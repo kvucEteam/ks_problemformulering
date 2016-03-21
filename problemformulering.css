@@ -1,0 +1,266 @@
+
+/*************************************
+        Generel styling
+*************************************/
+
+/*
+.TextHolder {
+    min-height: 100px; 
+    max-height: 550px;
+    width: 750px;
+    min-width: 360px;
+    padding: 20px 40px 20px 20px; 
+    margin: 0px 30px 30px 0px; 
+    background: #fff; 
+    border-radius: 6px;
+}
+
+.Clear{
+    clear: both;
+}
+
+
+.explanation {
+    margin-bottom: 20px;
+}
+
+.explanation div:nth-child(2){
+    width: 80%;
+}
+
+.explanation > .glyphicon{
+    color: #56bfc5;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.7;
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+
+.instruktion {
+    width: 100%;
+}
+.instruktion div:nth-child(2){
+    width: 80%;
+}
+*/
+
+/*************************************
+        Objekt styling
+*************************************/
+
+.Dropdown {
+    width: 100%;
+    margin: 0px 15px 15px 0px;
+    /*height: 35px;*/
+}
+
+.TextHolder {
+    /*background-color: #f8f8f6;*/
+}
+
+.container-fluid {
+    /*background-color: #FFF;*/
+}
+
+.row .btn-info, .row .btn-primary{
+	margin: 0px 15px 15px 0px;
+}
+
+.textOverview{
+    margin-bottom: 20px;
+}
+
+.textOverviewSubHeading{
+    font-weight: 600;
+}
+
+.QuoteHolder{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.btnActions .btn-primary:hover{
+    background-color: #969696;
+    border: 1px solid #969696;
+    color: #FFF;
+}
+
+.btnActions .btn-primary{
+    background-color: #666666;
+    border: 1px solid #666666;
+    color: #fff;
+}
+
+#TextContainer .btn-primary:hover, 
+#ThemeContainer .btn-primary:hover,
+#analyticalFocusContainer .btn-primary:hover,
+#subjectWordContainer .btn-primary:hover,
+#subjectWordContainer_btn .btn-primary:hover,
+#subjectWordField_btn_Container .btn-primary:hover,
+#subjectWordSentenceContainer .btn-primary:hover{
+    background-color: #969696;
+    border: 1px solid #969696;
+    color: #FFF;
+}
+
+#TextContainer .btn-primary, 
+#ThemeContainer .btn-primary, 
+#analyticalFocusContainer .btn-primary,
+#subjectWordContainer .btn-primary, 
+#subjectWordContainer_btn .btn-primary, 
+#subjectWordField_btn_Container .btn-primary,
+#subjectWordSentenceContainer .btn-primary{
+    background-color: #666666;
+    border: 1px solid #666666;
+    color: #fff;
+}
+
+audio {
+    width: 280px;  /* Ellers er audio for lang */
+}
+
+#testAudio{ 
+}
+
+textarea {
+    height: 120px;
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+}
+
+
+
+/***********************************************************************    
+            Fjerner den graalige farve fra textarea
+***********************************************************************/ 
+::-webkit-input-placeholder { /* WebKit, Blink, Edge */
+    color: inherit; 
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+   color: inherit;   
+   opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+   color: inherit;  
+   opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+   color: inherit;  
+}
+:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
+  color: inherit;  
+}
+
+/***********************************************************************    
+        Fjerner den graalige farve fra input-felter 
+***********************************************************************/
+.input-group input{
+    color: inherit;  
+}
+
+.form-control::-moz-placeholder{
+    color: inherit;  
+}
+/**********************************************************************/ 
+
+
+.stepNav {
+    margin: 30px 0px 30px 0px;
+}
+
+.stepNav audio{
+    float: right;
+    position: relative;
+    top: 10px;
+}
+
+#stepNavContainer{
+    float: left;
+}
+
+#processVal{
+    /*width: 8%;*/
+    float: left;
+}
+
+#processBarContainer{
+    width: 92%;
+    height: 12px;
+    float: right;
+    border: 1px solid #000;
+    margin-top: 6px;
+    border-radius: 6px;
+}
+
+#processBar{
+    height: 10px;
+    background-color: #56bfc5;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+}
+
+.Clear{
+    clear: both;
+}
+
+#step_6b .input-group, #step_9 .input-group {
+    width: 100%;
+}
+
+#step_6b input, #step_9 input {
+    height: 60px;  /* Dette svare ca til padding paa 20 px */
+}
+
+#step_1 .input-group{
+    margin-bottom: 10px;
+}
+
+
+.helperTextInput{
+    margin-bottom: 20px;
+}
+
+
+.stepInput .input-group {
+    margin-left: 20px;
+}
+
+.step .input-group {
+	display: inline-flex;
+}
+
+.introField {
+    margin-top: 20px;
+}
+
+
+/*
+.Sortable{
+    background-color: #f8f8f6;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+*/
+
+.sortable_text_container {
+    -moz-user-select: none;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #ddd;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 10px;
+    overflow: auto;
+    padding: 20px 10% 20px 20px;
+}
+
+
+#step_7_download {
+    text-transform: none;
+}
+
+
+
