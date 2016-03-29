@@ -1,51 +1,5 @@
 
 
-//====================================================== 
-//		ATO: Funktionalitet gem word-fil: 
-//======================================================
-    var content = "<h1> HEJ Thomas</h1> <p>Det er faktisk js..Er det ikke smart..!</p>";
-
-    var converted = htmlDocx.asBlob(content);
-    console.log(converted);
-
-
-    $(".saveFile").click(function() {
-        saveAs(converted, 'test.docx');
-    });
-
-//====================================================== 
-//		Test local storage
-//======================================================
-
-var testJsonObj = {"A": {"A1": 1, "A2": 2, "A3": 3}, "B": {"B1": 1, "B2": 2, "B3": 3}};
-var testArray = [1,2,3,4,5];
-
-
-function checkForLocalStoargeSupport(){
-	var TtestJsonObj; var TtestArray;
-	if(typeof(Storage) !== "undefined") {
-	    // alert("LocalStorage supported!");
-	    console.log("checkForLocalStoargeSupport - LocalStorage supported!");
-	} else {
-	    // alert("LocalStorage NOT supported!");
-	    console.log("checkForLocalStoargeSupport - LocalStorage NOT supported!");
-	}
-
-	localStorage.setItem("testJsonObj", JSON.stringify(testJsonObj));  	// This is how to save an object in "LocalStorage"
-	TtestJsonObj = JSON.parse(localStorage.getItem("testJsonObj"))		// This is how to get an object in "LocalStorage"
-	console.log("checkForLocalStoargeSupport - getItem 1: " + JSON.stringify(TtestJsonObj));
-
-	localStorage.setItem("testArray", JSON.stringify(testArray));  	// This is how to save an array in "LocalStorage"
-	TtestArray = JSON.parse(localStorage.getItem("testArray"))		// This is how to get an array in "LocalStorage"
-	console.log("checkForLocalStoargeSupport - getItem 1: " + JSON.stringify(TtestArray));
-}
-
-$( document ).on('click', "#testLocalStorage", function(event){
-	checkForLocalStoargeSupport();
-    console.log("testLocalStorage - PRESSED");
-});
-
-checkForLocalStoargeSupport();
 
 
 //################################################################################################################################
@@ -60,40 +14,6 @@ checkForLocalStoargeSupport();
 
 // Bootstrap input fields
 // http://getbootstrap.com/components/#input-groups
-
-
-// TO-DO fra referat far møde med Morten og Andreas 11-02-2016:
-// -----------------------------------------------------------
-// Skriveproces - skønlitterær analyse
-// Vi laver teksten som pdf, der åbnes i nyt vindue / downloades. 
-// UX og teksten: hvor skal den være, og være tilgængelig:
-// Ide: vi viser et tekstuddrag + en knap der åbner en pdf, som man kan downloade og ha åben ved siden af øvelsesvinduet
-// markere med PDF’ens markeringsredskaber, diigo eller andre digitale tekstmarkeringsredskaber
-// Nyt billede til step 0 (evt. en farvevariation - eller nogle tekster over)
-// Step 1: afklare copyright med Michael???
-// Step 3: tilføje brugervenlighed - “Brug evt. sætningsstarterne herunder”
-// Step 4: evt. minimere fokuspunkter til 5? (tilføjelse: UserMessageBox med beskrivelse af fokuspunktet - knappen er valgt.)
-// Step 5: “Find og indsæt tre citater fra teksten” - FR skal se på feedbackteksterne (fx ved manglende udfyldning etc. OBS husk: tekstindgange/paragrafskift.)
-// Step 6: citaterne er i anførselstegn
-// Step 7: UX og design-blik på dette step (TLY og THAN) (ato viser hvor teksterne om øvelsesinstrukserne ligger inden da.)
-// Step 8: stramme op på instruksteksterne.
-// Step 9: vi fjerner knapperne og erstatter med et inputfelt og et txt-area OBS - BUG, den sletter noget, når man går tilbage, i f.t. datahåndtering fra 8’eren?
-// step 10: UX og design-blik på dette step (TLY og THAN) (ato viser hvor teksterne om øvelsesinstrukserne ligger inden da. og ato og than kigger på wordfilen)
-
-// TO DO :
-// først en tekst som PDF til test. (anchortag til pdf plejer at fungere, siger than.)
-// Rigtige instrukstekster ind
-// UX derefter
-
-
-// Kilder til tekster - 19-02-2016:
-// ================================
-// 
-// klaus rifbjerg: "Det er blevet os pålagt" , 1960
-// 			http://www.ekelut.dk/papyrus/klassiker/KR/
-//			http://www.ekelut.dk/papyrus/klassiker/KR/rifbjerg_det%20er%20blevet%20os%20paalagt.mp3
-
-
 
 
 
@@ -119,8 +39,8 @@ function ReturnAjaxData(Type, Url, Async, DataType) {
 
 
 function getSelectedIndexNum(){
-	for (var n in jsonData.studentSelectedTexts){
-    	if (jsonData.studentSelectedTexts[n].selected){
+	for (var n in jsonData.studentSelectedProblems){
+    	if (jsonData.studentSelectedProblems[n].selected){
     		return n;
     	}
     }
@@ -128,10 +48,10 @@ function getSelectedIndexNum(){
 }
 
 function getSelected(varType){
-	for (var n in jsonData.studentSelectedTexts){
-    	if (jsonData.studentSelectedTexts[n].selected){
-    		if (jsonData.studentSelectedTexts[n].hasOwnProperty(varType)){
-    			return jsonData.studentSelectedTexts[n][varType];
+	for (var n in jsonData.studentSelectedProblems){
+    	if (jsonData.studentSelectedProblems[n].selected){
+    		if (jsonData.studentSelectedProblems[n].hasOwnProperty(varType)){
+    			return jsonData.studentSelectedProblems[n][varType];
     		} else {
     			alert('getSelected - ERROR: varType: "' + varType + '" does not exist!');
     		}
@@ -141,12 +61,12 @@ function getSelected(varType){
 }
 
 
-// {name: studentSelectedTexts, val: [], selected: false}
+// {name: studentSelectedProblems, val: [], selected: false}
 function setSelected(varType, varValue){
-	for (var n in jsonData.studentSelectedTexts){
-    	if (jsonData.studentSelectedTexts[n].selected){
-    		if (jsonData.studentSelectedTexts[n].hasOwnProperty(varType)){
-    			jsonData.studentSelectedTexts[n][varType] = varValue;
+	for (var n in jsonData.studentSelectedProblems){
+    	if (jsonData.studentSelectedProblems[n].selected){
+    		if (jsonData.studentSelectedProblems[n].hasOwnProperty(varType)){
+    			jsonData.studentSelectedProblems[n][varType] = varValue;
     			break;
     		} else {
     			alert('setSelected - ERROR: varType: "' + varType + '" does not exist!');
@@ -176,11 +96,12 @@ function setJsAudioEventLitsner2(){
 
 function changeNavAndAudioToStepNo(stepNo){
 	if (typeof(stepNoMem) === 'undefined'){
+		console.log("changeNavAndAudioToStepNo - 1");
 		window.stepNoMem = null;
 	}
 
 	if (stepNoMem != stepNo){  // In some steps, the templates are called several times. This creates problems since the audio src is loaded each time, which causes the player to start playing. This if-clause prevents this...
-
+		
 		stepNoMem = stepNo;
 
 		//====================
@@ -196,14 +117,16 @@ function changeNavAndAudioToStepNo(stepNo){
 		} 
 		var audioObj = document.getElementById("audioPlayer");
 		audioObj.src = audioSrc;  // When the "src" is set on the audioObj, the player starts to play automatically. This has to be prevented in "pause" has been pressed in a previous step.
-		if (typeof(autoPlayNew) !== 'undefined'){  
+		if (typeof(autoPlayNew) !== 'undefined'){ 
 			if (autoPlayNew){
-				audioObj.play();
+				audioObj.pause();	//  <--------  Slå Anne's strmme fra!!!
+				// audioObj.play();   //  <--------  Slå Anne's strmme til!!!
 			} else {
 				audioObj.pause();
 			}
 		} else {
-			audioObj.pause();
+			audioObj.pause();	//  <--------  Slå Anne's strmme fra!!!
+			// audioObj.play();   //  <--------  Slå Anne's strmme til!!!
 		}
 	}
 
@@ -291,14 +214,15 @@ console.log("elementInArray - false: " + elementInArray([1,2,3,4,5], 6));
 
 function returnStudentTextArray(){
 	var StudentSubjectArray = [];
-	for (var n in jsonData.studentSelectedTexts){
-		StudentSubjectArray.push(jsonData.studentSelectedTexts[n].textNo);
+	for (var n in jsonData.studentSelectedProblems){
+		StudentSubjectArray.push(jsonData.studentSelectedProblems[n].selcNo);
 	}
 	return StudentSubjectArray;
 }
 
 
 function removeEmptyElements(Tarray){
+	console.log('removeEmptyElements - Tarray: ' + JSON.stringify(Tarray));
 	for (var i in Tarray){
 		if (Tarray[i] === '') {
 			Tarray.splice(i, 1);
@@ -306,6 +230,8 @@ function removeEmptyElements(Tarray){
 	}
 	return Tarray;
 }
+console.log('removeEmptyElements: ' + JSON.stringify(removeEmptyElements([1,2,,3,,4,'',5,'',6])));
+
 
 
 function returnElementNumInArray(tArray, element){
@@ -563,8 +489,8 @@ function returnLastStudentSession() {
 
 
 function returnMissingElements(arrayName, elementName){
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var wordArray = [];
 	for (var n in JST[arrayName]){  // Find the missing words:
 		// var t = JST.textQuotes[n];
@@ -651,7 +577,7 @@ function step_0_template(){
 	HTML += '<div id="step_0" class="step">';
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_0" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_0" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('img'))?'<img id="stepImg_0" class="img-responsive" src="'+jsonData.steps[stepNo].img.src+'" alt="'+jsonData.steps[stepNo].img.alt+'"/>':'');
@@ -672,13 +598,10 @@ $( document ).on('click', "#step_0_goOn", function(event){
 //  	STEP 1 		//	CHOOSE YOUR TEKST
 //////////////////////
 
-// "subjects" : ["Rygning", "Syrien", "Atomkraft", "Grafitti", "Spis mindre kød", "Doping", "Prostitution", "Lægeordineret heroin", "Fri hash"],
+// "texts" : [
+// 		{"author" : "Peter Seeberg", "title" : "Patienten", "year": "1962", "src" : "pdf/Patienten.pdf", "studentMsg" : "<b>Din lærer skal give dig en kopi af teksten.</b>", "themes": ["Sundhed", "Identitet", "Moderne videnskab"], "textSnippet" : "<p>&quot;Da lægerne første gang stiftede bekendtskab med min sygdom, beroligede de mig meget inderligt og erklærede, at et amputeret ben ikke var noget at snakke om i vor tid, hvor proteserne jo ikke mere var en lidelse, som i træbenenes dage, men snarere en lettelse. De lovede mig, at jeg skulle komme til at gå nærmest bedre end før, idet de påstod, at iveren efter at gå igen ville tilføre mig kæmpekræfter. De fik ret. Da jeg først var kommet i gang, gik jeg bedre end nogen sinde, men længe varede det ikke, så dukkede sygdommen, som lægerne nu betegnede som den uhyre sjældne &quot;almindeligt bortfald&quot; op i det andet ben, der også måtte sættes af...&quot;</p>"},
+// 		{"author" : "Klaus Rifbjerg", "title" : "Det er blevet os pålagt", "year": "1960", "src" : "pdf/det_er_blevet_os_paalagt_2.pdf", "externalSrc": "https://materialeplatform.emu.dk/materialer/bogkort/86467329", "studentMsg" : "Link til materialet: ", "themes": ["En kritik af det moderne liv", "En kritik af velfærdsstaten", "Fremmedgørelse", "Kedsomhed"], "textSnippet" : "<p>&quot;Det er blevet os p&aring;lagt<br/> af statistikken<br/> i et gennemsnitsliv<br/> at &aring;bne et meget stort antal<br/> d&oslash;re, konservesd&aring;ser,<br/> punge, tegneb&oslash;ger, check.konti<br/> at lukke et meget stort antal<br/> samme...&quot;</p>"}	],
 
-// textNo
-
-// jsonData.studentSelectedTexts : [{"textNo":"Prostitution","selected":false,"subjectTexts":[]}]
-
-// MARK 10:49 - COPY/REPLACE: studentSelectedSubject  --->  studentSelectedTexts
 
 function step_1_template(){
 	window.editText = false;
@@ -688,45 +611,36 @@ function step_1_template(){
 	var stepNo = 1;
 	$('#processContainer').html(returnProcessBar(stepNo));
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-	var textNo = null;
-	// if (jsonData.hasOwnProperty("studentSelectedTexts")){
-	if (jsonData.hasOwnProperty("selectedTextNo")){
-		// textNo = getSelected('textNo');
-		textNo = jsonData.selectedTextNo;
-	}
+	var selcNo = null;
 
-	if (jsonData.hasOwnProperty("studentSelectedTexts")){
-	    	textNo = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].textNo;
+	// if (jsonData.hasOwnProperty("selectedProblemNo")){
+	//     	selcNo = jsonData.selectedProblemNo[jsonData.selectedIndexNum].selcNo;
+ 	// }
+
+    if (!jsonData.hasOwnProperty("originalNumOfProblems")){ 
+    	jsonData.originalNumOfProblems = jsonData.keyProblems.length;
     }
+    console.log('step_1_template - jsonData.originalNumOfProblems: ' + jsonData.originalNumOfProblems);
 
-    if (!jsonData.hasOwnProperty("originalNumOfTexts")){ 
-    	jsonData.originalNumOfTexts = jsonData.texts.length;;
-    }
-    console.log('step_1_template - jsonData.originalNumOfTexts: ' + jsonData.originalNumOfTexts);
-
-	console.log("step_1_template - textNo: " + textNo); 
+	console.log("step_1_template - selcNo: " + selcNo); 
 	var HTML = '';
 	HTML += '<div id="step_1" class="step">';
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_1" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_1" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	HTML += 			'<div id="TextContainer" class="btnActions">';
-			var JT = jsonData.texts;
+			var JT = jsonData.keyProblems;
 			for (var n in JT){
-			// for (var n = 0; n < jsonData.originalNumOfTexts; n++) {
-				// HTML += 	'<span class="Texts btn btn-'+((textNo == n)?'primary':'info')+'" >'+((JT[n].author!='')?JT[n].author+': ':'')+'"'+JT[n].title+'" '+((JT[n].year!='')?', '+JT[n].year:'')+'</span>';
-				HTML += 	'<span class="Texts btn btn-'+((textNo == n)?'primary':'info')+'" >'+'"'+JT[n].title+'" '+', '+((JT[n].author!='')?JT[n].author:'')+((JT[n].year!='')?', '+JT[n].year:'')+'</span>';
+				HTML += 	'<span class="keyProblems btn btn-'+((parseInt(selcNo) == n)?'primary':'info')+'" >'+JT[n].name+'</span>';
 			}
 	HTML += 			'</div>';
 
 	HTML += 			'<div class="stepInput">';
-	HTML += 				'<div class="helperText helperTextInput">Eller vælg din egen tekst:</div>';
-	HTML +=					returnInputBoxes3(1, 'Text_title TextInputField', 'Skriv titlen her...');
-	HTML +=					returnInputBoxes3(1, 'Text_author TextInputField', 'Skriv forfatteren her...');
-	HTML +=					returnInputBoxes3(1, 'Text_year TextInputField', 'Skriv året her...');
+	HTML += 				'<span class="helperText helperTextInput">Eller skriv selv et nøgleproblem:</span>';
+	HTML +=					returnInputBoxes3(1, 'Problem_name TextInputField', 'skriv her...');
 	HTML += 			'</div>';
 
 	HTML += 		'</div>';
@@ -739,378 +653,296 @@ function step_1_template(){
 
 
 $( document ).on('focusin', ".TextInputField", function(event){
-	$('.Texts').removeClass('btn-primary').addClass('btn-info');
+	$('.keyProblems').removeClass('btn-primary').addClass('btn-info');
 });
 
 $( document ).on('focusout', ".TextInputField", function(event){
-	if (jsonData.hasOwnProperty("studentSelectedTexts")){
-    	var textNo = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].textNo;
-    	$('.Texts').eq(textNo).addClass('btn-primary').removeClass('btn-info');
+	if (jsonData.hasOwnProperty("studentSelectedProblems")){
+    	var selcNo = jsonData.studentSelectedProblems[jsonData.selectedIndexNum].selcNo;
+    	$('.keyProblems').eq(selcNo).addClass('btn-primary').removeClass('btn-info');
     }
 });
 
 
-$( document ).on('click', ".Texts", function(event){
+$( document ).on('click', ".keyProblems", function(event){
 	window.studentTextPressed = true;
     console.log("Subjects - PRESSED");
-    $('.Texts').removeClass('btn-primary').addClass('btn-info');
+    $('.keyProblems').removeClass('btn-primary').addClass('btn-info');
     $(this).addClass('btn-primary');
 
-    $('.Text_author').val('');
-    $('.Text_title').val('');
-    $('.Text_year').val('');
+    $('.keyProblems').val('');
 
-    var studentSelectedTexts = $(this).text();
-    var textNo = $(this).index();
-    console.log("Subjects - textNo: " + textNo); 
+    var studentSelectedProblems = $(this).text();
+    var selcNo = $(this).index();
+    console.log("Subjects - selcNo: " + selcNo); 
 
-    if (!jsonData.hasOwnProperty("studentSelectedTexts")){
-    	jsonData.studentSelectedTexts = [];
+    if (!jsonData.hasOwnProperty("studentSelectedProblems")){
+    	jsonData.studentSelectedProblems = [];
     }
 
-    if (!elementInArray(returnStudentTextArray(), textNo)) {  // If studentSelectedTexts is not allready in studentSelectedTexts.textNo, then add it: 
-    	// jsonData.studentSelectedTexts.push({textNo: studentSelectedTexts, selected: false, subjectTexts: [] });
-    	jsonData.studentSelectedTexts.push({textNo: textNo, selected: false, subjectTexts: [] });
+    if (!elementInArray(returnStudentTextArray(), selcNo)) {  // If studentSelectedProblems is not allready in studentSelectedProblems.selcNo, then add it: 
+    	// jsonData.studentSelectedProblems.push({selcNo: studentSelectedProblems, selected: false, subjectTexts: [] });
+    	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
 	}
 
-    console.log("Subjects - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+    console.log("Subjects - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
-    // if (!studentChangeSubject(studentSelectedTexts)){
-	    for (var n in jsonData.studentSelectedTexts){
-	    	if (textNo == jsonData.studentSelectedTexts[n].textNo){
-	    		jsonData.studentSelectedTexts[n].selected = true;
+    // if (!studentChangeSubject(studentSelectedProblems)){
+	    for (var n in jsonData.studentSelectedProblems){
+	    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
+	    		jsonData.studentSelectedProblems[n].selected = true;
 	    	} else {
-	    		jsonData.studentSelectedTexts[n].selected = false;
+	    		jsonData.studentSelectedProblems[n].selected = false;
 	    	}
 	    }
 	// }
 
-	// jsonData.selectedTextNo = textNo; // = returnElementNumInArray(returnStudentTextArray(), studentSelectedTexts);
-	jsonData.selectedTextIndexNum = getSelectedIndexNum();
-	console.log("Subjects - jsonData.selectedTextIndexNum: " + jsonData.selectedTextIndexNum);  // <------- ########  SE HER !!! ##############
+	// jsonData.selectedselcNo = selcNo; // = returnElementNumInArray(returnStudentTextArray(), studentSelectedProblems);
+	jsonData.selectedIndexNum = getSelectedIndexNum();
+	console.log("Subjects - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum);  // <------- ########  SE HER !!! ##############
 
-    console.log("Subjects - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-
-    var JT = jsonData.texts[textNo];
-    console.log("Subjects - JT: " + JSON.stringify(JT));
-
-    var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-
-    var HTML = '';
-    if (JST.textNo < jsonData.originalNumOfTexts){
-	    HTML += '<h2>'+JT.title+'</h2> <i>Af '+JT.author+', '+JT.year+'</i> <br/><br/>';
-	    HTML += '<h4>Tekstuddrag:</h4>'
-	    HTML += JT.textSnippet;
-	    HTML += '<br/>' + ((JT.hasOwnProperty('studentMsg'))?JT.studentMsg:'')+((JT.hasOwnProperty('externalSrc'))?'<a href="'+JT.externalSrc+'" target="_blank">'+JT.externalSrc+'</a>':'');
-	    // HTML += '<br/> <a class="btn btn-lg btn-info" href="'+JT.src+'" target="_blank">Læs pdf i nyt browser vindue</a> <a class="btn btn-lg btn-info" href="'+JT.src+'" download="'+String(JT.src.split('/').pop())+'">Download pdf</a>';
-	} else {
-		HTML += 'Du har valgt at analysere din selvvalgte tekst: <br/><br/>';
-		HTML += ((JT.author!='')?JT.author+': ':'')+'"'+JT.title+'" '+((JT.year!='')?', '+JT.year:'') + '<br/><br/>';
-		HTML += '<span class="EditText btn btn-lg btn-info" >Ret kilde teksten</span>';
-	}
-
-    UserMsgBox("body", HTML);
-
-});
-
-
-$( document ).on('click', ".EditText", function(event){
-	editText = true;
-
-	var textNo = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].textNo;
-	console.log('EditText - textNo : ' + textNo);
-
-	$('.Text_title').val(jsonData.texts[textNo].title);
-	$('.Text_author').val(jsonData.texts[textNo].author);
-	$('.Text_year').val(jsonData.texts[textNo].year);
+    console.log("Subjects - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 });
 
 
 $( document ).on('click', "#step_1_goOn", function(event){
 
-	if (typeof(fallbackStudentTextNo) === 'undefined'){
-		window.fallbackStudentTextNo = null;
-	}
-
-	var Text_title = htmlEntities($('.Text_title').val());
-	var Text_author = htmlEntities($('.Text_author').val());
-	var Text_year = htmlEntities($('.Text_year').val()); 
-	var textNo = null;
+	var Problem_name = htmlEntities($('.Problem_name').val());
 	
-	var studentHasEnteredData = ((Text_title.length>0)||(Text_author.length>0)||(Text_year.length>0))?true:false; // Check if some fields are entered...
-	var boolRes = /^\d{4}$/.test(Text_year);
-	console.log('step_1_goOn - boolRes : ' + boolRes);
-	var studentDataIsComplete = ((Text_title.length > 0)&&(Text_author.length > 0)&&(boolRes))?true:false;  // Check if all fields are entered.
-	
+	var studentHasEnteredData = (Problem_name.length>0)?true:false; // Check if field are entered...
 
-	if (studentHasEnteredData && studentDataIsComplete) {  // If the student enters a title...
+	if (studentHasEnteredData) {  // If the student enters a keyProblem...
 
 		var themes = [];
 
-		if (!editText) {  // If the student has NOT choosen to edit the text data...
-			for (var n in jsonData.texts){  // Find out if the text (eg. textNo) already exixts: put the index "n" in "textNo"
-				if (Text_title == jsonData.texts[n].title){
-					textNo = n;
-					console.log('step_1_goOn - textNo 1: ' + textNo);
-					// jsonData.selectedTextIndexNum = textNo;
-				}
-				themes = themes.concat(jsonData.texts[n].themes);
-			}
-			themes = themes.filter( onlyUnique ); // Filters away all duplicate themes, so that only unique themes are left.
+		if (!jsonData.hasOwnProperty("studentSelectedProblems")){ 
+	    	jsonData.studentSelectedProblems = [];
+	    }
 
-		} else {  // The studen has choosen to edit the text data...
-			textNo = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].textNo;
-			jsonData.texts[textNo].author = Text_author;
-			jsonData.texts[textNo].title = Text_title;
-			jsonData.texts[textNo].year = Text_year;
-			editText = false;
+	    selcNo = jsonData.keyProblems.length;
+	    console.log('step_1_goOn - selcNo 2: ' + selcNo);
+
+	    jsonData.keyProblems.push({"name" : Problem_name, "themes": themes});
+
+		if (!elementInArray(returnStudentTextArray(), selcNo)) {  
+		   	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
 		}
 
-		if (textNo === null){  // If the text (eg. textNo) does NOT exixts...
-
-			if (!jsonData.hasOwnProperty("studentSelectedTexts")){ 
-		    	jsonData.studentSelectedTexts = [];
-		    }
-
-		    textNo = jsonData.texts.length;
-		    console.log('step_1_goOn - textNo 2: ' + textNo);
-
-		    // jsonData.texts.push({"author" : "", "title" : Text_title, "year": "", "themes": themes});
-		    jsonData.texts.push({"author" : Text_author, "title" : Text_title, "year": Text_year, "themes": themes});
-
-			if (!elementInArray(returnStudentTextArray(), textNo)) {  
-			   	jsonData.studentSelectedTexts.push({textNo: textNo, selected: false, subjectTexts: [] });
-			}
-
-			// jsonData.selectedTextIndexNum = textNo;
-		}
-
-		for (var n in jsonData.studentSelectedTexts){
-	    	if (textNo == jsonData.studentSelectedTexts[n].textNo){
-	    		jsonData.studentSelectedTexts[n].selected = true;
+		for (var n in jsonData.studentSelectedProblems){
+	    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
+	    		jsonData.studentSelectedProblems[n].selected = true;
 	    	} else {
-	    		jsonData.studentSelectedTexts[n].selected = false;
+	    		jsonData.studentSelectedProblems[n].selected = false;
 	    	}
 	    }
 
-	    jsonData.selectedTextIndexNum = getSelectedIndexNum();
+	    jsonData.selectedIndexNum = getSelectedIndexNum();
 	}
-
-
 
 	console.log("step_1_goOn - jsonData: " + JSON.stringify(jsonData));
-	console.log("step_1_goOn - fallbackStudentTextNo: " + fallbackStudentTextNo); 
-	console.log("step_1_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_1_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
-	console.log("step_1_goOn - fallbackStudentTextNo: " + fallbackStudentTextNo);
-
-	var error_noData = false;
 	var error_notEnoughstudentData = false;
 
-	// if ((typeof(studentTextPressed) !== "undefined") && (studentTextPressed == true) || (typeof(jsonData.selectedTextIndexNum) !== "undefined")){
-	if (!jsonData.hasOwnProperty("selectedTextIndexNum") && !studentHasEnteredData) {
-		error_noData = true;
+	if (!jsonData.hasOwnProperty("selectedIndexNum") && !studentHasEnteredData) {
 		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge en tekst, eller skrive titlen på en tekst, før du kan gå videre!");
+		error_notEnoughstudentData = true;
 	}
+
 	
-	if (studentHasEnteredData && !studentDataIsComplete) { 
-		var HTML = '';
-		if ((Text_title.length == 0) || (Text_author.length == 0)) {
-			error_notEnoughstudentData = true;
-			// var HTML = '';
-			// if ((Text_title.length == 0) || (Text_author.length == 0)) {
-				HTML += '<h4>OBS</h4> Du skal skrive '+((Text_title.length == 0)?'en titel':'')+(((Text_title.length == 0) && (Text_author.length == 0))?' og ':'')+((Text_author.length == 0)?'en forfatter':'')+'. ';
-			// }
-		}
-
-		// if ((Text_title == '') || (Text_title.match(/^\d{4}$/).length != 1)){
-		if (!boolRes){
-			error_notEnoughstudentData = true;
-			HTML += ((HTML == '')?'<h4>OBS</h4>':'') + ' Året skal være et årstal bestående af 4 tal.';
-		}
-
-		if (error_notEnoughstudentData){
-			UserMsgBox("body", HTML);
-		} 
-		
-	} 
-
-	if (!error_noData && !error_notEnoughstudentData) {
-	    // ORGINAL KODE:
-		fallbackStudentTextNo = jsonData.selectedTextNo;
+	if ((jsonData.hasOwnProperty("studentSelectedProblems")) && !error_notEnoughstudentData) {
 	 	$('#DataInput').html(step_2_template());
-	 	// setJsAudioEventLitsner();
-	 	// $(".studentTheme").focus();  // Sets the focus in the inputfield when the template loades.
-	}
+	} 
 
 });
 
 
-//////////////////////
-//  	STEP 2 		//   // CHOOSE YOUR THEME
-//////////////////////
 
+
+//////////////////////
+//  	STEP 2 		//   // FRA SKRIVEPROCES 1
+//////////////////////
 
 function step_2_template(){
 	console.log("step_2_template - jsonData 1: " + JSON.stringify(jsonData)); 
 	jsonData.currentStep = 2;
 	osc.save('jsonData', jsonData);
+
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var selcNo = JS.selcNo;
+
+	console.log("step_2_template - JS: " + JSON.stringify(JS)); 
+
+	if (!jsonData.hasOwnProperty("originalNumOfThemes")){
+    	JS.originalNumOfThemes = jsonData.keyProblems[selcNo].themes.length;
+    }
+
+    if (!JS.hasOwnProperty("studentThemes")){
+    	JS.studentThemes = [];			// Contains student supplied themes written in the input field
+    } 
+
+    if (!JS.hasOwnProperty("studentSelectedThemes")){
+    	JS.studentSelectedThemes = [];  // Contains index numbers of the pressed ".keyThemes" buttons
+    }
+
+    console.log("step_2_template - JS: " + JSON.stringify(JS)); 
+
+    var keyProblem = jsonData.keyProblems[selcNo].name;
+
+	// var studentSubjectArray = returnStudentSubjectArray();
+	// var subjectName = getSelected('subjectName');
+	// jsonData.selectedSubjectElementNum = returnElementNumInArray(studentSubjectArray, subjectName);  // Save selectedSubjectElementNum in jsonData. selectedIndexNum
+
 	var stepNo = 2;
 	$('#processContainer').html(returnProcessBar(stepNo));
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-	console.log("step_2_template - jsonData.selectedTextIndexNum: " + jsonData.selectedTextIndexNum);
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-	console.log("step_2_template - JST: " + JSON.stringify(JST));
-	var studentTheme = null;
-	if (JST.hasOwnProperty("studentTheme")){
-		studentTheme = JST.studentTheme;
-	}
-	console.log("step_2_template - studentTheme: " + studentTheme);
-	console.log("step_2_template - jsonData.texts["+JST.textNo+"].title: " + jsonData.texts[JST.textNo].title);
-
 	var HTML = '';
 	HTML += '<div id="step_2" class="step">';
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction + '&quot;'+jsonData.texts[JST.textNo].title+'&quot;'):'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction + ' &quot;' + keyProblem + '&quot;'):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
-	HTML += 			'<div id="ThemeContainer" class="btnActions">';
-			// var JS = jsonData.themes;
-			var JTT = jsonData.texts[JST.textNo].themes;
-			for (var n in JTT){
-				HTML += 	'<span class="Themes btn btn-'+((studentTheme === JTT[n])?'primary':'info')+'" >'+JTT[n]+'</span>';
-			}
-	HTML += 			'</div>';
-	HTML += 			'<div class="stepInput">';
-	HTML += 				'<span class="helperText">Eller vælg dit eget tema: </span>';
 
-		
-	// studentTheme = (((JST.hasOwnProperty('studentTheme')) && (!elementInArray(JTT, JST.studentTheme))))? JST.studentTheme : 'Skriv dit tema her...';
-	// HTML += 			returnInputBoxes3(1, 'studentTheme', studentTheme);
-	HTML +=				returnInputBoxes4(1, 'studentTheme', ((JST.hasOwnProperty('studentTheme')) && (!elementInArray(JTT, JST.studentTheme)))?JST.studentTheme:'', 'Skriv dit tema her...');
+	HTML += 			'<div id="subjectWordContainer" class="btnActions">';
+				console.log("step_2_template - jsonData.studentSelectedSubject 1: " + JSON.stringify(jsonData.studentSelectedSubject)); 
 
-	// HTML +=					returnInputBoxes3(1, 'studentTheme', 'Skriv dit tema her...');
+				var JT = jsonData.keyProblems[selcNo].themes
+
+				console.log("step_2_template - JT: " + JSON.stringify(JT));
+
+				console.log("step_2_template - elementInArray: " + JSON.stringify(JS.studentSelectedThemes));
+
+				for (var n in JT){
+					console.log("step_2_template - n: " + n + ", elementInArray: " + elementInArray(JS.studentSelectedThemes, n));
+					HTML += 	'<span class="keyThemes btn btn-'+((elementInArray(JS.studentSelectedThemes, n))?'primary':'info')+'" >'+JT[n]+'</span>';
+				}
+
+	HTML += 				'<div class="stepInput">';
+	HTML += 					'<span class="helperText helperTextInput">Tilføj evt. flere emner:</span>';
+									// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
+	HTML += 						returnInputBoxes4(JS.studentThemes.length, 'keyThemesByStudent', JS.studentThemes, 'skriv tema her...');
+	HTML += 						returnInputBoxes4(2, 'keyThemesByStudent', JS.studentThemes, 'X skriv tema her...');
+	HTML += 				'</div>';
+
 	HTML += 			'</div>';
+	
 	HTML += 		'</div>';
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 2 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 2 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
-
-
-$( document ).on('focusin', ".studentTheme", function(event){
-	$('.Themes').removeClass('btn-primary').addClass('btn-info');
+$( document ).on('click', ".keyThemes", function(event){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var index = $(this).index();
+	if ($(this).hasClass('btn-primary')){
+		JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
+		$('.keyThemes').eq(index).addClass('btn-info').removeClass('btn-primary');
+		console.log("keyThemes - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+	} else {
+		JS.studentSelectedThemes.push(index);
+		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
+		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
+	}
 });
 
 
-$( document ).on('focusout', ".studentTheme", function(event){
-	if (jsonData.hasOwnProperty("studentSelectedTexts")){
-    	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-    	$( ".Themes" ).each(function( index, element ) { 
-			if ($(element).text() == JST.studentTheme){
-				$('.Themes').eq(index).addClass('btn-primary').removeClass('btn-info');
-				return false;
+// This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
+// first empty input-field is found and focus is given to that field.
+$( document ).on('keypress', ".keyThemesByStudent", function(event){
+	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
+		event.preventDefault(); // ...prevents the normal action of the return-key.
+		$( ".keyThemesByStudent" ).each(function( index, element ) { // for each input-field...
+			if ($(element).val().length == 0) { // If the input-field is empty...
+				$(element).focus(); // ...give the input-field focus...
+				return false;  // ... and break the each-loop.
 			}
 		});
-    }
+	}
 });
 
 
-$( document ).on('focusout', ".studentTheme", function(event){
-// $( document ).on('focusin', ".studentTheme", function(event){  
-	var studentTheme = htmlEntities($('.studentTheme').val());
-	console.log("focusout - studentTheme: _" + studentTheme + "_");
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-    if (!JST.hasOwnProperty("studentTheme")){
-    	JST.studentTheme = null;
-    }
-    if (studentTheme.length > 0) {
-    	JST.studentTheme = studentTheme;
-    }
+$( document ).on('focusout', ".keyThemesByStudent", function(event){ 
+	// Save the choosen words 1:
+	var studentThemes = [];
+	$( ".keyThemesByStudent" ).each(function( index, element ) {
+		console.log("keyThemesByStudent - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
+		if ($(element).val().length > 0) { // Only inset entered values > 0
+			studentThemes.push(htmlEntities($(element).val()));
+		}
+	});
+	console.log("keyThemesByStudent - studentThemes: " + JSON.stringify(studentThemes));
+	console.log("focusout - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
+	jsonData.studentSelectedProblems[jsonData.selectedIndexNum].studentThemes = studentThemes;
+	console.log("focusout - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 });
 
+// $( document ).on('focusout', ".subjectWordField", function(event){  
+$( document ).on('focusin', ".keyThemesByStudent", function(event){
 
-$( document ).on('click', ".Themes", function(event){
-	// window.studentThemePressed = true;
-    console.log("Subjects - PRESSED");
-    $('.Themes').removeClass('btn-primary').addClass('btn-info');
-    $(this).addClass('btn-primary');
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
-    $('.studentTheme').val('');
-    $('.studentTheme').prop('placeholder', 'Skriv dit tema her...');
+	// var subjectTextsArray = [];
+	var filledKeyThemesByStudent = 0;
+	var numOfKeyThemesByStudent = $('.keyThemesByStudent').length;
+	$( ".keyThemesByStudent" ).each(function( index, element ) {
+		if ($(element).val().length > 0){
+			++filledKeyThemesByStudent;
+		}
+	});
+	console.log("focusin - numOfKeyThemesByStudent: " + numOfKeyThemesByStudent + ", filledKeyThemesByStudent: " + filledKeyThemesByStudent); 
+	console.log("focusin - jsonData.studentSelectedProblems[jsonData.selectedIndexNum] 1: " + JSON.stringify(jsonData.studentSelectedProblems[jsonData.selectedIndexNum])); 
 
-    var studentTheme = $(this).text();
-    var themeNo = $(this).index();
+	var Ajust = 0;
+	if ($(this).val().length > 0) {  // This prevents an extra field of being added if an old field with text inside is being edited.
+		Ajust = 1;
+	}
 
-    var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-    if (!JST.hasOwnProperty("studentTheme")){
-    	JST.studentTheme = null;
-    }
-    JST.studentTheme = studentTheme;
-
-    console.log("Themes - jsonData.studentSelectedTexts: " + JSON.stringify(jsonData.studentSelectedTexts));
-    console.log("Themes - jsonData: " + JSON.stringify(jsonData));  
+	if (filledKeyThemesByStudent == numOfKeyThemesByStudent-1+Ajust){
+		// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
+		$('.stepInput').append(returnInputBoxes4(1, 'keyThemesByStudent', '', 'X skriv tema her...'));
+	}
 });
-
 
 $( document ).on('click', "#step_2_goBack", function(event){
 	$('#DataInput').html(step_1_template());
-	// setJsAudioEventLitsner();
-});
 
+	// var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	// var selcNo = JS.selcNo;
+	// JS.originalNumOfThemes
+
+	// if (JS.originalNumOfThemes-1 < selcNo) {  
+	// 	$('.studentSubject').val(JS.name); 
+	// }
+});
 
 $( document ).on('click', "#step_2_goOn", function(event){
 
-	if (typeof(fallbackStudentTheme) === 'undefined'){
-		window.fallbackStudentTheme = null;
+	// var subjectTextsArray = getSelected('subjectTexts');
+	// subjectTextsArray = removeEmptyElements(subjectTextsArray); // Remove the empty elements
+	// setSelected('subjectTexts', subjectTextsArray);
+
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+
+	console.log("step_2_goOn - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	removeEmptyElements(JS.studentThemes);
+	console.log("step_2_goOn - studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+	if (jsonData.originalNumOfProblems - 1 < JS.selcNo) { // If the studen has choosen his/her own keyProblem...
+		jsonData.keyProblems[JS.selcNo].themes = JS.studentThemes;  // then insert the studentThemes into the keyProblems JSON data-structure.
 	}
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-
-	var studentTheme = htmlEntities($('.studentTheme').val());
-	console.log("step_2_goOn - studentTheme: " + studentTheme + ", studentTheme.length: " + studentTheme.length);
-
-	if (!JST.hasOwnProperty("studentTheme")){
-    	JST.studentTheme = null;
-    }
-
-	if ((studentTheme.length > 0)){
-
-		console.log("step_2_goOn - jsonData 1: " + JSON.stringify(jsonData)); 
-
-	    if (!elementInArray(jsonData.themes, studentTheme)){
-
-		// if (!JST.hasOwnProperty("studentTheme")){
-		//    	JST.studentTheme = null;
-		// }
-
-			jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].studentTheme = studentTheme;
-		}
-	}
-
-
-
-	console.log("step_2_goOn - fallbackStudentTheme: " + fallbackStudentTheme); 
-	console.log("step_2_goOn - jsonData.studentSelectedSubject 1: " + JSON.stringify(jsonData.studentSelectedSubject)); 
-
-	console.log("step_2_goOn - fallbackStudentTheme: " + fallbackStudentTheme + ", studentTheme: " + studentTheme);
-
-	// if (((typeof(studentThemePressed) !== "undefined") && (studentThemePressed == true)) || (studentTheme.length > 0)){
-	if ((JST.studentTheme !== null) && (JST.studentTheme.length > 0)){
-
-	    // ORGINAL KODE:
-		fallbackStudentTheme = studentTheme;
-	 	$('#DataInput').html(step_3_template());   // $("#form [name='input1st']").focus();   $("textarea [name='textareaFocus']"").focus();
-	 	// setJsAudioEventLitsner();
-	 	// $("#textInputTheme").focus();  // Sets the focus in the textarea when the template loades.
+	if (JS.studentSelectedThemes.length + JS.studentThemes.length >= jsonData.numOfChoosenWords){
+		$('#DataInput').html(step_3_template());
+		console.log("step_2_goOn - studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	} else {
-		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge et tema, eller skrive et valgfrit tema, før du kan gå videre!");
+		UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.studentSelectedThemes.length+JS.studentThemes.length)+' ord.');
 	}
+
 });
 
 
@@ -1122,58 +954,140 @@ $( document ).on('click', "#step_2_goOn", function(event){
 
 function step_3_template(){
 	console.log("step_3_template - jsonData 1: " + JSON.stringify(jsonData)); 
+	console.log("step_3_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
+	console.log("step_3_template - keyProblems 1: " + JSON.stringify(jsonData.keyProblems)); 
 	jsonData.currentStep = 3;
 	osc.save('jsonData', jsonData);
 	var stepNo = 3;
 	$('#processContainer').html(returnProcessBar(stepNo));
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
 	var HTML = '';
 	HTML += '<div id="step_3" class="step">';
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_3" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(insertThemes(jsonData.steps[stepNo].instruction)):'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_3" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(insertKeyProblem(jsonData.steps[stepNo].instruction)):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div id="subjectTextThemeContainer" class="btnActions">';
+	HTML += 			'<div id="subjectTextThemeContainer" >';
 			
-	HTML += 				'<div class="DropdownWrap">';
-	HTML += 					insertThemes(returnDropdownMarkup(jsonData.sentenceStarters_theme));
+	HTML += 				'<div class="problemFormulationBtnWrap">';
+	HTML += 						'<span class="problemFormulationBtn btn btn-primary">Åben dit problemformuleringsvindue</span>';
 	HTML += 				'</div>';
 
-	HTML += 				'<textarea id="textInputTheme" val="" name="textareaFocus">';
-				if (JST.hasOwnProperty('TextTheme')) {
-					HTML += JST.TextTheme;
-				}			
-	HTML += 				'</textarea>';
+			var studentSelectedThemes = [];
+			for (var n in JS.studentSelectedThemes) {
+				studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]);
+			}
+			var JSS = JS.studentThemes.concat(studentSelectedThemes);
+			console.log("step_3_template - JSS: " + JSON.stringify(JSS)); 
+			for (var n in JSS){
+				HTML += 	'<span class="btn btn-info">'+JSS[n]+'</span>';
+			}
 
 	HTML += 			'</div>';
 	HTML += 		'</div>';
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 3 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 3 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
 
-function insertThemes(dropdownMarkup){
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-	console.log('insertThemes - studentTheme: ' + JST.studentTheme);
-	return dropdownMarkup.replace(/\?\?\?/g, JST.studentTheme.toLowerCase());
+function insertKeyProblem(dropdownMarkup){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
+	console.log('insertThemes - keyProblem: ' + keyProblem);
+	return dropdownMarkup.replace(/\?\?\?/g, keyProblem.toLowerCase());
 }
 // console.log('insertThemes: '+insertThemes('Det valgte tema er ???, som er et tama der aktuelt ift...'));
 
 
-$(document).on('change', '#Dropdown0', function(){
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$( document ).on('click', ".problemFormulationBtn", function(event){
+	var HTML = '';
+	HTML += '<h4>Din problemformulering</h4>';
+	HTML += '<div class="DropdownWrap">';
+	HTML += 	returnDropdownMarkup(jsonData.sentenceStarters_problemFormulation);
+	HTML += '</div>';
+	HTML += '<textarea id="textInputProblemFormulation" class="textInput" val="">';
+			// if ((JST.hasOwnProperty('textQuotes')) && (typeof(JST.textQuotes[quoteCount]) !== 'undefined')) {
+			// 	HTML += JST.textQuotes[quoteCount];
+			// }			
+	HTML += '</textarea>';
+	HTML += '<span class="problemFormulation_goBack btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span>Se din forrige</span><span class="problemFormulation_goOn btn btn-info">Se din nye<span class="glyphicon glyphicon-chevron-right"></span></span><span class="problemFormulation_saveHide btn btn-info">Gem og luk</span>';
+	HTML += '<div class="Clear"></div>';
+	UserMsgBox("body", HTML);
+
+	$('#UserMsgBox').unbind('click');
+	$('.MsgBox_bgr').unbind('click');
+
+	// ADD DATASTRUCTURE
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	if (!JS.hasOwnProperty('problemFormulationMem')){
+		JS.problemFormulationMem = [];
+	}
+	window.problemFormulationMemNum = JS.problemFormulationMem.length;
+	
+});
+
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$( document ).on('click', ".problemFormulation_goBack", function(event){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	console.log('problemFormulation_goBack - problemFormulationMem: ' + JS.problemFormulationMem);
+	console.log('problemFormulation_goBack - problemFormulationMemNum 1: ' + problemFormulationMemNum);
+	if ((0 < problemFormulationMemNum) && (problemFormulationMemNum <= JS.problemFormulationMem.length)){
+		--problemFormulationMemNum;
+		console.log('problemFormulation_goBack - problemFormulationMemNum 2: ' + problemFormulationMemNum);
+		$('#textInputProblemFormulation').val(JS.problemFormulationMem[problemFormulationMemNum]);
+	}	
+});
+
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$( document ).on('click', ".problemFormulation_goOn", function(event){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	console.log('problemFormulation_goOn - problemFormulationMem: ' + JS.problemFormulationMem);
+	console.log('problemFormulation_goOn - problemFormulationMemNum 1: ' + problemFormulationMemNum);
+	if ((0 <= problemFormulationMemNum) && (problemFormulationMemNum < JS.problemFormulationMem.length-1)){
+		++problemFormulationMemNum;
+		console.log('problemFormulation_goOn - problemFormulationMemNum 2: ' + problemFormulationMemNum);
+		$('#textInputProblemFormulation').val(JS.problemFormulationMem[problemFormulationMemNum]);
+	}
+});
+
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$( document ).on('click', ".problemFormulation_saveHide", function(event){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var textInputProblemFormulation = $('#textInputProblemFormulation').val();
+	console.log('problemFormulation_saveHide - textInputProblemFormulation: ' + textInputProblemFormulation);
+	console.log('problemFormulation_goOn - problemFormulationMem 1: ' + JS.problemFormulationMem);
+	if (textInputProblemFormulation.length > 0)	{
+		JS.problemFormulationMem.push(textInputProblemFormulation);
+	}
+	console.log('problemFormulation_goOn - problemFormulationMem 2: ' + JS.problemFormulationMem);
+	$(".MsgBox_bgr").fadeOut(200, function() {
+	    $(this).remove();
+	});
+});
+
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$( document ).on('click', ".CloseClass", function(event){
+	$(".MsgBox_bgr").fadeOut(200, function() {
+	    $(this).remove();
+	});
+});
+
+// Functionality for the UserMsgBox containing the "Problem Formulation".
+$(document).on('change', '#Dropdown1', function(){
 	// var selectedText = $('#Dropdown1:selected').text();
-	var textInputTheme = $('#Dropdown0').val();
+	var textInputTheme = $('#Dropdown1').val();
 	console.log("textInputTheme - textInputTheme: " + textInputTheme);
-	$('#textInputTheme').val(textInputTheme);
+	$('#textInputProblemFormulation').val(textInputTheme);
 });
 
 
@@ -1188,7 +1102,7 @@ $( document ).on('click', "#step_3_goOn", function(event){
 
 	var TextTheme = htmlEntities($('#textInputTheme').val());
 	if (TextTheme.length > 0){
-		var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 		if (!JST.hasOwnProperty('TextTheme')){
 			JST.TextTheme = null;
 		}
@@ -1219,12 +1133,12 @@ function step_4_template(){
 	$('#processContainer').html(returnProcessBar(stepNo));
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
 	var analyticalFocus = null;
-	// if (jsonData.hasOwnProperty("studentSelectedTexts")){
+	// if (jsonData.hasOwnProperty("studentSelectedProblems")){
 	if (JST.hasOwnProperty("analyticalFocus")){
-		// textNo = getSelected('textNo');
+		// selcNo = getSelected('selcNo');
 		analyticalFocus = JST.analyticalFocus;
 	}
 	console.log("step_4_template - analyticalFocus: " + analyticalFocus); 
@@ -1233,7 +1147,7 @@ function step_4_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_4" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_4" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	HTML += 			'<div id="analyticalFocusContainer" class="btnActions">';
@@ -1250,7 +1164,7 @@ function step_4_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 4 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 4 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -1269,9 +1183,9 @@ $( document ).on('click', ".AnalyticalFocus", function(event){
 
     // $('.studentSubject').val('');
 
-    var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+    var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
-    var studentSelectedTexts = $(this).text();
+    var studentSelectedProblems = $(this).text();
     var analyticalFocus = $(this).index();
     console.log("AnalyticalFocus - analyticalFocus: " + analyticalFocus); 
 
@@ -1281,7 +1195,7 @@ $( document ).on('click', ".AnalyticalFocus", function(event){
 
     JST.analyticalFocus = analyticalFocus;
 
-    console.log("AnalyticalFocus - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+    console.log("AnalyticalFocus - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
 	console.log("AnalyticalFocus - $(this).index(): " + parseInt($(this).index()));    
     UserMsgBox("body", jsonData.analyticalFocus[parseInt($(this).index())].description);
@@ -1289,9 +1203,9 @@ $( document ).on('click', ".AnalyticalFocus", function(event){
 
 $( document ).on('click', "#step_4_goOn", function(event){
 
-	console.log("step_4_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_4_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (JST.hasOwnProperty("analyticalFocus")){
 
 	 	$('#DataInput').html(step_5_template());
@@ -1319,7 +1233,7 @@ function step_5_template(){
 	osc.save('jsonData', jsonData);
 	console.log("step_5_template - quoteCount: " + ((typeof(quoteCount) !== 'undefined')?quoteCount:'undefined'));
 	console.log("step_5_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_5_template - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_5_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	if ((typeof(quoteCount) === 'undefined') || (quoteCount === null)) { 
 		window.quoteCount = 0;
 	} else {
@@ -1328,13 +1242,13 @@ function step_5_template(){
 		}
 	}
 	
-	// var textNo = getSelected('textNo'); // Needs no check, since it was added to the datastructure in step 1. 
+	// var selcNo = getSelected('selcNo'); // Needs no check, since it was added to the datastructure in step 1. 
 
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];  // <-----  NEW!
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	var textQuotes = [];
 	if (JST.hasOwnProperty("textQuotes")){
-		// textNo = getSelected('textNo');
+		// selcNo = getSelected('selcNo');
 		textQuotes = JST.textQuotes;
 	}
 	console.log("step_5_template - textQuotes: " + textQuotes + ", quoteCount: " + quoteCount);
@@ -1346,15 +1260,15 @@ function step_5_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_5" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_5" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="TextRef btn btn-info" >'+jsonData.texts[JST.textNo].author+': "'+jsonData.texts[JST.textNo].title+'", '+jsonData.texts[JST.textNo].year+'</span>';
-						var JT = jsonData.texts[JST.textNo];
-						console.log("step_5_template - JST.textNo: " + JST.textNo);
+	// HTML +=				'<span class="TextRef btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
+						var JT = jsonData.keyProblems[JST.selcNo];
+						console.log("step_5_template - JST.selcNo: " + JST.selcNo);
 	// HTML += 			'<span class="TextRef btn btn-info" >'+((JT.author!='')?JT.author+': ':'')+'"'+JT.title+'" '+((JT.year!='')?', '+JT.year:'')+'</span>';
 	HTML += 			'<span class="TextRef btn btn-info" >'+'"'+JT.title+'" '+', '+((JT.author!='')?JT.author:'')+((JT.year!='')?', '+JT.year:'')+'</span>';
 	
@@ -1376,7 +1290,7 @@ function step_5_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 5 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 5 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -1384,11 +1298,11 @@ function step_5_template(){
 $( document ).on('click', ".TextRef", function(event){
 	$(this).removeClass('btn-primary').addClass('btn-info');
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-	var JT = jsonData.texts[JST.textNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var JT = jsonData.keyProblems[JST.selcNo];
 	var HTML = '';
 
-	if (JST.textNo < jsonData.originalNumOfTexts){
+	if (JST.selcNo < jsonData.originalNumOfProblems){
 	    HTML += '<h2>'+JT.title+'</h2> <i>Af '+JT.author+', '+JT.year+'</i> <br/><br/>';
 	    HTML += '<h4>Tekstuddrag:</h4>'
 	    HTML += JT.textSnippet;
@@ -1410,8 +1324,8 @@ $( document ).on('click', ".quoteBtn", function(event){
 	console.log("quoteBtn - index: " + index);
 	 
 	// -----------------------
-	console.log("quoteBtn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("quoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textQuotes')){
 		JST.textQuotes = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
@@ -1428,12 +1342,12 @@ $( document ).on('click', ".quoteBtn", function(event){
 		// JSN.subjectTexts_sentences.push(sentence);
 		JST.textQuotes[quoteCount] = sentence;
 		// $('#DataInput').html(step_4_template());
-		console.log("quoteBtn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	} 
 	// else {
 	// 	JST.subjectTexts_sentences[quoteCount] = sentence;
 	// 	// $('#DataInput').html(step_4b_template());
-	// 	console.log("quoteBtn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	// 	// makeSortable();
 	// }
 
@@ -1461,8 +1375,8 @@ $( document ).on('click', "#step_5_goBack", function(event){
 });
 
 $( document ).on('click', "#step_5_goOn", function(event){
-	console.log("step_4_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("step_4_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textQuotes')){
 		JST.textQuotes = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
@@ -1478,16 +1392,16 @@ $( document ).on('click', "#step_5_goOn", function(event){
 	if (sentence.length > 0) {
 		// if (quoteCount < jsonData.numOfChoosenWords-1){
 		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
-		// 	console.log("step_4_goOn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts));
+		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
 			
 		// 	$('#DataInput').html(step_4_template());
 			
 		// } else {
 			JST.textQuotes[quoteCount] = sentence;
-			console.log("step_4_goOn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+			console.log("step_4_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 			if (!hasNonEmptyStrElm( JST.textQuotes )){
 				// JSN.subjectTexts_sentences[quoteCount] = sentence;
-				console.log("step_4_goOn - jsonData.studentSelectedTexts 4: " + JSON.stringify(jsonData.studentSelectedTexts));
+				console.log("step_4_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
 				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
 				$('#DataInput').html(step_6_template());
 				// setJsAudioEventLitsner();
@@ -1506,8 +1420,8 @@ $( document ).on('click', "#step_5_goOn", function(event){
 
 
 function returnMissingWords(btnPrimaryText){
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var wordArray = [];
 	for (var n in JST.textQuotes){  // Find the missing words:
 		// var t = JST.textQuotes[n];
@@ -1556,12 +1470,12 @@ function returnMissingWords(btnPrimaryText){
 function step_6_template(){
 	jsonData.currentStep = 6;
 	osc.save('jsonData', jsonData);
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];  // <-----  NEW!
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	// console.log("step_6_template - textQuotes: " + JST.textQuotes + ", quoteCount: " + quoteCount);
 	console.log("step_6_template - quoteNoteCount: " + ((typeof(quoteNoteCount) !== 'undefined')?quoteNoteCount:'undefined'));
 	console.log("step_6_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_6_template - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_6_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	if ((typeof(quoteNoteCount) === 'undefined') || (quoteNoteCount === null)) { 
 		window.quoteNoteCount = 0;
 	} else {
@@ -1572,11 +1486,11 @@ function step_6_template(){
 	
 	console.log("step_6_template - quoteNoteCount: " + quoteNoteCount);
 
-	// var textNo = getSelected('textNo'); // Needs no check, since it was added to the datastructure in step 1.
+	// var selcNo = getSelected('selcNo'); // Needs no check, since it was added to the datastructure in step 1.
 
 	var textQuoteNotes = [];
 	if (JST.hasOwnProperty("textQuoteNotes")){
-		// textNo = getSelected('textNo');
+		// selcNo = getSelected('selcNo');
 		textQuoteNotes = JST.textQuoteNotes;
 	}
 	var stepNo = 6;
@@ -1587,15 +1501,15 @@ function step_6_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="TextRef btn btn-info" >'+jsonData.texts[JST.textNo].author+': "'+jsonData.texts[JST.textNo].title+'", '+jsonData.texts[JST.textNo].year+'</span>';
-						var JT = jsonData.texts[JST.textNo];
-						console.log("step_6_template - JST.textNo: " + JST.textNo);
+	// HTML +=				'<span class="TextRef btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
+						var JT = jsonData.keyProblems[JST.selcNo];
+						console.log("step_6_template - JST.selcNo: " + JST.selcNo);
 	HTML += 			'<span class="TextRef btn btn-info" >'+((JT.author!='')?JT.author+': ':'')+'"'+JT.title+'" '+((JT.year!='')?', '+JT.year:'')+'</span>';
 	
 	HTML += 				'<div id="QuoteContainer" class="btnActions">';
@@ -1624,7 +1538,7 @@ function step_6_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 6 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 6 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -1642,8 +1556,8 @@ $( document ).on('click', ".quoteNoteBtn", function(event){
 	console.log("quoteBtn - index: " + index);
 	 
 	// -----------------------
-	console.log("quoteNoteBtn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("quoteNoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textQuoteNotes')){
 		JST.textQuoteNotes = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
@@ -1659,12 +1573,12 @@ $( document ).on('click', ".quoteNoteBtn", function(event){
 		// JSN.subjectTexts_sentences.push(sentence);
 		JST.textQuoteNotes[quoteNoteCount] = sentence;
 		// $('#DataInput').html(step_4_template());
-		console.log("quoteBtn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	} 
 	// else {
 	// 	JST.subjectTexts_sentences[quoteCount] = sentence;
 	// 	// $('#DataInput').html(step_4b_template());
-	// 	console.log("quoteBtn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	// 	// makeSortable();
 	// }
 
@@ -1695,8 +1609,8 @@ $( document ).on('click', "#step_6_goBack", function(event){
 });
 
 $( document ).on('click', "#step_6_goOn", function(event){
-	console.log("step_4_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("step_4_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textQuoteNotes')){
 		JST.textQuoteNotes = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
@@ -1712,16 +1626,16 @@ $( document ).on('click', "#step_6_goOn", function(event){
 	if (sentence.length > 0) {
 		// if (quoteCount < jsonData.numOfChoosenWords-1){
 		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
-		// 	console.log("step_4_goOn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts));
+		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
 			
 		// 	$('#DataInput').html(step_4_template());
 			
 		// } else {
 			JST.textQuoteNotes[quoteNoteCount] = sentence;
-			console.log("step_4_goOn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+			console.log("step_4_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 			if (!hasNonEmptyStrElm( JST.textQuoteNotes )){
 				// JSN.subjectTexts_sentences[quoteCount] = sentence;
-				console.log("step_4_goOn - jsonData.studentSelectedTexts 4: " + JSON.stringify(jsonData.studentSelectedTexts));
+				console.log("step_4_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
 				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
 				$('#DataInput').html(step_7_template());
 				// setJsAudioEventLitsner();
@@ -1755,7 +1669,7 @@ function step_7_template(){
 	osc.save('jsonData', jsonData);
 	console.log("step_7_template - quoteCount: " + ((typeof(textPassageCount) !== 'undefined')?textPassageCount:'undefined'));
 	console.log("step_7_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_7_template - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_7_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount === null)) { 
 		window.textPassageCount = 0;
 		console.log("step_7_template - textPassageCount DEFINED! ");
@@ -1768,11 +1682,11 @@ function step_7_template(){
 
 	console.log("step_7_template - textPassageCount: " + textPassageCount);
 
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];  // <-----  NEW!
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	var textPassages = [];
 	if (JST.hasOwnProperty("textPassages")){
-		// textNo = getSelected('textNo');
+		// selcNo = getSelected('selcNo');
 		textPassages = JST.textPassages;
 	}
 	var stepNo = 7;
@@ -1783,13 +1697,13 @@ function step_7_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_7" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_7" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.texts[JST.textNo].author+': "'+jsonData.texts[JST.textNo].title+'", '+jsonData.texts[JST.textNo].year+'</span>';
+	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
 	
 	HTML += 				'<div id="textPassageContainer" class="btnActions">';
 				for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
@@ -1832,7 +1746,7 @@ function step_7_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 7 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 7 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -1850,8 +1764,8 @@ $( document ).on('click', ".textPassageBtn", function(event){
 	console.log("quoteBtn - index: " + index);
 	 
 	// -----------------------
-	console.log("quoteNoteBtn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("quoteNoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textPassages')){
 		JST.textPassages = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
@@ -1867,12 +1781,12 @@ $( document ).on('click', ".textPassageBtn", function(event){
 		// JSN.subjectTexts_sentences.push(sentence);
 		JST.textPassages[textPassageCount] = sentence;
 		// $('#DataInput').html(step_4_template());
-		console.log("quoteBtn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	} 
 	// else {
 	// 	JST.subjectTexts_sentences[textPassageCount] = sentence;
 	// 	// $('#DataInput').html(step_4b_template());
-	// 	console.log("quoteBtn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	// 	// makeSortable();
 	// }
 
@@ -1901,8 +1815,8 @@ $( document ).on('click', "#step_7_goBack", function(event){
 });
 
 $( document ).on('click', "#step_7_goOn", function(event){
-	console.log("step_7_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("step_7_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	if (!JST.hasOwnProperty('textPassages')){
 		JST.textPassages = [];
 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
@@ -1918,16 +1832,16 @@ $( document ).on('click', "#step_7_goOn", function(event){
 	if (sentence.length > 0) {
 		// if (quoteCount < jsonData.numOfChoosenWords-1){
 		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
-		// 	console.log("step_4_goOn - jsonData.studentSelectedTexts 2: " + JSON.stringify(jsonData.studentSelectedTexts));
+		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
 			
 		// 	$('#DataInput').html(step_4_template());
 			
 		// } else {
 			JST.textPassages[textPassageCount] = sentence;
-			console.log("step_7_goOn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+			console.log("step_7_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 			if (!hasNonEmptyStrElm( JST.textPassages )){
 				// JSN.subjectTexts_sentences[quoteCount] = sentence;
-				console.log("step_7_goOn - jsonData.studentSelectedTexts 4: " + JSON.stringify(jsonData.studentSelectedTexts));
+				console.log("step_7_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
 				console.log("step_7_goOn - jsonData: " + JSON.stringify(jsonData));
 				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
 				$('#DataInput').html(step_8_template());
@@ -1960,14 +1874,14 @@ function step_8_template(){
 	$('#processContainer').html(returnProcessBar(stepNo));
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
 	var HTML = '';
 	HTML += '<div id="step_8" class="step">';
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_8" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_8" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
@@ -1988,7 +1902,7 @@ function step_8_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 8 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 8 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -2011,7 +1925,7 @@ $( document ).on('click', "#step_8_goOn", function(event){
 
 	var conclusion = htmlEntities($('#textInputConclusion').val());
 	if (conclusion.length > 0){
-		var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 		if (!JST.hasOwnProperty('conclusion')){
 			JST.conclusion = null;
 		}
@@ -2044,18 +1958,18 @@ function step_9_template(){
 	osc.save('jsonData', jsonData);
 	// console.log("step_9_template - headAndIntroCount: " + ((typeof(headAndIntroCount) !== 'undefined')?headAndIntroCount:'undefined'));
 	console.log("step_9_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_9_template - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_9_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount === null)) { 
 	// 	window.headAndIntroCount = 0;
 	// } else {
 	// 	++headAndIntroCount;
 	// }
 
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];  // <-----  NEW!
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	var headAndIntro = ['', ''];
 	if (JST.hasOwnProperty("headAndIntro")){
-		// textNo = getSelected('textNo');
+		// selcNo = getSelected('selcNo');
 		headAndIntro = JST.headAndIntro;
 	} else {
 		JST.headAndIntro = headAndIntro;
@@ -2072,7 +1986,7 @@ function step_9_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_9" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_9" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
@@ -2091,7 +2005,7 @@ function step_9_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 9 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 9 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -2102,8 +2016,8 @@ $( document ).on('focusout', ".headerField", function(event){
 	var headerField = htmlEntities($('.headerField').val());
 	console.log("focusout - headerField: _" + headerField + "_");
 	// if (headerField.length > 0) {
-		// var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-		jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].headAndIntro[0] = headerField;
+		// var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[0] = headerField;
 	// }
 });
 
@@ -2112,7 +2026,7 @@ $( document ).on('focusout', ".introField", function(event){
 	var introField = htmlEntities($('.introField').val());
 	console.log("focusout - introField: _" + introField + "_");
 	// if (introField.length > 0) {
-		jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum].headAndIntro[1] = introField;
+		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[1] = introField;
 	// }
 });
 
@@ -2133,13 +2047,13 @@ $( document ).on('click', "#step_9_goBack", function(event){
 });
 
 $( document ).on('click', "#step_9_goOn", function(event){
-	console.log("step_9_goOn - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
+	console.log("step_9_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	
-	console.log("step_9_goOn - jsonData.studentSelectedTexts 3: " + JSON.stringify(jsonData.studentSelectedTexts));
+	console.log("step_9_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	if (!hasNonEmptyStrElm( JST.headAndIntro )){
 		// JSN.subjectTexts_sentences[quoteCount] = sentence;
-		console.log("step_9_goOn - jsonData.studentSelectedTexts 4: " + JSON.stringify(jsonData.studentSelectedTexts));
+		console.log("step_9_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
 		// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
 		$('#DataInput').html(step_10_template());
 		// // setJsAudioEventLitsner();
@@ -2158,10 +2072,10 @@ function step_10_template(){
 	jsonData.currentStep = 10;
 	osc.save('jsonData', jsonData);
 	console.log("step_10_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_10_template - jsonData.studentSelectedTexts 1: " + JSON.stringify(jsonData.studentSelectedTexts)); 
+	console.log("step_10_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
-	// var JSN = jsonData.studentSelectedTexts[jsonData.selectedTextNo];
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];  // <-----  NEW!
+	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	
 	var stepNo = 10;
 
@@ -2173,17 +2087,17 @@ function step_10_template(){
 	HTML +=     '<div class="row">';
 	HTML += 		'<div class="col-xs-12 col-md-8">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_10" class="stepHeader">'+jsonData.steps[stepNo].header+' - '+jsonData.headerAndWordTemplateHeader.toLowerCase()+'</h1>':'');
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_10" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?instruction(jsonData.steps[stepNo].instruction):'');
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.texts[JST.textNo].author+': "'+jsonData.texts[JST.textNo].title+'", '+jsonData.texts[JST.textNo].year+'</span>';
+	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
 
 	HTML += 				'<div id="textOverviewContainer" >';
 				HTML += 		'<h3>'+JST.headAndIntro[0]+'</h3>';
-				HTML +=			'<p>En analyse af '+jsonData.texts[JST.textNo].author+"'s &quot;"+jsonData.texts[JST.textNo].title+'&quot; fra '+jsonData.texts[JST.textNo].year+'.<p>';
+				HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
 				HTML += 		'<h4>Indledning</h4> ';
 				HTML += 		'<p>'+JST.headAndIntro[1]+'</p>';
 				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
@@ -2209,7 +2123,7 @@ function step_10_template(){
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 10 - jsonData.studentSelectedTexts", jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum]);
+	errObj.updateErrorObj("STEP 10 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	return HTML;
 }
 
@@ -2233,8 +2147,8 @@ $( document ).on('click', "#step_10_download", function(event){
 
 
 function wordTemplate() {
-	var JST = jsonData.studentSelectedTexts[jsonData.selectedTextIndexNum];
-	var text = jsonData.texts[JST.textNo];
+	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var text = jsonData.keyProblems[JST.selcNo];
 	var HTML = '';
 	HTML += '<!DOCTYPE html>';
 	HTML += '<html>';
@@ -2258,7 +2172,7 @@ function wordTemplate() {
 	HTML += 	'<body>';
 	HTML += 		'<h1>'+JST.headAndIntro[0]+'</h1>';
 	// HTML += 		'<hr/>';
-	HTML +=			'<p>En analyse af '+jsonData.texts[JST.textNo].author+"'s &quot;"+jsonData.texts[JST.textNo].title+'&quot; fra '+jsonData.texts[JST.textNo].year+'.<p>';
+	HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
 	HTML += 		'<p><b>Indledning:</b> '+JST.headAndIntro[1]+'</p>';
 
 	// HTML += 			'<h3>Din valgte tekst: </h3>';
@@ -2621,7 +2535,7 @@ $(document).ready(function() {
 
 
 	// STEP 5:
-	// jsonData = {"headerAndWordTemplateHeader":"Skriv en skønlitterær analyse","texts":[{"author":"Peter Seeberg","title":"Patienten","year":"1962","src":"pdf/Patienten.pdf","themes":["Tema 1a","Tema 2a","Tema 3a","Tema 4a","Tema 5a","Tema 6a"],"textSnippet":"<p>Da lægerne første gang stiftede bekendtskab med min sygdom, beroligede de mig meget in- derligt og erklærede, at et amputeret ben ikke var noget at snakke om i vor tid, hvor prote- serne jo ikke mere var en lidelse, som i træbe- nenes dage, men snarere en lettelse. De love- de mig, at jeg skulle komme til at gå nærmest bedre end før, idet de påstod, at iveren efter at gå igen ville tilføre mig kæmpekræfter. De fik ret. Da jeg først var kommet i gang, gik jeg bedre end nogen sinde, men længe varede det ikke, så dukkede sygdommen, som lægerne nu betegnede som den uhyre sjældne ,,alminde- ligt bortfald” op i det andet ben, der også måtte sættes af. Heller ikke denne gang fornægtede lægekunsten sig. Det viste sig, at jeg gik bedre med to kunstige ben end med to naturlige.</p><p>Derpå havde jeg en kort frist, så dukkede sygdommen op i den højre arm og bredte sig hastigt helt op til skulderen, hvad lægerne badmig om ikke at tage alt for tungt på, for også arme lå det inden for protesekunstens mulig- heder at fremstille bedre end naturen, og snart var jeg da udstyret ikke blot med en, men med to kunstige arme, som var mig til udmærket nyt- te. Ved den højre arm var lægerne nogle dage i et dilemma, for her begyndte syg¬dommen ved albuen, og det faldt dem først ind at bort- save dette led og derpå forbinde de to dele med det kunstige led, men da sygdommen så tog fart, således at det havde været skulderen og hånden, der måtte forbindes, blev denne tanke straks opgivet...</p>"},{"author":"Jonathan Swift","title":"Et beskedent forslag","year":"1729","src":"pdf/test.pdf","themes":["Tema 1b","Tema 2b","Tema 3b","Tema 4b","Tema 5b","Tema 6b"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."},{"author":"Amanda Hertz","title":"Stjernedrengen","year":"1989","src":"pdf/test.pdf","url":"https://www.fyldepennen.dk/tekster/61092/stjernedrengen","themes":["Tema 1c","Tema 2c","Tema 3c","Tema 4c","Tema 5c","Tema 6c"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."},{"author":"Laila Jørgensen","title":"Stormen","year":"2016","src":"pdf/test.pdf","url":"https://www.fyldepennen.dk/tekster/61094/stormen","themes":["Tema 1d","Tema 2d","Tema 3d","Tema 4d","Tema 5d","Tema 6d"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."}],"themes":["Tema 1","Tema 2","Tema 3","Tema 4","Tema 5","Tema 6","Tema 7","Tema 8","Tema 9","Tema 10"],"sentenceStarters_theme":{"id":"Dropdown0","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"analyticalFocus":[{"name":"Analytisk fokuspunkt 1","description":"<b>Analytisk fokuspunkt 1</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 2","description":"<b>Analytisk fokuspunkt 2</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 3","description":"<b>Analytisk fokuspunkt 3</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 4","description":"<b>Analytisk fokuspunkt 4</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 5","description":"<b>Analytisk fokuspunkt 5</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"}],"numOfChoosenWords":3,"sentenceStarters_quoteNote":{"id":"Dropdown1","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"sentenceStarters_conclusion":{"id":"Dropdown2","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_begin":{"id":"Dropdown3","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_end":{"id":"Dropdown4","class":"Dropdown","options":[{"value":"Afslutningsvis kan man sige at ..."},{"value":"Når alt kommer til alt er der meget som taler for at ..."},{"value":"Til sidst vil jeg bare sige at jeg synes at det er totalt for dårligt at ..."}]},"steps":[{"step":0,"header":"(step 0) - Guidet skriveproces","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/_analyse/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) - Guidet skriveproces","instruction":"Vælg den tekst du vil arbejde med (klik og vælg)","audioFiles":[{"name":"audio/_analyse/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) - Guidet skriveproces","instruction":"Vælg et tema til teksten: ","audioFiles":[{"name":"audio/_analyse/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) - Guidet skriveproces","instruction":"Formuler hvad dit tema handler om. Brug evt. sætningsstarterne herunder","audioFiles":[{"name":"audio/_analyse/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) - Guidet skriveproces","instruction":"Vælg analytisk fokuspunkt","audioFiles":[{"name":"audio/_analyse/step_4.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) - Guidet skriveproces","instruction":"Find og indsæt ??? citater fra teksten","audioFiles":[{"name":"audio/_analyse/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) - Guidet skriveproces","instruction":"Forklar dine citater","audioFiles":[{"name":"audio/_analyse/step_6.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) - Guidet skriveproces","instruction":"Skriv ???-1 sætninger, der forbinder dine tekstafsnit","audioFiles":[{"name":"audio/_analyse/step_7.mp3","type":"mpeg"}]},{"step":8,"header":"(step 8) - Guidet skriveproces","instruction":"Skriv et par afsluttende sætninger","audioFiles":[{"name":"audio/_analyse/step_8.mp3","type":"mpeg"}]},{"step":9,"header":"(step 9) - Guidet skriveproces","instruction":"Skriv en overskrift og indledning til din analyse","audioFiles":[{"name":"audio/_analyse/step_9.mp3","type":"mpeg"}]},{"step":10,"header":"(step 10) - Guidet skriveproces","instruction":"Skriv en overskrift og indledning til din analyse","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din skønlitterær analyse.","audioFiles":[{"name":"audio/_analyse/step_10.mp3","type":"mpeg"}]}],"currentStep":5,"autoPlay":true,"studentSelectedTexts":[{"textNo":2,"selected":true,"subjectTexts":[],"studentTheme":"Tema 2c","TextTheme":"aaaaaa","analyticalFocus":3}],"selectedTextIndexNum":"0"};
+	// jsonData = {"headerAndWordTemplateHeader":"Skriv en skønlitterær analyse","texts":[{"author":"Peter Seeberg","title":"Patienten","year":"1962","src":"pdf/Patienten.pdf","themes":["Tema 1a","Tema 2a","Tema 3a","Tema 4a","Tema 5a","Tema 6a"],"textSnippet":"<p>Da lægerne første gang stiftede bekendtskab med min sygdom, beroligede de mig meget in- derligt og erklærede, at et amputeret ben ikke var noget at snakke om i vor tid, hvor prote- serne jo ikke mere var en lidelse, som i træbe- nenes dage, men snarere en lettelse. De love- de mig, at jeg skulle komme til at gå nærmest bedre end før, idet de påstod, at iveren efter at gå igen ville tilføre mig kæmpekræfter. De fik ret. Da jeg først var kommet i gang, gik jeg bedre end nogen sinde, men længe varede det ikke, så dukkede sygdommen, som lægerne nu betegnede som den uhyre sjældne ,,alminde- ligt bortfald” op i det andet ben, der også måtte sættes af. Heller ikke denne gang fornægtede lægekunsten sig. Det viste sig, at jeg gik bedre med to kunstige ben end med to naturlige.</p><p>Derpå havde jeg en kort frist, så dukkede sygdommen op i den højre arm og bredte sig hastigt helt op til skulderen, hvad lægerne badmig om ikke at tage alt for tungt på, for også arme lå det inden for protesekunstens mulig- heder at fremstille bedre end naturen, og snart var jeg da udstyret ikke blot med en, men med to kunstige arme, som var mig til udmærket nyt- te. Ved den højre arm var lægerne nogle dage i et dilemma, for her begyndte syg¬dommen ved albuen, og det faldt dem først ind at bort- save dette led og derpå forbinde de to dele med det kunstige led, men da sygdommen så tog fart, således at det havde været skulderen og hånden, der måtte forbindes, blev denne tanke straks opgivet...</p>"},{"author":"Jonathan Swift","title":"Et beskedent forslag","year":"1729","src":"pdf/test.pdf","themes":["Tema 1b","Tema 2b","Tema 3b","Tema 4b","Tema 5b","Tema 6b"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."},{"author":"Amanda Hertz","title":"Stjernedrengen","year":"1989","src":"pdf/test.pdf","url":"https://www.fyldepennen.dk/tekster/61092/stjernedrengen","themes":["Tema 1c","Tema 2c","Tema 3c","Tema 4c","Tema 5c","Tema 6c"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."},{"author":"Laila Jørgensen","title":"Stormen","year":"2016","src":"pdf/test.pdf","url":"https://www.fyldepennen.dk/tekster/61094/stormen","themes":["Tema 1d","Tema 2d","Tema 3d","Tema 4d","Tema 5d","Tema 6d"],"textSnippet":"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum..."}],"themes":["Tema 1","Tema 2","Tema 3","Tema 4","Tema 5","Tema 6","Tema 7","Tema 8","Tema 9","Tema 10"],"sentenceStarters_theme":{"id":"Dropdown0","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"analyticalFocus":[{"name":"Analytisk fokuspunkt 1","description":"<b>Analytisk fokuspunkt 1</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 2","description":"<b>Analytisk fokuspunkt 2</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 3","description":"<b>Analytisk fokuspunkt 3</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 4","description":"<b>Analytisk fokuspunkt 4</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"},{"name":"Analytisk fokuspunkt 5","description":"<b>Analytisk fokuspunkt 5</b> <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua...</p>"}],"numOfChoosenWords":3,"sentenceStarters_quoteNote":{"id":"Dropdown1","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"sentenceStarters_conclusion":{"id":"Dropdown2","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_begin":{"id":"Dropdown3","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_end":{"id":"Dropdown4","class":"Dropdown","options":[{"value":"Afslutningsvis kan man sige at ..."},{"value":"Når alt kommer til alt er der meget som taler for at ..."},{"value":"Til sidst vil jeg bare sige at jeg synes at det er totalt for dårligt at ..."}]},"steps":[{"step":0,"header":"(step 0) - Guidet skriveproces","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/_analyse/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) - Guidet skriveproces","instruction":"Vælg den tekst du vil arbejde med (klik og vælg)","audioFiles":[{"name":"audio/_analyse/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) - Guidet skriveproces","instruction":"Vælg et tema til teksten: ","audioFiles":[{"name":"audio/_analyse/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) - Guidet skriveproces","instruction":"Formuler hvad dit tema handler om. Brug evt. sætningsstarterne herunder","audioFiles":[{"name":"audio/_analyse/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) - Guidet skriveproces","instruction":"Vælg analytisk fokuspunkt","audioFiles":[{"name":"audio/_analyse/step_4.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) - Guidet skriveproces","instruction":"Find og indsæt ??? citater fra teksten","audioFiles":[{"name":"audio/_analyse/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) - Guidet skriveproces","instruction":"Forklar dine citater","audioFiles":[{"name":"audio/_analyse/step_6.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) - Guidet skriveproces","instruction":"Skriv ???-1 sætninger, der forbinder dine tekstafsnit","audioFiles":[{"name":"audio/_analyse/step_7.mp3","type":"mpeg"}]},{"step":8,"header":"(step 8) - Guidet skriveproces","instruction":"Skriv et par afsluttende sætninger","audioFiles":[{"name":"audio/_analyse/step_8.mp3","type":"mpeg"}]},{"step":9,"header":"(step 9) - Guidet skriveproces","instruction":"Skriv en overskrift og indledning til din analyse","audioFiles":[{"name":"audio/_analyse/step_9.mp3","type":"mpeg"}]},{"step":10,"header":"(step 10) - Guidet skriveproces","instruction":"Skriv en overskrift og indledning til din analyse","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din skønlitterær analyse.","audioFiles":[{"name":"audio/_analyse/step_10.mp3","type":"mpeg"}]}],"currentStep":5,"autoPlay":true,"studentSelectedProblems":[{"selcNo":2,"selected":true,"subjectTexts":[],"studentTheme":"Tema 2c","TextTheme":"aaaaaa","analyticalFocus":3}],"selectedIndexNum":"0"};
 	// $('#DataInput').html(step_5_template());
 
 	
@@ -2634,41 +2548,41 @@ $(document).ready(function() {
 	// $('#DataInput').html(step_0_template());
 
 	// STEP 1:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":[]}]};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":[]}]};
 	// $('#DataInput').html(step_1_template());
 
 	// STEP 2:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_2_template());
 
 	// STEP 3:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_3_template());
 
 	// STEP 4:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_4_template());
 
 	// STEP 4b:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_4b_template());
 	// makeSortable(); // VIGTIG: DENNE SKAL VÆRE AKTIV VED TEST (ellers er DOM-elementer ikke tilstæde!)
 
 	// STEP 5:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_5_template());
 
 	// STEP 6:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning"}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning"}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_6_template());
 
 	// STEP 6b:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning","sentenceStarters_end_text":"afsluttende sætning"}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning","sentenceStarters_end_text":"afsluttende sætning"}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_6b_template());
 
 	// STEP 7:
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"value":"Afslutningsvis kan man sige at ..."},{"value":"Når alt kommer til alt er der meget som taler for at ..."},{"value":"Til sidst vil jeg bare sige at jeg synes at det er totalt for dårligt at ..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"currentStep":0,"studentSelectedTexts":[{"textNo":"Kvantemekanik","selected":true,"subjectTexts":["Oscillator","Partikel i brønd","Bølgefunktioner","Diffrentialligninger","dualitet","singlet","triplet","Heisenberg","schrödinger"],"subjectTexts_selected":[0,3,7],"subjectTexts_sentences":["Ocillator sætninger","Diffrentialligning sætning","Heisenberg sætning"],"subjectTexts_sentences_2":["Diffrentialligning sætning","Ocillator sætninger","Heisenberg sætning"],"sentenceStarters_begin_text":"Niels Bohr betragtes som en af kvantemekanikkens fædre...","sentenceStarters_end_text":"Kvantemekanikken kan slutteligt siges at være ejendommelig.","studentSubjectTitel":["Kvantemekanikkens elementer"]}],"selectedTextNo":"0"};
-	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedTexts":[{"textNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning","sentenceStarters_end_text":"afsluttende sætning","studentSubjectTitel":["overskrift"]}],"selectedTextNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"value":"Hvis nogen skulle være i tvivl om at det er et problem at ..., så bør man tænke på at ..."},{"value":"Debatten handler om ..."},{"value":"For det første er det vigtigt at huske på ..."},{"value":"Mange mener at ..., men man kan også argumentere for ..."},{"value":"Mit hovedsynspunkt er ..."},{"value":"På den ene side ..., men på den anden side ..."},{"value":"Det er vigtigt at ..., men det er også vigtigt ..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"value":"Alle kan blive enige om at det er et problem at ... (generel vinkel)"},{"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},{"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"value":"Afslutningsvis kan man sige at ..."},{"value":"Når alt kommer til alt er der meget som taler for at ..."},{"value":"Til sidst vil jeg bare sige at jeg synes at det er totalt for dårligt at ..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"currentStep":0,"studentSelectedProblems":[{"selcNo":"Kvantemekanik","selected":true,"subjectTexts":["Oscillator","Partikel i brønd","Bølgefunktioner","Diffrentialligninger","dualitet","singlet","triplet","Heisenberg","schrödinger"],"subjectTexts_selected":[0,3,7],"subjectTexts_sentences":["Ocillator sætninger","Diffrentialligning sætning","Heisenberg sætning"],"subjectTexts_sentences_2":["Diffrentialligning sætning","Ocillator sætninger","Heisenberg sætning"],"sentenceStarters_begin_text":"Niels Bohr betragtes som en af kvantemekanikkens fædre...","sentenceStarters_end_text":"Kvantemekanikken kan slutteligt siges at være ejendommelig.","studentSubjectTitel":["Kvantemekanikkens elementer"]}],"selectedselcNo":"0"};
+	// jsonData = {"subjects":["Rygning","Syrien","Atomkraft","Grafitti","Spis mindre kød","Doping","Prostitution","Lægeordineret heroin","Fri hash"],"numOfChoosenWords":3,"sentenceStarters_word":{"id":"Dropdown1","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - ord - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - ord -  1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - ord -  2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - ord -  3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - ord -  4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - ord -  5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_begin":{"id":"Dropdown2","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - start - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - start - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - start - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - start - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - start - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - start - 5: Lorem ipsum dolor sit amet..."}]},"sentenceStarters_end":{"id":"Dropdown3","class":"Dropdown","options":[{"id":"id0","class":"class0","value":"Sætningsstarter - slut - 0: Lorem ipsum dolor sit amet..."},{"id":"id1","class":"class1","value":"Sætningsstarter - slut - 1: Lorem ipsum dolor sit amet..."},{"id":"id2","class":"class2","value":"Sætningsstarter - slut - 2: Lorem ipsum dolor sit amet..."},{"id":"id3","class":"class3","value":"Sætningsstarter - slut - 3: Lorem ipsum dolor sit amet..."},{"id":"id4","class":"class4","value":"Sætningsstarter - slut - 4: Lorem ipsum dolor sit amet..."},{"id":"id5","class":"class5","value":"Sætningsstarter - slut - 5: Lorem ipsum dolor sit amet..."}]},"steps":[{"step":0,"header":"(step 0) Guidet skriveproces - skriv en debatartikel.","img":{"src":"img/start_img_750x350.jpg","alt":"Billede af XXX"},"audioFiles":[{"name":"audio/step_0.mp3","type":"mpeg"}]},{"step":1,"header":"(step 1) Guidet skriveproces - skriv en debatartikel.","instruction":"Vælg et af følgende emner (klik og vælg)","audioFiles":[{"name":"audio/step_1.mp3","type":"mpeg"}]},{"step":2,"header":"(step 2) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav en brainstorm på dit valgte emne: ","audioFiles":[{"name":"audio/step_2.mp3","type":"mpeg"}]},{"step":3,"header":"(step 3) Guidet skriveproces - skriv en debatartikel.","instruction":"(step 3) Udvælg ??? ord fra din brainstorm.","audioFiles":[{"name":"audio/step_3.mp3","type":"mpeg"}]},{"step":4,"header":"(step 4) Guidet skriveproces - skriv en debatartikel.","instruction":"Lav ord til sætninger - et ad gangen","audioFiles":[{"name":"audio/step_4.mp3","type":"mpeg"}]},{"step":"4b","header":"(step 4b) Guidet skriveproces - skriv en debatartikel.","instruction":"Træk dine ??? sætninger i rette rækkefølge.","audioFiles":[{"name":"audio/step_4b.mp3","type":"mpeg"}]},{"step":5,"header":"(step 5) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>indledende</b> sætning","audioFiles":[{"name":"audio/step_5.mp3","type":"mpeg"}]},{"step":6,"header":"(step 6) Guidet skriveproces - skriv en debatartikel.","instruction":"Nu skal du skrive en <b>afsluttende</b> sætning","audioFiles":[{"name":"audio/step_6.mp3","type":"mpeg"}]},{"step":"6b","header":"(step 6b) Guidet skriveproces - skriv en debatartikel.","instruction":"Skriv en <b>overskrift</b> til din debatartikel","audioFiles":[{"name":"audio/step_6b.mp3","type":"mpeg"}]},{"step":7,"header":"(step 7) Guidet skriveproces - skriv en debatartikel.","instruction":"Her er dine 5 sætninger som du skal arbejde videre med.","explanation":"Download Word-filen med instruktion til hvordan du kan arbejde videre med din debatartikel.","audioFiles":[{"name":"audio/step_7.mp3","type":"mpeg"}]}],"studentSelectedProblems":[{"selcNo":"aaa","selected":true,"subjectTexts":["bbb","ccc","ddd","eee","fff","ggg","hhh","iii","jjj"],"subjectTexts_selected":[5,6,7],"subjectTexts_sentences":["aaa","bbb","ccc"],"subjectTexts_sentences_2":["aaa","ccc","bbb"],"sentenceStarters_begin_text":"indledende sætning","sentenceStarters_end_text":"afsluttende sætning","studentSubjectTitel":["overskrift"]}],"selectedselcNo":"0"};
 	// $('#DataInput').html(step_7_template());
 
 
