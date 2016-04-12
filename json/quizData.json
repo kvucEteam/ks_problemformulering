@@ -35,6 +35,45 @@
                 {"value":"Brugen af ordene..., giver læseren billeder af..."}
             ]
         },
+    "sentenceStarters_taxonomy_describing" : 
+		{"id":"Dropdown_describing", "class":"Dropdown taxonomyDropdown", "selected": "0",
+            "options":[
+            	{"value":"Redegørende spørgsmål - brainstorm-hjælp"},
+                {"value":"Citatet illustrerer det tvetydige ved..."},
+                {"value":"I citatet kommer fortællerens holdning til syne..."},
+                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
+                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
+                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
+                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
+                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            ]
+        },
+    "sentenceStarters_taxonomy_analysing" : 
+		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
+            "options":[
+            	{"value":"Analyserende spørgsmål - brainstorm-hjælp"},
+                {"value":"Citatet illustrerer det tvetydige ved..."},
+                {"value":"I citatet kommer fortællerens holdning til syne..."},
+                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
+                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
+                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
+                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
+                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            ]
+        },
+    "sentenceStarters_taxonomy_assessing" : 
+		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
+            "options":[
+            	{"value":"Vurderende spørgsmål - brainstorm-hjælp"},
+                {"value":"Citatet illustrerer det tvetydige ved..."},
+                {"value":"I citatet kommer fortællerens holdning til syne..."},
+                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
+                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
+                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
+                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
+                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            ]
+        },
     "sentenceStarters_interpretation" : 
 		{"id":"Dropdown1b", "class":"Dropdown", "selected": "0", 
             "options":[
@@ -79,7 +118,7 @@
 		{
 			"step" : 0,
 			"header" : "STEP 0 - Skriv en problemformulering",
-			"img" : {"src" : "img/start_img_analyse.jpg", "alt" : "Billede af XXX"},
+			"img" : {"src" : "img/start_img1140.jpg", "alt" : "Guidet skriveproces"},
 			"audioFiles" : [{"name": "audio/step_0.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_0_goOn", "text":"Gå videre"}]
 		},{
@@ -91,9 +130,10 @@
 		},{
 			"step" : 2,
 			"header" : "STEP 2 - Skriv en problemformulering",
-			"instruction" : "Afgræns dit fokus. Udvælg de emner, som passer til ",
+			"instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
+			"masterEx" : [{"time": 1, "word": "Nu har du valgt en tekst"}, {"time": 5, "word": "DIT TEKSTARBEJDE"}, {"time": 9, "word": "Et eller flere temaer"}, {"time": 11.5, "word": "Fokuseret analyse"}, {"time": 16, "word": "Omdrejningspunkt"}, {"time": 22, "word": "Skriv evt eget tema!"}]
 		},{
 			"step" : 3,
 			"header" : "STEP 3 - Skriv en problemformulering",
@@ -103,7 +143,7 @@
 		},{
 			"step" : 4,
 			"header" : "STEP 4 - Skriv en problemformulering",
-			"instruction" : "Vælg analytisk fokuspunkt",
+			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}]
 		},{

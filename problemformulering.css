@@ -87,26 +87,7 @@ textarea {
 
 
 
-/***********************************************************************    
-            Fjerner den graalige farve fra textarea
-***********************************************************************/ 
-::-webkit-input-placeholder { /* WebKit, Blink, Edge */
-    color: inherit; 
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-   color: inherit;   
-   opacity:  1;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-   color: inherit;  
-   opacity:  1;
-}
-:-ms-input-placeholder { /* Internet Explorer 10-11 */
-   color: inherit;  
-}
-:placeholder-shown { /* Standard (https://drafts.csswg.org/selectors-4/#placeholder) */
-  color: inherit;  
-}
+
 
 /***********************************************************************    
         Fjerner den graalige farve fra input-felter 
@@ -121,8 +102,12 @@ textarea {
 /**********************************************************************/ 
 
 
+.sortable_text_container .input-group {
+    width: 100%;
+}
+
 .stepNav {
-    margin: 30px 0px 30px 0px;
+    margin: 30px 0px 10px 0px;
 }
 
 .stepNav audio{
@@ -137,27 +122,85 @@ textarea {
 
 #processVal{
     /*width: 8%;*/
-    float: left;
+    float: right;
+    color: #777;
+    width: 45px;
+    text-align: right;
 }
 
 #processBarContainer{
-    width: 92%;
+
+    /****************************************************************************************************
+     * IMPORTANT NOTE:
+     * ===============
+     * Below are implementations of "CSS-trickery" in diffrent browsers 
+     * that makes it possible to make somthing a certain width in percent, 
+     * subsequently add or subtract a definite lenth in px! This implementation 
+     * can potentially makes furture width- and height JS-hacks obsolete!!!
+     *
+     * SEE:   
+     * http://stackoverflow.com/questions/2434602/css-setting-width-height-as-percentage-minus-pixels;
+     *
+     * See where this "calc()" functionality is supported (supported in IE11 and IE9):
+     * http://caniuse.com/#feat=calc
+     *
+     *
+     * ON A RELATED NOTE...
+     * ====================
+     * CSS 3 defines variables through the "var()" functionality:
+     * https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables
+     *
+     * - but it is currently (April 2016) not supported in many browsers (contemplate using SASS and LESS instead):
+     * http://caniuse.com/#feat=css-variables
+     *
+     * CSS Preprocessors – Sass vs LESS:
+     * https://www.keycdn.com/blog/sass-vs-less/
+     *
+     ****************************************************************************************************/
+
+    /* Firefox */
+    width: -moz-calc(100% - 45px);
+    /* WebKit */
+    width: -webkit-calc(100% - 45px);
+    /* Opera */
+    width: -o-calc(100% - 45px);
+    /* Standard CSS3-compliant browsers */
+    width: calc(100% - 45px);
+
+    /*width: 92%;*/
     height: 12px;
-    float: right;
-    border: 1px solid #000;
+    float: left;
+    border: 1px solid #cececc;
     margin-top: 6px;
-    border-radius: 6px;
+    border-radius: 2px;
 }
+
+
+
 
 #processBar{
     height: 10px;
-    background-color: #56bfc5;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
+    background-color: #e7e6e2;
+    border-top-left-radius: 2px;
+    border-bottom-left-radius: 2px;
+}
+
+#masterStudentTextContainer{
+    padding-bottom: 10px;
 }
 
 .Clear{
     clear: both;
+}
+
+.glyphicons {
+
+    margin-right: 14px;
+    margin-top: 1px;
+}
+
+.glyphicon-pencil{
+    margin-right: 10px;
 }
 
 .problemFormulation_goBack .glyphicon {
@@ -173,6 +216,10 @@ textarea {
     margin-right: 0px;
 }
 
+#stepImg_0{
+    margin-left: 15px;
+    padding-right: 30px;
+}
 
 #step_6b .input-group, #step_9 .input-group {
     width: 100%;
@@ -184,6 +231,10 @@ textarea {
 
 #step_1 .input-group{
     margin-bottom: 10px;
+}
+
+.instruktion{
+    margin-left: -15px;
 }
 
 
@@ -228,6 +279,43 @@ textarea {
 
 #step_7_download {
     text-transform: none;
+}
+
+
+.tabHeading_selected{
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #f8f8f6;
+}
+
+.tabHeading{
+/*
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #f8f8f6;
+*/    
+/*
+    position: relative;
+    top: 1px;
+    padding-left: 10px;
+    padding-top: 10px;
+    display: inline-block;
+*/
+}
+
+.tabBody{
+    /*border: 1px solid #cececc;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-right: 1px solid #cececc;
+    border-left: 1px solid #cececc;
+    border-bottom: 1px solid #cececc;
+}
+
+.tabBodyDropdownContainer{
+    margin-bottom: 10px;
 }
 
 
