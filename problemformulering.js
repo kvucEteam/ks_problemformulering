@@ -59,7 +59,9 @@ function isUseragentSafari(){
 
 	console.log('isUseragentSafari - navigator.userAgent: ' + navigator.userAgent);
 	
-	return (navigator.userAgent.indexOf('Safari')!==-1)?true:false;
+	// return (navigator.userAgent.indexOf('Safari')!==-1)?true:false;
+
+	return Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;   // SEE:  https://jsfiddle.net/9atsffau/
 }
 console.log('isUseragentSafari: ' + isUseragentSafari());
 
@@ -552,15 +554,16 @@ function returnLastStudentSession() {
 	var TjsonData = osc.load('jsonData');
 	console.log('returnLastStudentSession - TjsonData: ' + JSON.stringify(TjsonData));
 
+	// IMPORTANT: 
+	// In this exercise, the user has to download a word-document in the last step. This is not possible when using Safari - this is why this if-clause has been added.
 	if ((isUseragentSafari()) && (typeof(safariUserHasAgreed) === 'undefined')){
 
 		window.safariUserHasAgreed = false;
 
-		UserMsgBox("body", '<h4>ADVARSEL</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade wordfilen til sidst i øvelsen</p><br> <p>Brug i stedet Chrome (<a href="https://www.google.dk/chrome/browser/desktop/">hent den her</a>) eller Firefox  (<a href="https://www.mozilla.org/da/firefox/new/">hent den her</a>).</p><br> <p>Mvh vucdigital.dk</p>');
+		UserMsgBox("body", '<h4>ADVARSEL</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade wordfilen til sidst i øvelsen.</p><br> <p>Brug i stedet <b>Chrome</b> (<a href="https://www.google.dk/chrome/browser/desktop/">Hent den her</a>) eller <b>Firefox</b>  (<a href="https://www.mozilla.org/da/firefox/new/">Hent den her</a>).</p><br> <p>Mvh <a href="https://www.vucdigital.dk">vucdigital.dk</a> </p>');
 		
 		$('#UserMsgBox').addClass('UserMsgBox_safari');
 		$('.MsgBox_bgr').addClass('MsgBox_bgr_safari');
-		// $('.MsgBox_bgr_safari').removeClass('MsgBox_bgr');
 
 		$( document ).on('click', ".UserMsgBox_safari", function(event){
 			$(".UserMsgBox_safari").fadeOut(200, function() {
@@ -1172,6 +1175,25 @@ function step_3_template(){
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
+	var studentSelectedThemes = [];
+	for (var n in JS.studentSelectedThemes) {
+		studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]);
+	}
+	var JSS = JS.studentThemes.concat(studentSelectedThemes);
+	console.log("step_3_template - JSS: " + JSON.stringify(JSS));
+
+	console.log("step_3_template - JS 1: " + JSON.stringify(JS)); 
+
+	if (!JS.hasOwnProperty('taxonomyObjArray')){
+		JS.taxonomyObjArray = [];
+
+		for (var n in JSS) {
+			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": []});
+		}
+	}
+
+	console.log("step_3_template - JS 2: " + JSON.stringify(JS));
+
 	var HTML = '';
 	HTML += '<div id="step_3" class="step">';
 	HTML +=     '<div class="row">';
@@ -1187,12 +1209,12 @@ function step_3_template(){
 	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
 	HTML += 			'</div>';
 
-			var studentSelectedThemes = [];
-			for (var n in JS.studentSelectedThemes) {
-				studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]);
-			}
-			var JSS = JS.studentThemes.concat(studentSelectedThemes);
-			console.log("step_3_template - JSS: " + JSON.stringify(JSS)); 
+			// var studentSelectedThemes = [];
+			// for (var n in JS.studentSelectedThemes) {
+			// 	studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]);
+			// }
+			// var JSS = JS.studentThemes.concat(studentSelectedThemes);
+			// console.log("step_3_template - JSS: " + JSON.stringify(JSS)); 
 
 			HTML += '<ul class="nav nav-tabs">';  // <-----  NATIVE BOOTSTRAP TABS
 			for (var n in JSS){
@@ -1204,7 +1226,24 @@ function step_3_template(){
 			}
 			HTML += '</ul>';    // <-----  NATIVE BOOTSTRAP TABS
 
-			for (var n in JSS){
+
+// var count = 0;
+// for (var n in JS.taxonomyObjArray) { 
+// 	var taxonomyObjkey = Object.keys(JS.taxonomyObjArray[n]);
+// 	for (var k in taxonomyObjkey) { 
+// 		var key = taxonomyObjkey[k];
+// 		if (key != 'studentSelectedTheme'){ // studentSelectedTheme has to be ignored...
+// 			for (var t in JS.taxonomyObjArray[n][key]) { 
+// 				var arrLen = JS.taxonomyObjArray[n][key].length-1;
+// 				HTML += '<div id="Sort_'+count+'" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
+// 				++count;
+// 			}
+// 		}
+// 	}
+// }
+
+
+			for (var n in JS.taxonomyObjArray) { 
 				HTML += 	'<div id="tabBody_'+n+'" class="tabBody">';
 
 				HTML += 		'<div class="row">';
@@ -1219,6 +1258,10 @@ function step_3_template(){
 												HTML += JS.textQuoteNotes[quoteNoteCount];
 											}			
 				HTML += 				'</textarea>';
+										for (var k in JS.taxonomyObjArray[n].describe) {
+											var arrLen = JS.taxonomyObjArray[n].describe.length-1;
+											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].describe[arrLen-k]+'</div>' : '';
+										}
 				HTML += 			'</div>';
 
 				HTML += 			'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
@@ -1231,6 +1274,10 @@ function step_3_template(){
 												HTML += JS.textQuoteNotes[quoteNoteCount];
 											}			
 				HTML += 				'</textarea>';
+										for (var k in JS.taxonomyObjArray[n].analyse) {
+											var arrLen = JS.taxonomyObjArray[n].analyse.length-1;
+											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].analyse[arrLen-k]+'</div>' : '';
+										}
 				HTML += 			'</div>';
 
 				HTML += 			'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
@@ -1243,6 +1290,10 @@ function step_3_template(){
 												HTML += JS.textQuoteNotes[quoteNoteCount];
 											}			
 				HTML += 				'</textarea>';
+										for (var k in JS.taxonomyObjArray[n].assess) {
+											var arrLen = JS.taxonomyObjArray[n].assess.length-1;
+											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].assess[arrLen-k]+'</div>' : '';
+										}
 				HTML += 			'</div>';
 
 				HTML += 		'</div>';
@@ -1281,16 +1332,16 @@ $( document ).on('click', ".tabHeading", function(event){
 });
 
 
-$( document ).on('focusin', ".tabInput", function(event){
-	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	if (!JS.hasOwnProperty('taxonomyObjArray')){
-		JS.taxonomyObjArray = [];
+// $( document ).on('focusin', ".tabInput", function(event){
+// 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	if (!JS.hasOwnProperty('taxonomyObjArray')){
+// 		JS.taxonomyObjArray = [];
 
-		for (var n in JS.studentSelectedThemes) {
-			JS.taxonomyObjArray.push({"studentSelectedTheme": null, "describe": [], "analyse": [], "assess": []});
-		}
-	}
-});
+// 		for (var n in JS.studentSelectedThemes) {
+// 			JS.taxonomyObjArray.push({"studentSelectedTheme": null, "describe": [], "analyse": [], "assess": []});
+// 		}
+// 	}
+// });
 
 
 function tabInput(thisObj){
@@ -1344,27 +1395,76 @@ $( document ).on('keypress', ".tabInput", function(event){
 
 
 $( document ).on('click', ".taxonomy", function(event){
+	
+	console.log('TAXONOMYTEST - click');
+
+	// PROBLEMS BETWEEN JQUERY-UI-SORTABLE, CLICK AND FOCUSOUT:
+	// --------------------------------------------------------
+	// JQuery UI "sortable" creates a problem between the "click" event and the 
+	// "focusout" event - the "click" event is fired before the "focusout" event when "sortable" is active. 
+	// This is why the special case for step 4 (below) has been made. It works for firefox and chrome, but not safari. In
+	// safari, one has to tab once on a new div for "closeing" the editing-mode of the old div, and then once more on 
+	// the new div to begining the editing the new div. In all, you have to tab twice on the new div. In setp 3, one need 
+	// only tab _ONCE_ on a new div to close the old div, and start editing the new div.
+	if (($('.taxonomyTextEdit').length > 0) && (jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
+		
+		// alert('TEST 1');  // <------ VIRKER ALENE I ALLE BROWSERE!!! Alert-kaldet gør at nedenstående trigger bliver kørt - hvis . 
+		
+		$( ".taxonomyEdit" ).trigger( "focusout" );  // <----- Virker i Firefox og chrome, men ikke i safari.
+		// $( ".taxonomyEdit" ).triggerHandler( "focusout" );  // <---- Virker ikke!!!
+
+		updateSortableOrderArray(1);
+
+		// alert('TEST 2');
+	}
+	// alert('TEST 3');
+
 	var text = $(this).text();
+	text = htmlEntities(text);
+
 	$(this).removeClass('taxonomy');
 	$(this).addClass('taxonomyEdit');
 	console.log('taxonomy - text: _'+text+'_');
 	$(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', text, 'Skriv eller klik væk for at slette...'));
+
+	// $('.taxonomyTextEdit', this).focus();  // This jus sets the focus. To set the focus at the end, see the following:
+
+	// SET FOCUS AT THE END:
+	// SEE: http://stackoverflow.com/questions/19568041/set-focus-and-cursor-to-end-of-text-input-field-string-w-jquery 
+	var searchInput = $('.taxonomyTextEdit', this);
+
+	// Multiply by 2 to ensure the cursor always ends up at the end;
+	// Opera sometimes sees a carriage return as 2 characters.
+	var strLength = searchInput.val().length * 2;
+
+	searchInput.focus();
+	searchInput[0].setSelectionRange(strLength, strLength);
+	
 });
 
 
 $( document ).on('focusout', ".taxonomyEdit", function(event){
+
+	console.log('TAXONOMYTEST - .focusout');
+
 	var text = $('.taxonomyTextEdit').val();  
-	console.log('taxonomyEdit - text: _'+text+'_');
+	console.log('taxonomyEdit - focusout - text: _'+text+'_');
 	$('.input-group', this).remove();
 	
+	if (jsonData.currentStep == 3){
+		taxonomyEdit(text, $(this));
+	}
+
 	if (text.length > 0) {
 		$(this).closest('.sortable_text_container').addClass('taxonomy');
 		$(this).text(text);
 		$(this).removeClass('taxonomyEdit');
-		taxonomyEdit(text, $(this));
+		// taxonomyEdit(text, $(this));
 	} else {
 		$(this).remove();
 	}
+
+	// taxonomyTimeing = true;
 });
 
 
@@ -1374,14 +1474,18 @@ $( document ).on('keypress', ".taxonomyEdit", function(event){
 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
 		event.preventDefault(); // ...prevents the normal action of the return-key.
 		var text = $('.taxonomyTextEdit').val();  
-		console.log('taxonomyEdit - text: _'+text+'_');
+		console.log('taxonomyEdit - return - text: _'+text+'_');
 		$('.input-group', this).remove();
 		
+		if (jsonData.currentStep == 3){
+			taxonomyEdit(text, $(this));
+		}
+
 		if (text.length > 0) {
 			$(this).closest('.sortable_text_container').addClass('taxonomy');
 			$(this).text(text);
 			$(this).removeClass('taxonomyEdit');
-			taxonomyEdit(text, $(this));
+			// taxonomyEdit(text, $(this));
 		} else {
 			$(this).remove();
 		}
@@ -1404,12 +1508,18 @@ function taxonomyEdit(text, thisObj){
 
 	console.log('taxonomyEdit - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray[tabBody_index]));
 	
-	if (text.length > 0) {
-		JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][index] = text;
-	} else {
+	var len = JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].length;
+	console.log('taxonomyEdit - len: ' + len + ', index: ' + index + ', res: ' + String(len - 1 - index));
 
+	if (text.length > 0) {
+		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][index] = text;
+		JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][len - 1 - index] = text;
+	} else {
+		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(index, 1);  // Dette virker, men arrayet skal reverses, så der slettes fra den rigtige ende!
+		JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(len - 1 - index, 1);
 	}
 	console.log('taxonomyEdit - taxonomyObjArray 3: ' + JSON.stringify(JS.taxonomyObjArray));
+	
 }
 
 
@@ -1421,8 +1531,6 @@ $(document).on('change', '.taxonomyDropdown', function(){
 	$(this).parent().next().focus();
 });
 
-
-///////////////////////////////////////////////////////////////////////////////////////////
 
 
 function insertKeyProblem(dropdownMarkup){
@@ -1587,21 +1695,25 @@ $( document ).on('click', "#step_3_goBack", function(event){
 $( document ).on('click', "#step_3_goOn", function(event){
 
 	var TextTheme = htmlEntities($('#textInputTheme').val());
-	if (TextTheme.length > 0){
-		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-		if (!JST.hasOwnProperty('TextTheme')){
-			JST.TextTheme = null;
-		}
 
-		JST.TextTheme = TextTheme;
+	// TextTheme = 'TEST'; // <--------------------------------   VIGTIGT: FIND UD AF HVILKET MINIMUMSKRAV FAGREDAKTØRENE HAR TIL DETTE SKRIDT!!!
+	
+	// if (TextTheme.length > 0){
+	
 		
 		step_4_template();
 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
 		
-	} else {
-		UserMsgBox("body", '<h4>OBS</h4> Du skal formulere hvad dit tema handler om i tekstboksen. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til din formulering.');
-	}
+	// } else {
+	// 	UserMsgBox("body", '<h4>OBS</h4> Du skal formulere hvad dit tema handler om i tekstboksen. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til din formulering.');
+	// }
 });
+
+
+//####################################################################################################################
+//											      DEV-LINE
+//####################################################################################################################
+
 
 
 
@@ -1613,6 +1725,7 @@ $( document ).on('click', "#step_3_goOn", function(event){
 
 function step_4_template(){
 	console.log("step_4_template - jsonData 1: " + JSON.stringify(jsonData)); 
+	console.log("step_4_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	jsonData.currentStep = 4;
 	osc.save('jsonData', jsonData);
 	var stepNo = 4;
@@ -1620,15 +1733,13 @@ function step_4_template(){
 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	console.log("step_4_template - JS.taxonomyObjArray: " + JSON.stringify(JS.taxonomyObjArray));
 
-	var analyticalFocus = null;
-	// if (jsonData.hasOwnProperty("studentSelectedProblems")){
-	if (JST.hasOwnProperty("analyticalFocus")){
-		// selcNo = getSelected('selcNo');
-		analyticalFocus = JST.analyticalFocus;
+	if (!JS.hasOwnProperty('SortableOrderArray')){
+		JS.SortableOrderArray = [];
 	}
-	console.log("step_4_template - analyticalFocus: " + analyticalFocus); 
+	
 	var HTML = '';
 	HTML += '<div id="step_4" class="step">';
 	HTML +=     '<div class="row">';
@@ -1638,17 +1749,33 @@ function step_4_template(){
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	
-	// HTML += 			'<div id="analyticalFocusContainer" class="btnActions">';
-	// 		var JA = jsonData.analyticalFocus;
-	// 		for (var n in JA){
-	// 			HTML += 	'<span class="AnalyticalFocus btn btn-'+((analyticalFocus == n)?'primary':'info')+'" >'+JA[n].name+'</span>';
-	// 		}
-	// HTML += 			'</div>';
+	HTML += 			'<div id="subjectSentenceSortableContainer" class="btnActions">';
 
-	// HTML += 			'<div class="stepInput">';
-	// HTML += 				'<span class="helperText">Eller vælg dit eget emne:</span>';
-	// HTML +=					returnInputBoxes3(1, 'studentSubject', 'Skriv dit emne her...');
-	// HTML += 			'</div>';
+	var barHeight = 3; // Needs to come from the JSON data.
+
+	var count = 0;
+	for (var n in JS.taxonomyObjArray) { 
+		var taxonomyObjkey = Object.keys(JS.taxonomyObjArray[n]);
+		for (var k in taxonomyObjkey) { 
+			var key = taxonomyObjkey[k];
+			if (key != 'studentSelectedTheme'){ // studentSelectedTheme has to be ignored...
+				for (var t in JS.taxonomyObjArray[n][key]) { 
+					var arrLen = JS.taxonomyObjArray[n][key].length-1;
+					// HTML += '<div id="Sort_'+count+'" data-address="{n:'+n+',key:'+key+',t:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
+					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
+					HTML += (count == barHeight)? '<div id="barHeight">----------------------------------</div>' : '';
+					++count;
+				}
+			}
+		}
+	}
+
+			// for (var n in JS.taxonomyObjArray[tabBody_index][taxonomyObjKey]) {
+			// 	HTML += 	'<div id="Sort_"'+n+' class="Sortable sortable_text_container">'+JSNS[n]+'</div>';
+			// }
+
+	HTML += 			'</div>';
+
 	HTML += 		'</div>';
 	HTML += 	'</div>';
 	HTML += '</div>';
@@ -1658,6 +1785,79 @@ function step_4_template(){
 	$('#DataInput').html(HTML);
 
 	setJsAudioEventLitsner2();
+
+	makeSortable();
+}
+
+
+function makeSortable() {
+	// Sort function are placed here due to readiness issues of the DOM:
+	$( "#subjectSentenceSortableContainer" ).sortable({
+		axis: 'y',
+		sortAnimateDuration: 500,
+	    sortAnimate: true,
+	    distance: 25,
+	    update: function(event, ui) {
+	    	console.log('makeSortable - UPDATE');
+	    	updateSortableOrderArray(2);
+	    	// $( "#subjectSentenceSortableContainer" ).sortable( "refresh" );  // "Refresh" anvende ikke således.
+	    	repositionBarHeight();
+	    },
+	    start: function(event, ui) {
+	    	console.log('makeSortable - START');
+	        console.log('makeSortable - ui.item.index: ' + ui.item.index());
+	    },
+	    stop: function(event, ui) {
+	        console.log('makeSortable - STOP');
+	    }
+	});
+}
+
+
+function repositionBarHeight(){
+	var barHeightPos;
+	$( "#subjectSentenceSortableContainer div" ).each(function( index, element ) {
+		if ($(element).attr('id') == ''){
+			
+		}
+	});
+}
+
+
+function updateSortableOrderArray(callNo){ 
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	// JS.taxonomyObjArray;
+	var SortableOrderArray = []
+	$( ".Sortable" ).each(function( index, element ) {
+		SortableOrderArray.push($(element).text());
+
+		var eds = $(element).attr('data-address');
+		console.log('updateSortableOrderArray - callNo: '+callNo+', eds 1: _' + eds + '_');
+
+		eds = eds.replace(/_/g, '"'); 
+		console.log('updateSortableOrderArray - callNo: '+callNo+', eds 2: _' + eds + '_');
+
+		var edo = JSON.parse(eds);
+		// var edo = JSON.parse(eds);
+		console.log('updateSortableOrderArray - callNo: '+callNo+', edo: ' + edo + ', typeof(edo): ' + typeof(edo));
+		console.log('updateSortableOrderArray - callNo: '+callNo+', edo.n: ' + edo.n);
+
+		// IMPORTANT:
+		// ========== 
+		// The commented out code below makes user-alterations in step 4 data go back to setp 3 data (if the user choose to go back). It has been commented out
+		// because this might NOT be desireble due to the "student-progression" philosophy in the other guided writing-apps in Dansk A.
+		// It has the following problems, which needs to be fixed: 
+		// 	(1) when edited, it does not update the step 3 data (due to the updateSortableOrderArray(1) call and the click-focusout problem).
+		//		It updates when sorted (but the sorted order can not be seen in setp 3).
+		//  (2) When a div is deleted by editing, the deleted div is still present in step 3.
+		// 
+		// var arrLen = JS.taxonomyObjArray[edo.n][edo.key].length-1;
+		// JS.taxonomyObjArray[edo.n][edo.key][arrLen - edo.t] = $(element).text();
+		// console.log('updateSortableOrderArray - callNo: '+callNo+', JS.taxonomyObjArray['+edo.n+']['+edo.key+']['+String(arrLen - edo.t)+']: ' + JS.taxonomyObjArray[edo.n][edo.key][arrLen - edo.t]);
+
+	}); 
+	console.log('updateSortableOrderArray - callNo: '+callNo+', SortableOrderArray: ' + JSON.stringify(SortableOrderArray));
+	JS.SortableOrderArray = SortableOrderArray;
 }
 
 
