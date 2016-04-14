@@ -22,6 +22,7 @@
     	{"name" : "Sprog", "description" : "<h4>Sprog</h4> <p>Er der nogle særlige træk ved sproget, som virker vigtige i forhold til temaet? Er der et særligt billedsprog? Gentagelser? Fagsprog, slang og/eller dialekt?</p>"}    
     ],
 	"numOfChoosenWords" : 3,
+    "numOfSubQuestions" : 4,
 	"sentenceStarters_problemFormulation" : 
 		{"id":"Dropdown1", "class":"Dropdown", "selected": "0",
             "options":[
@@ -143,19 +144,19 @@
 		},{
 			"step" : 4,
 			"header" : "STEP 4 - Skriv en problemformulering",
-			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
+			"instruction" : "Nu skal du gruppere og sortere dine underspørgsmål. Tænk over taksonomi og sammenhæng. De ??? øverste underspørgsmål (grønne) går videre i næste skridt. Du kan editere din problemformulering løbende.",
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 5,
 			"header" : "STEP 5 - Skriv en problemformulering",
-			"instruction" : "Find ??? citater fra teksten, der understøtter dit analytiske fokus. Indsæt citaterne i tekstfelterne",
+			"instruction" : "Her er dine ??? vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 6,
 			"header" : "STEP 6 - Skriv en problemformulering",
-			"instruction" : "Forklar dine citater, og beskriv, hvorfor de er relevante for din analyse.",
+			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_goOn", "text":"Gå videre"}]
 		},{
