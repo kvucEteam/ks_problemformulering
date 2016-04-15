@@ -109,7 +109,12 @@ function setJsAudioEventLitsner2(){
 	if (typeof(autoPlayNew) === 'undefined'){
 		window.autoPlayNew = true;
 		console.log("setJsAudioEventLitsner2 - autoPlay - SET");
+
+		autoPlayNew = (isiniFrame())? false : true; 
 	}
+
+	// alert('setJsAudioEventLitsner2 - autoPlayNew: ' + autoPlayNew);
+	console.log('setJsAudioEventLitsner2 - isiniFrame - autoPlayNew: ' + autoPlayNew);
 
 	var audioObj = document.getElementById("audioPlayer");
 
@@ -121,34 +126,18 @@ function setJsAudioEventLitsner2(){
 		audioObj.pause(); 
 	}
 
-	// if ((autoPlayNew) && (!audioObj.ended)){
-	// 	console.log("setJsAudioEventLitsner2 - NO EVENT - PAUSE");
-	// 	audioObj.play(); 
-	// } else {
-	// 	audioObj.pause(); 
-	// }
 
     audioObj.onpause = function() {
     	console.log("setJsAudioEventLitsner2 - PAUSE");
     	if (!audioObj.ended){
     		autoPlayNew = false; 
     	}
-    	// if ((autoPlayNew) && (!audioObj.ended)){
-    	// 	console.log("setJsAudioEventLitsner2 - autoPlayNew = false ");
-    	// 	// autoPlayNew = false;  // The if-clause "if (!audioObj.ended)" solves the issue of the player not autoplaying in the next step if the soundfile ended natually/played-to-end in the current step.
-    	// 	// audioObj.pause();
-    	// }
+    	
     }
     audioObj.onplay = function() {
     	console.log("setJsAudioEventLitsner2 - PLAY");
     	autoPlayNew = true;
-    	// if ((autoPlayNew) && (!audioObj.ended)) {
-    	// 	console.log("setJsAudioEventLitsner2 - autoPlayNew = true ");
-    	// 	autoPlayNew = true;   // The if-clause "if (!audioObj.ended)" solves the issue of the player not autoplaying in the next step if the soundfile ended natually/played-to-end in the current step.
-     //    	audioObj.play();
-     //    } else {
-     //    	audioObj.pause(); 
-     //    }
+    	
     }
 }
 
