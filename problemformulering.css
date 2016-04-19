@@ -318,8 +318,18 @@ textarea {
     margin-bottom: 10px;
 }
 
-.nav a{
-    
+.tabHeading a {
+    color: #717272;
+}
+
+.nav-tabs > li.active > a, 
+.nav-tabs > li.active > a:focus, 
+.nav-tabs > li.active > a:hover{
+    color: #05a0a8;
+}
+
+.cssGreen{
+    background-color: #dff8f8;
 }
 
 

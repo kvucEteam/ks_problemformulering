@@ -138,19 +138,19 @@
 		},{
 			"step" : 3,
 			"header" : "STEP 3 - Skriv en problemformulering",
-			"instruction" : "Du valgte nøgleproblemet &quot;???&quot;. Hvad kendetegnder dine valg? Er der noget, som kan beskrives som et fælles problem?",
+			"instruction" : "Du valgte nøgleproblemet &quot;???&quot;. Hvad kendetegner dine valg? Er der noget, som kan beskrives som et fælles problem?",
 			"audioFiles" : [{"name": "audio/step_3.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 4,
 			"header" : "STEP 4 - Skriv en problemformulering",
-			"instruction" : "Nu skal du gruppere og sortere dine underspørgsmål. Tænk over taksonomi og sammenhæng. De ??? øverste underspørgsmål (grønne) går videre i næste skridt. Du kan editere din problemformulering løbende.",
+			"instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 5,
 			"header" : "STEP 5 - Skriv en problemformulering",
-			"instruction" : "Her er dine ??? vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
+			"instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}]
 		},{
@@ -158,7 +158,7 @@
 			"header" : "STEP 6 - Skriv en problemformulering",
 			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"DOWNLOAD"}]
 		},{
 			"step" : 7,
 			"header" : "STEP 7 - Skriv en problemformulering",
