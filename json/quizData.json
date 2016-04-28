@@ -39,40 +39,28 @@
     "sentenceStarters_taxonomy_describing" : 
 		{"id":"Dropdown_describing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-            	{"value":"Redegørende spørgsmål - brainstorm-hjælp"},
-                {"value":"Citatet illustrerer det tvetydige ved..."},
-                {"value":"I citatet kommer fortællerens holdning til syne..."},
-                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
-                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
-                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
-                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
-                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            	{"value":"Faktuelle spørgsmål - ??? - brainstorm-hjælp"},
+                {"value":"Hvordan er ???..."},
+                {"value":"Hvordan kendetegner ???..."},
+                {"value":"Hvordan forløb ???..."}
             ]
         },
     "sentenceStarters_taxonomy_analysing" : 
 		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-            	{"value":"Analyserende spørgsmål - brainstorm-hjælp"},
-                {"value":"Citatet illustrerer det tvetydige ved..."},
-                {"value":"I citatet kommer fortællerens holdning til syne..."},
-                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
-                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
-                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
-                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
-                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            	{"value":"Undersøgende spørgsmål - ??? - brainstorm-hjælp"},
+                {"value":"Hvorfor er ???..."},
+                {"value":"Hvilke grunde er der til at ???..."},
+                {"value":"Hvilke konsekvenser er ved ??? når..."}
             ]
         },
     "sentenceStarters_taxonomy_assessing" : 
 		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-            	{"value":"Vurderende spørgsmål - brainstorm-hjælp"},
-                {"value":"Citatet illustrerer det tvetydige ved..."},
-                {"value":"I citatet kommer fortællerens holdning til syne..."},
-                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
-                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
-                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
-                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
-                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+                {"value":"Diskuterende/vurderende spørgsmål - ??? - brainstorm-hjælp"},
+            	{"value":"Hvilken betydning har ???..."},
+                {"value":"Hvordan kan man sammenligne ???..."},
+                {"value":"Hvilke forskelle er der på ??? og ..."}
             ]
         },
     "sentenceStarters_interpretation" : 
@@ -118,68 +106,68 @@
 	"steps" : [
 		{
 			"step" : 0,
-			"header" : "STEP 0 - Skriv en problemformulering",
+			"header" : "STEP 0 - Hjælp til problemformuleringen",
 			"img" : {"src" : "img/start_img1140.jpg", "alt" : "Guidet skriveproces"},
 			"audioFiles" : [{"name": "audio/step_0.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_0_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 1,
-			"header" : "STEP 1 - Skriv en problemformulering",
+			"header" : "STEP 1 - Hjælp til problemformuleringen",
 			"instruction" : "Vælg et nøgleproblem",
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 2,
-			"header" : "STEP 2 - Skriv en problemformulering",
+			"header" : "STEP 2 - Hjælp til problemformuleringen",
 			"instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
 			"masterEx" : [{"time": 1, "word": "Nu har du valgt en tekst"}, {"time": 5, "word": "DIT TEKSTARBEJDE"}, {"time": 9, "word": "Et eller flere temaer"}, {"time": 11.5, "word": "Fokuseret analyse"}, {"time": 16, "word": "Omdrejningspunkt"}, {"time": 22, "word": "Skriv evt eget tema!"}]
 		},{
 			"step" : 3,
-			"header" : "STEP 3 - Skriv en problemformulering",
-			"instruction" : "Du valgte nøgleproblemet &quot;???&quot;. Hvad kendetegner dine valg? Er der noget, som kan beskrives som et fælles problem?",
+			"header" : "STEP 3 - Hjælp til problemformuleringen",
+			"instruction" : "Lav de tre valgte underemner om til underspørgsmål. Find på så mange spørgsmål som du kan.",
 			"audioFiles" : [{"name": "audio/step_3.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 4,
-			"header" : "STEP 4 - Skriv en problemformulering",
+			"header" : "STEP 4 - Hjælp til problemformuleringen",
 			"instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 5,
-			"header" : "STEP 5 - Skriv en problemformulering",
+			"header" : "STEP 5 - Hjælp til problemformuleringen",
 			"instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 6,
-			"header" : "STEP 6 - Skriv en problemformulering",
+			"header" : "STEP 6 - Hjælp til problemformuleringen",
 			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"DOWNLOAD"}]
 		},{
 			"step" : 7,
-			"header" : "STEP 7 - Skriv en problemformulering",
+			"header" : "STEP 7 - Hjælp til problemformuleringen",
 			"instruction" : "Formulér ???-1 sætninger, der kobler tekstens tema med de udvalgte citater og giver dit bud på en fortolkning.",
 			"audioFiles" : [{"name": "audio/step_7.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_7_goBack", "text":"Gå tilbage"}, {"id": "step_7_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 8,
-			"header" : "STEP 8 - Skriv en problemformulering",
+			"header" : "STEP 8 - Hjælp til problemformuleringen",
 			"instruction" : "Skriv et par afsluttende sætninger",
 			"audioFiles" : [{"name": "audio/step_8.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_8_goBack", "text":"Gå tilbage"}, {"id": "step_8_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 9,
-			"header" : "STEP 9 - Skriv en problemformulering",
+			"header" : "STEP 9 - Hjælp til problemformuleringen",
 			"instruction" : "Skriv en overskrift og indledning til din analyse",
 			"audioFiles" : [{"name": "audio/step_9.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_9_goBack", "text":"Gå tilbage"}, {"id": "step_9_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 10,
-			"header" : "STEP 10 - Skriv en problemformulering",
+			"header" : "STEP 10 - Hjælp til problemformuleringen",
 			"instruction" : "Download din analyse",
 			"explanation" : "Download Word-filen. Den indeholder en vejledning til, hvordan du kan arbejde videre med din skønlitterære analyse.",
 			"audioFiles" : [{"name": "audio/step_10.mp3", "type": "mpeg"}],

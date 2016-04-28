@@ -749,9 +749,7 @@ function step_1_template(){
 	osc.save('jsonData', jsonData);
 	var stepNo = 1;
 	$('#processContainer').html(returnProgressBar(stepNo));
-	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-	$('#audioPlayerContainer').html(returnAudioMarkup(stepNo));
-	// setJsAudioEventLitsner2(); 
+	// $('#audioPlayerContainer').html(returnAudioMarkup(stepNo));     // <---------- Audio 
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 	var selcNo = null;
 
@@ -771,7 +769,7 @@ function step_1_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_1" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	HTML += 			'<div id="TextContainer" class="btnActions">';
 			var JT = jsonData.keyProblems;
@@ -787,7 +785,8 @@ function step_1_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2(); 
+	$('#audioPlayerContainer').html('');
+	// setJsAudioEventLitsner2(); 
 }
 
 
@@ -868,6 +867,7 @@ $( document ).on('click', "#step_1_goOn", function(event){
 
 function step_2_template(){
 	console.log("step_2_template - jsonData 1: " + JSON.stringify(jsonData)); 
+	console.log("step_2_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	jsonData.currentStep = 2;
 	osc.save('jsonData', jsonData);
 
@@ -907,11 +907,11 @@ function step_2_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet &quot;' + keyProblem + '&quot;. '+ jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet &quot;' + keyProblem + '&quot;. '+ jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div class="masterStudentBtnWrap">';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
 	HTML += 			'<div id="subjectWordContainer" class="btnActions">';
@@ -947,9 +947,17 @@ function step_2_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
+	// setJsAudioEventLitsner2();
 }
 
+
+function insertMasterExample(){
+	var HTML = '';
+	HTML += '<div class="masterStudentBtnWrap">';
+	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	HTML += '</div>';
+	return HTML;
+}
 
 
 $( document ).on('click', ".masterStudentBtn", function(event){
@@ -1038,6 +1046,20 @@ function returnTimetampedWord(masterExArr, playerTime, timeTolerance){
 }
 
 
+function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJDE FOR SELV INTASTEDE TEMAGER/EMNER OGSÅ!!!!
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	
+	if (JS.studentSelectedThemes.length + JS.studentThemes.length > jsonData.numOfChoosenWords){
+		var indexNo = JS.studentSelectedThemes[0];
+		console.log("keyThemeMaxAmountController - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
+		console.log("keyThemeMaxAmountController - indexNo: " + indexNo);
+		$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
+		JS.studentSelectedThemes.splice(0, 1);
+		console.log("keyThemeMaxAmountController - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+	}
+}
+
+
 $( document ).on('click', ".keyThemes", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var index = $(this).index();
@@ -1050,6 +1072,7 @@ $( document ).on('click', ".keyThemes", function(event){
 		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
 		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
 	}
+	keyThemeMaxAmountController();
 });
 
 
@@ -1070,17 +1093,24 @@ $( document ).on('keypress', ".keyThemesByStudent", function(event){
 
 $( document ).on('focusout', ".keyThemesByStudent", function(event){ 
 	// Save the choosen words 1:
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var studentThemes = [];
 	$( ".keyThemesByStudent" ).each(function( index, element ) {
 		console.log("keyThemesByStudent - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
 		if ($(element).val().length > 0) { // Only inset entered values > 0
-			studentThemes.push(htmlEntities($(element).val()));
+			if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val())){
+				studentThemes.push(htmlEntities($(element).val()));
+				// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
+				// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
+			}
 		}
 	});
 	console.log("keyThemesByStudent - studentThemes: " + JSON.stringify(studentThemes));
 	console.log("focusout - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
-	jsonData.studentSelectedProblems[jsonData.selectedIndexNum].studentThemes = studentThemes;
+	JS.studentThemes = studentThemes;
 	console.log("focusout - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	
+	keyThemeMaxAmountController();
 });
 
 
@@ -1132,9 +1162,9 @@ $( document ).on('click', "#step_2_goOn", function(event){
 
 	if (JS.studentThemes.length > 0) { // If the studen has choosen his/her own keyProblem...
 		for (var n in JS.studentThemes){
-			jsonData.keyProblems[JS.selcNo].themes.push(JS.studentThemes[n]);  // then insert the studentThemes into the keyProblems JSON data-structure.
-			var lastThemeIndex = jsonData.keyProblems[JS.selcNo].themes.length - 1;  // Number of themes in the the selected problem.
-			JS.studentSelectedThemes.push(lastThemeIndex);
+			// jsonData.keyProblems[JS.selcNo].themes.push(JS.studentThemes[n]);  // then insert the studentThemes into the keyProblems JSON data-structure.
+			// var lastThemeIndex = jsonData.keyProblems[JS.selcNo].themes.length - 1;  // Number of themes in the the selected problem.
+			// JS.studentSelectedThemes.push(lastThemeIndex);
 		}
 	}
 
@@ -1172,6 +1202,7 @@ function step_3_template(){
 		studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]);
 	}
 	var JSS = JS.studentThemes.concat(studentSelectedThemes);
+	// var JSS = JS.studentThemes.concat(JS.studentSelectedThemes);
 	console.log("step_3_template - JSS: " + JSON.stringify(JSS));
 
 	console.log("step_3_template - JS 1: " + JSON.stringify(JS)); 
@@ -1180,7 +1211,7 @@ function step_3_template(){
 		JS.taxonomyObjArray = [];
 
 		for (var n in JSS) {
-			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": []});
+			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
 		}
 	}
 
@@ -1192,13 +1223,13 @@ function step_3_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_3" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(insertKeyProblem(jsonData.steps[stepNo].instruction) + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(insertKeyProblem(jsonData.steps[stepNo].instruction) + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="subjectTextThemeContainer" >';
 			
 	HTML += 			'<div class="masterStudentBtnWrap">';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
 			// var studentSelectedThemes = [];
@@ -1208,13 +1239,12 @@ function step_3_template(){
 			// var JSS = JS.studentThemes.concat(studentSelectedThemes);
 			// console.log("step_3_template - JSS: " + JSON.stringify(JSS)); 
 
+			window.taxonomytabHeadings = ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål'];
 			HTML += '<ul class="nav nav-tabs">';  // <-----  NATIVE BOOTSTRAP TABS
-			for (var n in JSS){
-				// HTML += 	'<span id="tabHeading_'+n+'" class="tabHeading '+((n==1)?'tabHeading_selected':'')+'">';
-				// '<span class="btn btn-info">';
-				// HTML += 		'<span class="btn btn-info">'+JSS[n]+'</span>';
-				// HTML += 	'</span>';
-				HTML += '<li id="tabHeading_'+n+'" class="tabHeading'+((n==0)?' active':'')+'"><a href="#">'+JSS[n]+'</a></li>';    // <-----  NATIVE BOOTSTRAP TABS
+			// for (var n in JSS){
+			for (var n in taxonomytabHeadings){
+				// HTML += '<li id="tabHeading_'+n+'" class="tabHeading'+((n==0)?' active':'')+'"><a href="#">'+JSS[n]+'</a></li>';    // <-----  NATIVE BOOTSTRAP TABS
+				HTML += '<li id="tabHeading_'+n+'" class="tabHeading'+((n==0)?' active':'')+'"><a href="#">'+taxonomytabHeadings[n]+'</a></li>';    // <-----  NATIVE BOOTSTRAP TABS
 			}
 			HTML += '</ul>';    // <-----  NATIVE BOOTSTRAP TABS
 
@@ -1234,59 +1264,48 @@ function step_3_template(){
 // 	}
 // }
 
+// <span class="contentEdit glyphicon glyphicon-pencil"></span>
 
-			for (var n in JS.taxonomyObjArray) { 
+			// insertStudentSelectedThemes(dropdownMarkup, index)
+			for (var n in taxonomytabHeadings) { 
 				HTML += 	'<div id="tabBody_'+n+'" class="tabBody">';
 
 				HTML += 		'<div class="row">';
+									for (var k in JS.taxonomyObjArray){
+				HTML += 				'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
+											// for (var k in JS.taxonomyObjArray){
+				HTML += 						'<div class="DropdownWrap">';
+				HTML += 							(n == 0)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_describing), JSS, k) : '';
+				HTML += 							(n == 1)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_analysing), JSS, k) : '';
+				HTML += 							(n == 2)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_assessing), JSS, k) : '';
+				HTML += 						'</div>';
+											// }
 
-				HTML += 			'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
-				HTML += 				'<div class="DropdownWrap">';
-				HTML += 				returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_describing);
+				HTML += 					'<textarea class="tabInput">';
+												// if ((JS.hasOwnProperty('textQuoteNotes')) && (typeof(JS.textQuoteNotes[quoteNoteCount]) !== 'undefined')) {
+												// 	HTML += JS.textQuoteNotes[quoteNoteCount];
+												// }			
+				HTML += 					'</textarea>';
+											if (n == 0){
+												for (var p in JS.taxonomyObjArray[k].describe) {
+													var arrLen = JS.taxonomyObjArray[k].describe.length-1;
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+												}
+											}
+											if (n == 1){
+												for (var p in JS.taxonomyObjArray[k].analyse) {
+													var arrLen = JS.taxonomyObjArray[k].analyse.length-1;
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].analyse[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+												}
+											}
+											if (n == 2){
+												for (var p in JS.taxonomyObjArray[k].assess) {
+													var arrLen = JS.taxonomyObjArray[k].assess.length-1;
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].assess[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+												}
+											}
 				HTML += 				'</div>';
-
-				HTML += 				'<textarea class="tabInput">';
-											if ((JS.hasOwnProperty('textQuoteNotes')) && (typeof(JS.textQuoteNotes[quoteNoteCount]) !== 'undefined')) {
-												HTML += JS.textQuoteNotes[quoteNoteCount];
-											}			
-				HTML += 				'</textarea>';
-										for (var k in JS.taxonomyObjArray[n].describe) {
-											var arrLen = JS.taxonomyObjArray[n].describe.length-1;
-											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].describe[arrLen-k]+'</div>' : '';
-										}
-				HTML += 			'</div>';
-
-				HTML += 			'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
-				HTML += 				'<div class="DropdownWrap">';
-				HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_analysing);
-				HTML += 				'</div>';
-
-				HTML += 				'<textarea class="tabInput">';
-											if ((JS.hasOwnProperty('textQuoteNotes')) && (typeof(JS.textQuoteNotes[quoteNoteCount]) !== 'undefined')) {
-												HTML += JS.textQuoteNotes[quoteNoteCount];
-											}			
-				HTML += 				'</textarea>';
-										for (var k in JS.taxonomyObjArray[n].analyse) {
-											var arrLen = JS.taxonomyObjArray[n].analyse.length-1;
-											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].analyse[arrLen-k]+'</div>' : '';
-										}
-				HTML += 			'</div>';
-
-				HTML += 			'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
-				HTML += 				'<div class="DropdownWrap">';
-				HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_assessing);
-				HTML += 				'</div>';
-
-				HTML += 				'<textarea class="tabInput">';
-											if ((JS.hasOwnProperty('textQuoteNotes')) && (typeof(JS.textQuoteNotes[quoteNoteCount]) !== 'undefined')) {
-												HTML += JS.textQuoteNotes[quoteNoteCount];
-											}			
-				HTML += 				'</textarea>';
-										for (var k in JS.taxonomyObjArray[n].assess) {
-											var arrLen = JS.taxonomyObjArray[n].assess.length-1;
-											HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[n].assess[arrLen-k]+'</div>' : '';
-										}
-				HTML += 			'</div>';
+									}
 
 				HTML += 		'</div>';
 
@@ -1302,7 +1321,7 @@ function step_3_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
+	// setJsAudioEventLitsner2();
 
 	$('.tabBody').hide();
 	// $('#tabBody_0').show();
@@ -1338,10 +1357,11 @@ $( document ).on('click', ".tabHeading", function(event){
 // });
 
 
-function tabInput(thisObj){
+function tabInput(thisObj){  // taxonomytabHeadings
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	console.log("tabInput - studentSelectedProblems 1: " + JSON.stringify(JS)); 
 
+	var tabObjLookup = ["describe", "analyse", "assess"];  // <----- ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål']
 	window.tabBodyDropdown_index = $(thisObj).closest('.tabBodyDropdownContainer').index();
 
 	console.log('focusout - tabBodyDropdown_index: _'+tabBodyDropdown_index+'_');
@@ -1352,7 +1372,8 @@ function tabInput(thisObj){
 	var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabHeading_index]);
 	console.log('focusout - taxonomyObjArray: _'+taxonomyObjArray+'_');
 
-	var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];
+	// var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];  	  // <-------- OLD !
+	var taxonomyObjKey = tabObjLookup[tabHeading_index];							  // <-------- NEW !
 	console.log('focusout - taxonomyObjKey: _'+taxonomyObjKey+'_');
 
 	console.log('focusout - string: '+parseInt(tabBodyDropdown_index+1));
@@ -1366,7 +1387,8 @@ function tabInput(thisObj){
 		
 		console.log('focusout - text: _'+text+'_');
 
-		JS.taxonomyObjArray[tabHeading_index][taxonomyObjKey].push(text);
+		// JS.taxonomyObjArray[tabHeading_index][taxonomyObjKey].push(text);	// <-------- OLD !
+		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].push(text);	// <-------- NEW !
 		console.log('focusout - taxonomyObjArray: ' + JSON.stringify(JS.taxonomyObjArray));
 
 		$('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div class="taxonomy sortable_text_container">'+text+'</div>');
@@ -1429,6 +1451,8 @@ $( document ).on('click', ".taxonomy", function(event){
 	$(this).addClass('taxonomyEdit');
 	console.log('taxonomy - text: _'+text+'_');
 	$(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', text, 'Skriv eller klik væk for at slette...'));
+	$('.input-group', this).append('<span onclick="test()" class="contentDelete glyphicon glyphicon-trash"></span>');
+	window.contentDelete = false;
 
 	// $('.taxonomyTextEdit', this).focus();  // This jus sets the focus. To set the focus at the end, see the following:
 
@@ -1455,44 +1479,107 @@ $( document ).on('click', ".taxonomy", function(event){
 });
 
 
+function test(){
+	console.log('TAXONOMYTEST -x- test');
+}
+
+
+$( document ).on('click', ".contentDelete", function(event){
+	console.log('TAXONOMYTEST -x- contentDelete.click');
+	var HTML = '';
+	HTML += '<div class="label label-primary deleteCallOut">';
+	HTML += '<h5>Slet?</h5>';
+	HTML += '</div>';
+	HTML += '<span class="glyphicon glyphicon-arrow-down"></span>';
+	$(this).after(HTML);
+});
+
+$( document ).on('mouseover', ".contentDelete", function(event){
+	console.log('TAXONOMYTEST -x- contentDelete.mouseover');
+	// $('.taxonomyEdit').unbind('focusout');
+});
+
+$( document ).on('mousedown', ".contentDelete", function(event){  // <----- EVENT SEQUENCE: mousedown > focusout > click
+	console.log('TAXONOMYTEST -x- contentDelete.mousedown');
+	// $('.taxonomyEdit').unbind('focusout');
+
+	contentDelete = true;
+	var HTML = '';
+	HTML += '<div class="label label-primary deleteCallOut">';
+	HTML += '<h5>Slet?</h5>';
+	HTML += '</div>';
+	HTML += '<span class="glyphicon glyphicon-arrow-down"></span>';
+	$(this).after(HTML);
+});
+
+
+$( document ).on('click', "body:not(.contentDelete)", function(event){
+	console.log('TAXONOMYTEST -x- contentDelete:not().click - class: ' + $(this).attr('class'));
+	// $( ".taxonomyEdit" ).trigger( "focusout" ); 
+})
+
+
+$( document ).on('click', ".contentDelete", function(event){
+	console.log('TAXONOMYTEST -x- contentDelete.focusout');
+	// $( ".taxonomyEdit" ).trigger( "focusout" ); 
+});
+
+
+$( document ).on('click', ".sortable_text_container", function(event){
+	console.log('TAXONOMYTEST -x- sortable_text_container.click');
+});
+
+
 $( document ).on('focusout', ".taxonomyEdit", function(event){
+// $( document ).on('focusout', ".taxonomyTextEdit", function(event){
+// $( document ).on('focusout', ".sortable_text_container", function(event){
+// $( document ).on('click', ".taxonomyEdit:not()", function(event){
 
-	console.log('TAXONOMYTEST - .focusout');
+	console.log('TAXONOMYTEST -x- taxonomyEdit.focusout');
 
-	// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
-	// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
-	// By reactivating sortability on the "on focusout" event, then the sortability will be active if the user chooses to sort the divs.
-	if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
-		$( "#subjectSentenceSortableContainer" ).sortable({
-			disabled: false
-		});
-	}
+	if (!contentDelete){
 
-	var text = $('.taxonomyTextEdit').val();  
-	console.log('taxonomyEdit - focusout - text: _'+text+'_');
-	$('.input-group', this).remove();
-	
-	if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
-		console.log('focusout - A1');
-		taxonomyEdit(text, $(this));
-	}
-
-	if (text.length > 0) {
-		console.log('focusout - A2 - TAXONOMYTEST');
-		$(this).closest('.sortable_text_container').addClass('taxonomy');
-		$(this).text(text);
-		$(this).removeClass('taxonomyEdit');
-		// taxonomyEdit(text, $(this));
-	} else {
-		$(this).remove();
-		console.log('focusout - A3 - TAXONOMYTEST');
+		// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
+		// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
+		// By reactivating sortability on the "on focusout" event, then the sortability will be active if the user chooses to sort the divs.
 		if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
-			console.log('focusout - A4 - TAXONOMYTEST');
-			colorSubQuestions();
+			$( "#subjectSentenceSortableContainer" ).sortable({
+				disabled: false
+			});
 		}
+
+		var text = $('.taxonomyTextEdit').val();  
+		console.log('taxonomyEdit - focusout - text: _'+text+'_');
+		$('.input-group', this).remove();
+		// $(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
+		// $(this).css('background-color','blue');
+		
+		if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
+			console.log('focusout - A1');
+			taxonomyEdit(text, $(this));
+		}
+
+		if (text.length > 0) {
+			console.log('focusout - A2 - TAXONOMYTEST');
+			$(this).closest('.sortable_text_container').addClass('taxonomy');
+			$(this).text(text);
+			$(this).removeClass('taxonomyEdit');
+			// taxonomyEdit(text, $(this));
+		} else {
+			$(this).remove();
+			console.log('focusout - A3 - TAXONOMYTEST');
+			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
+				console.log('focusout - A4 - TAXONOMYTEST');
+				colorSubQuestions();
+			}
+		}
+
+		$(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
+
+		// taxonomyTimeing = true;
 	}
 
-	// taxonomyTimeing = true;
+	contentDelete = false;
 });
 
 
@@ -1533,9 +1620,11 @@ function taxonomyEdit(text, thisObj){
 	var tabBodyDropdown_index = $(thisObj).closest('.tabBodyDropdownContainer').index();  
 	var tabBody_index = parseInt($(thisObj).closest('.tabBody').prop('id').replace('tabBody_',''));
 	console.log('taxonomyEdit - index: ' + index + ', tabBodyDropdown_index: ' + tabBodyDropdown_index + ', tabBody_index: ' + tabBody_index);
-
+	
 	var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabBody_index]);
-	var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];
+	// var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];
+	var tabObjLookup = ["describe", "analyse", "assess"];  // <----- ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål']
+	var taxonomyObjKey = tabObjLookup[tabHeading_index];
 	console.log('taxonomyEdit - taxonomyObjArray: ' + taxonomyObjArray + ', taxonomyObjKey: ' + taxonomyObjKey);
 
 	console.log('taxonomyEdit - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray[tabBody_index]));
@@ -1545,10 +1634,12 @@ function taxonomyEdit(text, thisObj){
 
 	if (text.length > 0) {
 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][index] = text;
-		JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][len - 1 - index] = text;
+		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][len - 1 - index] = text;  // <---- OLD !!!
+		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey][len - 1 - index] = text;  // <---- NEW !!!
 	} else {
 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(index, 1);  // Dette virker, men arrayet skal reverses, så der slettes fra den rigtige ende!
-		JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(len - 1 - index, 1);
+		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(len - 1 - index, 1);  // <---- OLD !!!
+		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].splice(len - 1 - index, 1);
 	}
 	console.log('taxonomyEdit - taxonomyObjArray 3: ' + JSON.stringify(JS.taxonomyObjArray));
 	
@@ -1559,10 +1650,20 @@ $(document).on('change', '.taxonomyDropdown', function(){
 	// var selectedText = $('#Dropdown1:selected').text();
 	var taxonomyDropdown = $(this).val();
 	console.log("taxonomyDropdown - taxonomyDropdown: " + taxonomyDropdown);
-	$(this).parent().next().val(taxonomyDropdown);
-	$(this).parent().next().focus();
+	var tabBodyObj = $(this).closest('.tabBodyDropdownContainer'); 
+	$('.tabInput', tabBodyObj).val(taxonomyDropdown);
+	$('.tabInput', tabBodyObj).focus();
 });
 
+
+function insertStudentSelectedThemes(dropdownMarkup, JSS, index){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	// var indexNo = JS.studentSelectedThemes[index];
+	// var studentSelectedTheme = jsonData.keyProblems[JS.selcNo].themes[indexNo];
+	var studentSelectedTheme = JSS[index];
+	console.log('insertStudentSelectedThemes - studentSelectedTheme: ' + studentSelectedTheme);
+	return dropdownMarkup.replace(/\?\?\?/g, studentSelectedTheme.toLowerCase());
+}
 
 
 function insertKeyProblem(dropdownMarkup){
@@ -1788,11 +1889,12 @@ function step_4_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_4" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	
 	HTML += 			'<div class="masterStudentBtnWrap">';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: SORTER UNDERSPØRGSMÅL</span>';
+	// HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: SORTER UNDERSPØRGSMÅL</span>';
+	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
 	HTML += 			'<div id="subjectSentenceSortableContainer" class="btnActions">';
@@ -1838,7 +1940,7 @@ function step_4_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
+	// setJsAudioEventLitsner2();
 
 	makeSortable();
 

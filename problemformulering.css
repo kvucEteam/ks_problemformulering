@@ -272,8 +272,9 @@ textarea {
     font-size: 14px;
     line-height: 1.7;
     margin-bottom: 10px;
-    overflow: auto;
-    padding: 20px 10% 20px 20px;
+    /*overflow: auto;*/
+    overflow: unset;
+    padding: 20px 1% 20px 20px;
 }
 
 
@@ -332,4 +333,35 @@ textarea {
     background-color: #dff8f8;
 }
 
+.masterStudentBtn{
+    margin-right: 0px;
+    margin-bottom: 0px;
+}
 
+.contentEdit{
+    float: right;
+}
+
+.contentDelete{
+    position: relative;
+    z-index: 10000;
+    cursor: crosshair;
+}
+
+.deleteCallOut {
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: 1px;
+    top: -43px;
+    z-index: 100;
+}
+
+.glyphicon-arrow-down {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 30px;
+    top: -19px;
+    z-index: 99;
+}
