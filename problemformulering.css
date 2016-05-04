@@ -343,6 +343,7 @@ textarea {
 }
 
 .contentDelete{
+    float: right;
     position: relative;
     z-index: 10000;
     cursor: crosshair;

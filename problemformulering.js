@@ -1380,6 +1380,7 @@ function tabInput(thisObj){  // taxonomytabHeadings
 
 	console.log('focusout - jquery: ' + '#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index+1))+') .tabInput');
 	var text = $('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').val();
+	// var text = $('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').html();
 	text = htmlEntities(text);
 
 	if (text.length > 0){
@@ -1391,7 +1392,7 @@ function tabInput(thisObj){  // taxonomytabHeadings
 		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].push(text);	// <-------- NEW !
 		console.log('focusout - taxonomyObjArray: ' + JSON.stringify(JS.taxonomyObjArray));
 
-		$('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div class="taxonomy sortable_text_container">'+text+'</div>');
+		$('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div class="taxonomy sortable_text_container">'+text+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
 	}
 }
 
@@ -1450,8 +1451,12 @@ $( document ).on('click', ".taxonomy", function(event){
 	$(this).removeClass('taxonomy');
 	$(this).addClass('taxonomyEdit');
 	console.log('taxonomy - text: _'+text+'_');
+
 	$(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', text, 'Skriv eller klik væk for at slette...'));
-	$('.input-group', this).append('<span onclick="test()" class="contentDelete glyphicon glyphicon-trash"></span>');
+	// $(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', '<span class="taxonomyTextEditContainer">'+text+'</span>', 'Skriv eller klik væk for at slette...'));
+	// $(this).html('<input type="text" class="taxonomyTextEdit form-control" value="'+text+'" placeholder="Skriv eller klik væk for at slette..." aria-describedby="sizing-addon2">');
+
+	$('.input-group', this).append('<span class="contentDelete glyphicon glyphicon-trash"></span>');
 	window.contentDelete = false;
 
 	// $('.taxonomyTextEdit', this).focus();  // This jus sets the focus. To set the focus at the end, see the following:
@@ -1479,19 +1484,14 @@ $( document ).on('click', ".taxonomy", function(event){
 });
 
 
-function test(){
-	console.log('TAXONOMYTEST -x- test');
-}
-
-
 $( document ).on('click', ".contentDelete", function(event){
 	console.log('TAXONOMYTEST -x- contentDelete.click');
-	var HTML = '';
-	HTML += '<div class="label label-primary deleteCallOut">';
-	HTML += '<h5>Slet?</h5>';
-	HTML += '</div>';
-	HTML += '<span class="glyphicon glyphicon-arrow-down"></span>';
-	$(this).after(HTML);
+	// var HTML = '';
+	// HTML += '<div class="label label-primary deleteCallOut">';
+	// HTML += '<h5>Slet?</h5>';
+	// HTML += '</div>';
+	// HTML += '<span class="glyphicon glyphicon-arrow-down"></span>';
+	// $(this).after(HTML);
 });
 
 $( document ).on('mouseover', ".contentDelete", function(event){
@@ -1503,20 +1503,49 @@ $( document ).on('mousedown', ".contentDelete", function(event){  // <----- EVEN
 	console.log('TAXONOMYTEST -x- contentDelete.mousedown');
 	// $('.taxonomyEdit').unbind('focusout');
 
+	// $(this).closest('.taxonomyEdit').css('background-color','blue'); // append('<span class="contentEdit glyphicon glyphicon-trash"></span>');
+
 	contentDelete = true;
+
 	var HTML = '';
 	HTML += '<div class="label label-primary deleteCallOut">';
 	HTML += '<h5>Slet?</h5>';
 	HTML += '</div>';
 	HTML += '<span class="glyphicon glyphicon-arrow-down"></span>';
 	$(this).after(HTML);
+
 });
 
 
-$( document ).on('click', "body:not(.contentDelete)", function(event){
-	console.log('TAXONOMYTEST -x- contentDelete:not().click - class: ' + $(this).attr('class'));
-	// $( ".taxonomyEdit" ).trigger( "focusout" ); 
-})
+// $( document ).on('click', "body:not(.contentDelete .taxonomyEdit)", function(event){
+$( document ).on('click', "body", function(event){
+	
+	console.log('TAXONOMYTEST -x- event.target.nodeName: ' + event.target.nodeName + ', event.target.className: ' + event.target.className); 
+
+	var clickClass = event.target.className;
+
+	if ((clickClass.indexOf('contentEdit') === -1) && (clickClass.indexOf('contentDelete') === -1) && (clickClass.indexOf('taxonomyEdit') === -1) && (clickClass.indexOf('taxonomyTextEdit') === -1)){
+		// var thisObj = $(this);
+		if ($('.taxonomyEdit').length > 0){  // It has to be in edit mode...
+			var thisObj = $('.taxonomyEdit');
+			contentDeleteController(thisObj);
+		}
+	}
+
+	if ((clickClass.indexOf('taxonomyTextEdit') !== -1)){
+		$('.contentDelete').remove();
+		$('.deleteCallOut').remove();
+		$('.glyphicon-arrow-down').remove();
+		$('.input-group', this).append('<span class="contentDelete glyphicon glyphicon-trash"></span>');
+	}
+});
+
+$( document ).on('click', ".deleteCallOut", function(event){
+
+	// taxonomyEdit($('.taxonomyTextEdit').val(), $(this).closest('.taxonomyEdit'));  // <----- "sortable_text_container" instead of "taxonomyEdit"
+
+	$(this).closest('.sortable_text_container').remove();
+});
 
 
 $( document ).on('click', ".contentDelete", function(event){
@@ -1531,11 +1560,16 @@ $( document ).on('click', ".sortable_text_container", function(event){
 
 
 $( document ).on('focusout', ".taxonomyEdit", function(event){
-// $( document ).on('focusout', ".taxonomyTextEdit", function(event){
-// $( document ).on('focusout', ".sortable_text_container", function(event){
-// $( document ).on('click', ".taxonomyEdit:not()", function(event){
 
 	console.log('TAXONOMYTEST -x- taxonomyEdit.focusout');
+
+	var thisObj = $(this);
+	contentDeleteController(thisObj);
+
+});
+
+
+function contentDeleteController(thisObj){
 
 	if (!contentDelete){
 
@@ -1550,37 +1584,37 @@ $( document ).on('focusout', ".taxonomyEdit", function(event){
 
 		var text = $('.taxonomyTextEdit').val();  
 		console.log('taxonomyEdit - focusout - text: _'+text+'_');
-		$('.input-group', this).remove();
+		$('.input-group', thisObj).remove();
 		// $(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
 		// $(this).css('background-color','blue');
 		
 		if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
 			console.log('focusout - A1');
-			taxonomyEdit(text, $(this));
+			// taxonomyEdit(text, $(thisObj));   // <--- 2/5-2016 
 		}
 
 		if (text.length > 0) {
 			console.log('focusout - A2 - TAXONOMYTEST');
-			$(this).closest('.sortable_text_container').addClass('taxonomy');
-			$(this).text(text);
-			$(this).removeClass('taxonomyEdit');
+			$(thisObj).closest('.sortable_text_container').addClass('taxonomy');
+			$(thisObj).text(text);
+			$(thisObj).removeClass('taxonomyEdit');
 			// taxonomyEdit(text, $(this));
 		} else {
-			$(this).remove();
+			$(thisObj).remove();
 			console.log('focusout - A3 - TAXONOMYTEST');
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
 				console.log('focusout - A4 - TAXONOMYTEST');
 				colorSubQuestions();
 			}
 		}
-
-		$(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
-
-		// taxonomyTimeing = true;
+	
+		console.log('TAXONOMYTEST -x- TRASH FALSE');
+		$(thisObj).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
 	}
 
 	contentDelete = false;
-});
+
+}
 
 
 // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
@@ -1588,12 +1622,15 @@ $( document ).on('focusout', ".taxonomyEdit", function(event){
 $( document ).on('keypress', ".taxonomyEdit", function(event){
 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
 		event.preventDefault(); // ...prevents the normal action of the return-key.
+
 		var text = $('.taxonomyTextEdit').val();  
+		// var text = $('.taxonomyTextEditContainer').val();  
+
 		console.log('taxonomyEdit - return - text: _'+text+'_');
 		$('.input-group', this).remove();
 		
 		if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
-			taxonomyEdit(text, $(this));
+			// taxonomyEdit(text, $(this));     // <--- 2/5-2016 
 		}
 
 		if (text.length > 0) {
@@ -1642,8 +1679,32 @@ function taxonomyEdit(text, thisObj){
 		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].splice(len - 1 - index, 1);
 	}
 	console.log('taxonomyEdit - taxonomyObjArray 3: ' + JSON.stringify(JS.taxonomyObjArray));
-	
 }
+
+
+function taxonomyEdit_2(){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
+
+	// JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
+
+	$( ".tabBody" ).each(function( index1, element1 ) {   // describe / analyse / assess...
+		
+		$( ".tabBodyDropdownContainer", element1 ).each(function( index2, element2 ) {  //  each of the themes...
+			var elemArr = [];
+			$( ".sortable_text_container", element2 ).each(function( index3, element3 ) {  // each of the subquestions...
+				elemArr.push($(element3).text());
+			});
+
+			var objKeys = Object.keys(JS.taxonomyObjArray[index2]);
+			console.log('taxonomyEdit_2 - index2 : ' + index2 + ', objKeys: '+JSON.stringify(objKeys)+', index1+1: ' + String(index1+1) + ', elemArr: ' + JSON.stringify(elemArr));
+			JS.taxonomyObjArray[index2][objKeys[index1+1]] = elemArr;
+		});
+	});	
+
+	console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
+}
+
 
 
 $(document).on('change', '.taxonomyDropdown', function(){
@@ -1827,6 +1888,8 @@ $( document ).on('click', "#step_3_goBack", function(event){
 
 $( document ).on('click', "#step_3_goOn", function(event){
 
+	taxonomyEdit_2();
+
 	var TextTheme = htmlEntities($('#textInputTheme').val());
 
 	// TextTheme = 'TEST'; // <--------------------------------   VIGTIGT: FIND UD AF HVILKET MINIMUMSKRAV FAGREDAKTØRENE HAR TIL DETTE SKRIDT!!!
@@ -1912,7 +1975,7 @@ function step_4_template(){
 					var arrLen = JS.taxonomyObjArray[n][key].length-1;
 					// HTML += '<div id="Sort_'+count+'" data-address="{n:'+n+',key:'+key+',t:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
 					// HTML += '<div style="background-color:'+((count <= barHeight)? colorObj.g3 : colorObj.f1)+'" id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
-					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'</div>';
+					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';
 					// HTML += (count == barHeight)? '<div id="barHeight">----------------------------------</div>' : '';
 					// JS.SortableOrderArray.push(JS.taxonomyObjArray[n][key][arrLen-t]);  															// <------ OLD! 
 					TSortableOrderArray.push(((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] ));	// <------ NEW!
@@ -2110,7 +2173,7 @@ function step_5_template(){
 	HTML += 			'</textarea>';
 
 						for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
-							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'</div>';	
+							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
 							TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
 						}
 						JS.subQuestionArray = TsubQuestionArray;
