@@ -87,19 +87,15 @@ textarea {
 
 
 
+/**************************************************************************************************    
+        Sætter grålig farve på placeholder tekst og sort tekst på bruger-indsat-tekst
+**************************************************************************************************/
 
-
-/***********************************************************************    
-        Fjerner den graalige farve fra input-felter 
-***********************************************************************/
 .input-group input{
     color: inherit;  
 }
 
-.form-control::-moz-placeholder{
-    color: inherit;  
-}
-/**********************************************************************/ 
+/*************************************************************************************************/ 
 
 
 .sortable_text_container .input-group {
@@ -366,3 +362,14 @@ textarea {
     top: -19px;
     z-index: 99;
 }
+
+#addSubject{
+    margin-left: 10px;
+    margin-bottom: 1px;
+}
+
+#step_2 .input-group{
+    margin-left: 0px; margin-right: 10px;
+}
+
+

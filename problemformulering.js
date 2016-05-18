@@ -29,26 +29,11 @@
 // TAKSONMISKE FORMULERINGER:
 // http://historiskmetode.weebly.com/-problemformulering-og-problemstillinger.html
 
+// Beslutningsmøde i Aarhus d. 9.5.16:
+// https://docs.google.com/document/d/1umqyQFODnYpJHPo2nmdQT-e62h6mqtxiGo_g8GuIt40/edit#
 
-
-// var jsonData = "<h1>OK</h1>";
-
-
-// function ReturnAjaxData(Type, Url, Async, DataType) {
-//     $.ajax({
-//         type: Type,
-//         url: Url,
-//         async: Async,
-//         dataType: DataType,
-//         success: function(Data) {
-//             console.log("ReturnAjaxData: " + JSON.stringify(Data));
-//             jsonData = JSON.parse(JSON.stringify(Data));
-//             // JsonExternalData = JSON.parse(JSON.stringify(Data));
-//         }
-//     }).fail(function() {
-//         alert("Ajax failed to fetch data - the requested quizdata might not exist...");
-//     });
-// }
+// Kode implementeringer d. 11.5.16:
+// https://docs.google.com/document/d/1W-TFLVnbCYT1IS3nWkmjl60IqjPU6C4G2VM6yL4yxFI/edit#
 
 
 function isUseragentSafari(){
@@ -907,7 +892,8 @@ function step_2_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet &quot;' + keyProblem + '&quot;. '+ jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e2 label label-default">' + keyProblem + '</span>. '+ jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';  // OLD 17-05-2016
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e2 label label-default">' + keyProblem + '</span>. '+ '<span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';	// NEW 17-05-2016
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div class="masterStudentBtnWrap">';
@@ -930,15 +916,16 @@ function step_2_template(){
 					HTML += 	'<span class="keyThemes btn btn-'+((elementInArray(JS.studentSelectedThemes, n))?'primary':'info')+'" >'+JT[n]+'</span>';
 				}
 
-	HTML += 				'<div class="stepInput">';
-	HTML += 					'<span class="helperText helperTextInput">Tilføj evt. et ekstra emne:</span>';
-									// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
-	// HTML += 						returnInputBoxes4(JS.studentThemes.length, 'keyThemesByStudent', JS.studentThemes, 'skriv tema her...');
-	HTML += 						returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'skriv dit eget emne...');
-	HTML += 				'</div>';
-
 	HTML += 			'</div>';
-	
+
+	HTML += 			'<div class="stepInput">';
+	// HTML += 				'<span class="helperText helperTextInput">Tilføj evt. et ekstra emne:</span>';
+								// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
+	// HTML += 					returnInputBoxes4(JS.studentThemes.length, 'keyThemesByStudent', JS.studentThemes, 'skriv tema her...');
+	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'Skriv evt. dit eget emne');
+	HTML +=						'<span id="addSubject" class="vuc-primary btn btn-primary">Tilføj emne</span>';
+	HTML += 			'</div>';
+
 	HTML += 		'</div>';
 	HTML += 	'</div>';
 	HTML += '</div>';
@@ -947,7 +934,22 @@ function step_2_template(){
 	
 	$('#DataInput').html(HTML);
 
-	// setJsAudioEventLitsner2();
+
+	// replaceWildcard2()
+
+	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
+
+}
+
+
+function replaceWildcardsInCmdObj(cmdObj){
+	for (var n in cmdObj) {
+		console.log("replaceWildcardsInCmdObj - cmdObj["+n+"][Object.keys("+cmdObj[n]+")]: " + cmdObj[n][Object.keys(cmdObj[n])]);
+		if (typeof(cmdObj[n][Object.keys(cmdObj[n])]) == "string") { // Only look for wildcards in strings, since replaceWildcard2 return a string...
+			cmdObj[n][Object.keys(cmdObj[n])] = replaceWildcard2(cmdObj[n][Object.keys(cmdObj[n])], jsonData.numOfChoosenWords);
+		}
+	}
 }
 
 
@@ -1023,6 +1025,7 @@ $( document ).on('click', ".masterStudentBtn", function(event){
 });
 
 
+
 $( document ).on('click', ".masterExampleClass .CloseClass", function(event){
 	clearInterval(pollTimer);
 	var masterExArr = jsonData.steps[jsonData.currentStep].masterEx;
@@ -1048,15 +1051,52 @@ function returnTimetampedWord(masterExArr, playerTime, timeTolerance){
 
 function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJDE FOR SELV INTASTEDE TEMAGER/EMNER OGSÅ!!!!
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	
-	if (JS.studentSelectedThemes.length + JS.studentThemes.length > jsonData.numOfChoosenWords){
-		var indexNo = JS.studentSelectedThemes[0];
-		console.log("keyThemeMaxAmountController - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
-		console.log("keyThemeMaxAmountController - indexNo: " + indexNo);
+
+	// if (typeof(studentThemesIndexes) == "undefined"){
+	// 	window.studentThemesIndexes = [];
+	// }
+
+	// if ($('.keyThemes').length > JS.originalNumOfThemes + JS.studentThemes.length){
+	// 	studentThemesIndexes.push(parseInt(JS.originalNumOfThemes-1) + JS.studentThemes.length);			// <---- NEW
+	// }
+	// console.log("keyThemeMaxAmountController - studentThemesIndexes: " + JSON.stringify(studentThemesIndexes));	
+
+	var keyThemeIndexes = [];
+	$( ".keyThemes" ).each(function( index, element ) { 
+		if ($(element).hasClass('btn-primary')) {
+			keyThemeIndexes.push($(element).index());
+		}
+	});
+	console.log("keyThemeMaxAmountController - keyThemeIndexes 1: " + JSON.stringify(keyThemeIndexes));	
+	keyThemeIndexes = keyThemeIndexes.reverse();
+	console.log("keyThemeMaxAmountController - keyThemeIndexes 2: " + JSON.stringify(keyThemeIndexes));
+
+	if (keyThemeIndexes.length > jsonData.numOfChoosenWords){
+		var indexNo = keyThemeIndexes[0];  
 		$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
-		JS.studentSelectedThemes.splice(0, 1);
-		console.log("keyThemeMaxAmountController - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+		keyThemeIndexes.splice(keyThemeIndexes.length-1, 1);
 	}
+
+	
+	// if (JS.studentSelectedThemes.length + JS.studentThemes.length > jsonData.numOfChoosenWords){
+	// 	console.log("keyThemeMaxAmountController - A1");
+
+	// 	// var indexNo = JS.studentSelectedThemes[0];  									// <---- OLD
+
+	// 	var totstudentThemes = studentThemesIndexes.concat(JS.studentSelectedThemes);   // <---- NEW
+	// 	var indexNo = totstudentThemes[0];  	
+	// 									    // <---- NEW
+	// 	console.log("keyThemeMaxAmountController - totstudentThemes: " + JSON.stringify(totstudentThemes));
+	// 	console.log("keyThemeMaxAmountController - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+		
+	// 	console.log("keyThemeMaxAmountController - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
+	// 	console.log("keyThemeMaxAmountController - indexNo: " + indexNo);
+	// 	$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
+	// 	JS.studentSelectedThemes.splice(0, 1);
+	// 	console.log("keyThemeMaxAmountController - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+	// } else {
+	// 	console.log("keyThemeMaxAmountController - A2");
+	// }
 }
 
 
@@ -1068,6 +1108,9 @@ $( document ).on('click', ".keyThemes", function(event){
 		$('.keyThemes').eq(index).addClass('btn-info').removeClass('btn-primary');
 		console.log("keyThemes - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
 	} else {
+		if (JS.studentSelectedThemes.length >= jsonData.numOfChoosenWords){
+			JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
+		}
 		JS.studentSelectedThemes.push(index);
 		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
 		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
@@ -1091,27 +1134,89 @@ $( document ).on('keypress', ".keyThemesByStudent", function(event){
 });
 
 
-$( document ).on('focusout', ".keyThemesByStudent", function(event){ 
-	// Save the choosen words 1:
+
+$( document ).on('focusout', ".keyThemesByStudent", function(event){   // COMMENTED OUT DUE TO 
+	// // Save the choosen words 1:
+	// var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	// var studentThemes = [];
+	// $( ".keyThemesByStudent" ).each(function( index, element ) {
+	// 	console.log("keyThemesByStudent - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
+	// 	if ($(element).val().trim().length > 0) { // Only inset entered values > 0
+	// 		if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val().trim())){
+	// 			studentThemes.push(htmlEntities($(element).val().trim()));
+	// 			// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
+	// 			// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
+	// 		}
+	// 	}
+	// });
+	// console.log("keyThemesByStudent - studentThemes: " + JSON.stringify(studentThemes));
+	// console.log("focusout - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
+	// JS.studentThemes = studentThemes;
+	// console.log("focusout - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	
+	// keyThemeMaxAmountController();
+});
+
+
+$( document ).on('click', "#addSubject", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var studentThemes = [];
-	$( ".keyThemesByStudent" ).each(function( index, element ) {
-		console.log("keyThemesByStudent - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
-		if ($(element).val().length > 0) { // Only inset entered values > 0
-			if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val())){
-				studentThemes.push(htmlEntities($(element).val()));
+	$( ".keyThemesByStudent" ).each(function( index, element ) {  // <--- This "each-staement" is a leftover from when the need was to collect btns from many input-fields...
+		console.log("addSubject - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
+		if ($(element).val().trim().length > 0) { // Only inset entered values > 0
+			if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val().trim())){
+				studentThemes.push(htmlEntities($(element).val().trim()));
 				// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
 				// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
+
+				// if (JS.studentSelectedThemes.length >= jsonData.numOfChoosenWords){   // NEW!!!!
+				// 	JS.studentSelectedThemes.splice(0, 1);
+				// }
+				// console.log('addSubject  - (keyThemes) - studentSelectedThemes: ' + JS.studentSelectedThemes);
+
+				$('#subjectWordContainer').append('<span class="keyThemes btn btn-primary">'+htmlEntities($(element).val().trim())+'</span>');
+				$('#subjectWordContainer .keyThemes').last().hide().fadeIn('slow');
+				$(element).val('');
+				console.log('addSubject - TEST');
+
+				// window.studentThemesIndexes = [];	
+				// for (var i = 0; i < JS.studentThemes.length; i++) {
+				// 	studentThemesIndexes.push(parseInt(JS.originalNumOfThemes) + i);			// <---- NEW
+				// }
 			}
 		}
 	});
-	console.log("keyThemesByStudent - studentThemes: " + JSON.stringify(studentThemes));
-	console.log("focusout - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
+	console.log("addSubject - studentThemes: " + JSON.stringify(studentThemes));
+	console.log("addSubject - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
 	JS.studentThemes = studentThemes;
-	console.log("focusout - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+	console.log("addSubject - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	
 	keyThemeMaxAmountController();
 });
+
+
+
+// NOT IN USE: 
+// "if ($(element).val().trim().length > 0)" in the above event-litsener fixes the issue of students adding pure blank spaces.
+function hasCharsDiffrentFromBlankSpaces(word){
+	var len = word.length;
+	var numOfBlankSpaces = (word.match(/\s/g) || []).length;
+	console.log('hasCharsDiffrentFromBlankSpaces word: "' + word + '", len: ' + len + ', numOfBlankSpaces: ' + numOfBlankSpaces );
+	if ((len > 0) && (len !== numOfBlankSpaces)) {
+		return true;
+	} else {
+		return false;
+	}
+}
+console.log('hasCharsDiffrentFromBlankSpaces 1: ' + hasCharsDiffrentFromBlankSpaces('a') );
+console.log('hasCharsDiffrentFromBlankSpaces 2: ' + hasCharsDiffrentFromBlankSpaces('a ') );
+console.log('hasCharsDiffrentFromBlankSpaces 3: ' + hasCharsDiffrentFromBlankSpaces('a  ') );
+console.log('hasCharsDiffrentFromBlankSpaces 4: ' + hasCharsDiffrentFromBlankSpaces(' ') );
+console.log('hasCharsDiffrentFromBlankSpaces 5: ' + hasCharsDiffrentFromBlankSpaces('  ') );
+console.log('hasCharsDiffrentFromBlankSpaces 6: ' + hasCharsDiffrentFromBlankSpaces(' a') );
+console.log('hasCharsDiffrentFromBlankSpaces 7: ' + hasCharsDiffrentFromBlankSpaces('  a') );
+
+
 
 
 // $( document ).on('focusin', ".keyThemesByStudent", function(event){  // <------  VIGTIGT 31/3-2016: Hvis der ønskes auto-genererede FLERE input-boxes, så fjern udkommenteringen af dette ".on('focusin')".
@@ -1185,6 +1290,7 @@ $( document ).on('click', "#step_2_goOn", function(event){
 
 
 function step_3_template(){
+	// $( ".problemFormulationBtn" ).trigger( "click" );
 	console.log("step_3_template - jsonData 1: " + JSON.stringify(jsonData)); 
 	console.log("step_3_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	console.log("step_3_template - keyProblems 1: " + JSON.stringify(jsonData.keyProblems)); 
@@ -1289,19 +1395,22 @@ function step_3_template(){
 											if (n == 0){
 												for (var p in JS.taxonomyObjArray[k].describe) {
 													var arrLen = JS.taxonomyObjArray[k].describe.length-1;
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
 												}
 											}
 											if (n == 1){
 												for (var p in JS.taxonomyObjArray[k].analyse) {
 													var arrLen = JS.taxonomyObjArray[k].analyse.length-1;
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].analyse[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
 												}
 											}
 											if (n == 2){
 												for (var p in JS.taxonomyObjArray[k].assess) {
 													var arrLen = JS.taxonomyObjArray[k].assess.length-1;
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].assess[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : '';
+													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
+													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
 												}
 											}
 				HTML += 				'</div>';
@@ -1763,7 +1872,8 @@ function saveProblemFormulation(){
 // Functionality for the UserMsgBox containing the "Problem Formulation".
 $( document ).on('click', ".problemFormulationBtn", function(event){
 	var HTML = '';
-	HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet "???"</h4>');
+	// HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet "???"</h4>');
+	HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet <span class="e2 label label-default"> ??? </span></h4>');
 	// HTML += '<div class="DropdownWrap">';  // <-----   NOT NEEDED AS OF 06-04-2016
 	// HTML += 	returnDropdownMarkup(jsonData.sentenceStarters_problemFormulation);
 	// HTML += '</div>';
@@ -1975,7 +2085,8 @@ function step_4_template(){
 					var arrLen = JS.taxonomyObjArray[n][key].length-1;
 					// HTML += '<div id="Sort_'+count+'" data-address="{n:'+n+',key:'+key+',t:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
 					// HTML += '<div style="background-color:'+((count <= barHeight)? colorObj.g3 : colorObj.f1)+'" id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
-					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';
+					// HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';  // <---- OLD 4/5-2016
+					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';            // <---- NEW 4/5-2016
 					// HTML += (count == barHeight)? '<div id="barHeight">----------------------------------</div>' : '';
 					// JS.SortableOrderArray.push(JS.taxonomyObjArray[n][key][arrLen-t]);  															// <------ OLD! 
 					TSortableOrderArray.push(((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] ));	// <------ NEW!
@@ -3291,6 +3402,9 @@ $(document).ready(function() {
 
 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016   // <------------  Commented out d. 08-04-2016
 
+	window.DTO = Object.create(dynamicTextClass); 
+
+
 
 	//====================================================================================
 
@@ -3561,5 +3675,179 @@ errorLogClass = {
 
 
 
+// HOW TO USE dynamicTextClass
+// ===========================
+//
+// SETUP:
+// ------
+// Setup of dynamicTextClass requires two HTML empty span-tags (or div-tags with display: inline) - the first needs the id "dynamicText", 
+// and the next the class "cursor":
+//
+//      <span id="dynamicText"></span><span class="cursor">|</span>
+// 
+// DEMO:
+// -----
+// To run a default demo do the following:
+//
+//      var DTO = Object.create(dynamicTextClass); 
+//      DTO.init('#dynamicText');
+//
+// This will run dynamicTextClass in demo mode, showing the textediting features insert(), add(), cut(), del() and wait().
+//
+// RUNNING OWN COMMANDS:
+// ---------------------
+// To run you own text commands do the following:
+//
+//      var DTO = Object.create(dynamicTextClass); 
+//      DTO.init('#dynamicText', you_own_cmdObj);
+//
+// - where you_own_cmdObj is an array of commands seen in the cmdObj demo below.
+//
+var dynamicTextClass = {
+    delimiter: {begin: "#", end: "#"},  // Not in use yet...
+    typeSpeed: 100,     // Time in milliseconds between each keystroke.
+    timeout: 0,         // Default time in milliseconds between each command.
+    cursorBlink: 300,   // Cursor blink speed.
+    cmdObj: [ // This is a small default demo of how to use the dynamicTextClass program.
+        {"insert": "Dette er en lille tekst editeringstest. Vi venter 3 sekunder mellem handlinger - dette gøres med kommandoen wait()..."},
+        {"wait": 3000},
+        {"insert": " Man kan indsætte lidt tekst via kommandoen insert()."},
+        {"wait": 3000},
+        {"add": " Man kan imitere at der skrives tekst via add(), og man kan slette tekst via del(): bla bla bla bla..."},
+        {"wait": 3000},
+        {"del": "4w1c"}, // XXw = delete "XX words", YYc = delete "YY chars", XXwYYc = delete "XX words" AND "YY chars".
+        {"wait": 3000},
+        {"add": ". Man kan også cutte tekst væk via cut(): bla bla bla bla..."},
+        {"wait": 3000},
+        {"cut": "4w1c"},  // XXw = cut "XX words", YYc = cut "YY chars", XXwYYc = cut "XX words" AND "YY chars".
+        {"wait": 1000},
+        {"add": " - således."},
+        {"wait": 3000},
+        {"add": " Dette er enden på denne lille præsentation :-)"}
+    ],
+    interval : null,
+    init : function(){ // ARGUMENTS: 1: tagetSelector, 2: cmdObj (which is optional. If cmdObj is omitted, the default cmdObj above is loaded).
+        this.tagetSelector = arguments[0];
+        if (typeof(arguments[1]) !== 'undefined') this.cmdObj = arguments[1];
 
+        this.findCmd();
+        this.startCursorBlink();
+    },
+    add : function(text){   // This method types the text given as argument. The typing speed is given by "typeSpeed".
+        console.log('add - CALLED');
+        var count = 0;
+        var chars = text.split('');
+        console.log('add - chars: ' + chars);
+        xthis = this;
+        var timeId = setInterval(function(){ 
+            if (count < chars.length){
+                console.log('add - count: ' + count + ', chars['+count+']: ' + chars[count]);
+                $(xthis.tagetSelector).append(String(chars[count])); 
+                ++count;
+            } else {
+                console.log('add - clearInterval');
+                clearInterval(timeId);         // Clear the "write timer" timeId
+                xthis.findCmd();
+            }
+        }, xthis.typeSpeed);
+    },
+    insert: function(text){ // This method inserts the text given as argument.
+        console.log('insert - CALLED');
+        $(this.tagetSelector).append(text);
+        this.findCmd(); 
+    },
+    del : function(cmd){   // This method deletes some text based on the command "cmd": XXw = delete "XX words", YYc = delete "YY chars", XXwYYc = delete "XX words" AND "YY chars". The speed by which text is deleted is given by "typeSpeed".
+        console.log('del - CALLED');
+        var numOfWords = (cmd.indexOf('w') !== -1)? parseInt(cmd.match(/(\d+)w/)[0].replace('w', '')) : 0;
+        var numOfChars = (cmd.indexOf('c') !== -1)? parseInt(cmd.match(/(\d+)c/)[0].replace('c', '')) : 0;
+        console.log('del - numOfWords: ' + typeof(numOfWords) + ', numOfChars: ' + typeof(numOfChars));
+        var text = $(this.tagetSelector).text();
+        var spaceArr = this.helper_spaceIndexes(text).reverse();
+        var textlen = text.length;
+        var numOfWordChars = (numOfWords == 0)? textlen : spaceArr[numOfWords-1];
+        console.log('del - text: ' + text + ', textlen: ' + textlen + ', spaceArr: ' + spaceArr + ', numOfWordChars: ' + numOfWordChars);
+        xthis = this;
+        var count = 0;
+        var timeId = setInterval(function(){ 
+            if (count < textlen-numOfWordChars+numOfChars){
+                console.log('del - count: ' + count);
+                text = text.slice(0,-1);
+                $(xthis.tagetSelector).html(text); 
+                ++count;
+            } else {
+                console.log('del - clearInterval');
+                clearInterval(timeId);         // First, clear the "write timer" timeId
+                xthis.findCmd();
+            }
+        }, xthis.typeSpeed);
+    },
+    cut: function(cmd){ // This method cuts away some text based on the command "cmd": XXw = delete "XX words", YYc = delete "YY chars", XXwYYc = delete "XX words" AND "YY chars".
+        console.log('cut - CALLED');
+        var numOfWords = (cmd.indexOf('w') !== -1)? parseInt(cmd.match(/(\d+)w/)[0].replace('w', '')) : 0;
+        var numOfChars = (cmd.indexOf('c') !== -1)? parseInt(cmd.match(/(\d+)c/)[0].replace('c', '')) : 0;
+        console.log('cut - numOfWords: ' + typeof(numOfWords) + ', numOfChars: ' + typeof(numOfChars));
+        var text = $(this.tagetSelector).text();
+        var spaceArr = this.helper_spaceIndexes(text).reverse();
+        var textlen = text.length;
+        var numOfWordChars = (numOfWords == 0)? textlen : spaceArr[numOfWords-1];
+        console.log('cut - text: ' + text + ', textlen: ' + textlen + ', spaceArr: ' + spaceArr + ', numOfWordChars: ' + numOfWordChars);
+        text = text.slice(0,-(textlen-numOfWordChars+numOfChars));
+        $(this.tagetSelector).html(text);
+        this.findCmd(); 
+    },
+    mark : function(text){
+        console.log('mark - CALLED');
+    }, 
+    wait : function(timeout){  // This method waits a number of milliseconds given by the argument "timeout", before the next command/method is executed.
+        console.log('wait - CALLED');
+        xthis = this;
+        setTimeout(function(){ 
+            xthis.findCmd(); 
+        }, timeout);
+    }, 
+    findCmd : function(milliSec){  // This method finds the next command in cmdObj and executes it. 
+        console.log('findCmd - CALLED');
+        xthis = this;
+        this.cmdCount = (typeof(this.cmdCount) === 'undefined')? 0 : this.cmdCount + 1;
+        if (this.cmdCount < this.cmdObj.length){
+            console.log('findCmd - cmdCount: ' + this.cmdCount);
+            var cmd = Object.keys(this.cmdObj[this.cmdCount]);
+            var arg = this.cmdObj[this.cmdCount][cmd];
+            arg = (typeof(arg) === "string")? '"'+arg+'"' : arg;
+            console.log('findCmd - eval('+cmd+'('+arg+')'+')');
+            eval('this.'+cmd+'('+arg+')');
+        }
+        console.log('findCmd - cmdCount 2: ' + this.cmdCount);
+    },
+    startCursorBlink: function() { // This method initiates cursor blink with a "blink speed" given by cursorBlink.
+        var xthis = this;
+        this.cursorTimer = setInterval(function(){
+            $('.cursor').fadeOut(xthis.cursorBlink).fadeIn(xthis.cursorBlink);
+        }, xthis.cursorBlink*2);
+    }, 
+    removeCursor: function(fadeTime){ // This method removes the cursor from the application - the speed by which it is removed is determined by "fadeTime".
+    	clearInterval(this.cursorTimer);
+    	$('.cursor').fadeOut(fadeTime);
+    },
+    helper_spaceIndexes: function(str){  // This method is a helper method - it returns an array containing the positions of blank space chars in a string "str" given as argument.
+        spaceArr = [];
+        var pos = 0; var count = -1;
+        while ((str.indexOf(' ', pos) !== -1)) {
+            pos = str.indexOf(' ', pos);
+            if (pos !== -1) spaceArr.push(pos);
+            pos += 1;
+        }
+        return spaceArr;
+    }
+}
+
+
+
+$(document).ready(function() {
+
+    var DTO = Object.create(dynamicTextClass); 
+    // DTO.init('#dynamicText', jsonData);  	// Own data...
+    // DTO.init('#dynamicText');  			 	// Demo data...
+
+});
 
