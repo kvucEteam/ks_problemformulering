@@ -130,8 +130,7 @@
 			"header" : "STEP 2 - Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
             "instruction" : [
-                {"wait": 2000},
-                {"add": "Hvilke ??? underemner kunne du tænke dig at arbejde med?"},
+                {"insert": "Hvilke ??? underemner kunne du tænke dig at arbejde med?"},
                 {"wait": 2000},
                 {"add": " Kan du se en sammenhæng mellem nogle af emnerne?"},
                 {"wait": 2000},

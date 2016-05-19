@@ -775,6 +775,10 @@ function step_1_template(){
 }
 
 
+// $( document ).on('click', ".problemFormulationBtn", function(event){
+// 	$( ".problemFormulationBtn" ).trigger( "click" );
+// });
+
 
 $( document ).on('focusin', ".TextInputField", function(event){
 	$('.keyProblems').removeClass('btn-primary').addClass('btn-info');
@@ -789,6 +793,7 @@ $( document ).on('focusout', ".TextInputField", function(event){
 
 
 $( document ).on('click', ".keyProblems", function(event){
+
 	window.studentTextPressed = true;
     console.log("Subjects - PRESSED");
     $('.keyProblems').removeClass('btn-primary').addClass('btn-info');
@@ -826,6 +831,8 @@ $( document ).on('click', ".keyProblems", function(event){
 	console.log("Subjects - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum);  // <------- ########  SE HER !!! ##############
 
     console.log("Subjects - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+    // $( ".problemFormulationBtn" ).trigger( "click" );
 });
 
 
@@ -866,11 +873,15 @@ function step_2_template(){
     }
 
     if (!JS.hasOwnProperty("studentThemes")){
-    	JS.studentThemes = [];			// Contains student supplied themes written in the input field
+    	JS.studentThemes = [];			// Contains student supplied themes (text) written in the input field
     } 
 
     if (!JS.hasOwnProperty("studentSelectedThemes")){
     	JS.studentSelectedThemes = [];  // Contains index numbers of the pressed ".keyThemes" buttons
+    }
+
+    if (!JS.hasOwnProperty("totStudentThemes_selectOrder")){
+    	JS.totStudentThemes_selectOrder = [];  // Contains student supplied themes (text) written in the input field
     }
 
     console.log("step_2_template - JS: " + JSON.stringify(JS)); 
@@ -893,7 +904,7 @@ function step_2_template(){
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e2 label label-default">' + keyProblem + '</span>. '+ jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';  // OLD 17-05-2016
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e2 label label-default">' + keyProblem + '</span>. '+ '<span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';	// NEW 17-05-2016
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e1 label label-default">' + keyProblem + '</span> '+ '<span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';	// NEW 17-05-2016
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div class="masterStudentBtnWrap">';
@@ -1065,6 +1076,7 @@ function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJ
 	$( ".keyThemes" ).each(function( index, element ) { 
 		if ($(element).hasClass('btn-primary')) {
 			keyThemeIndexes.push($(element).index());
+			// JS.totStudentThemes.push($(element).index());
 		}
 	});
 	console.log("keyThemeMaxAmountController - keyThemeIndexes 1: " + JSON.stringify(keyThemeIndexes));	
@@ -1075,6 +1087,12 @@ function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJ
 		var indexNo = keyThemeIndexes[0];  
 		$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
 		keyThemeIndexes.splice(keyThemeIndexes.length-1, 1);
+
+		// for (var n in JS.studentThemes){
+		// 	if (elementInArray(JS.totStudentThemes_selectOrder, JS.studentThemes[n])){
+
+		// 	}
+		// }
 	}
 
 	
@@ -1112,6 +1130,7 @@ $( document ).on('click', ".keyThemes", function(event){
 			JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
 		}
 		JS.studentSelectedThemes.push(index);
+		JS.totStudentThemes_selectOrder.push(index);
 		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
 		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
 	}
@@ -1161,11 +1180,15 @@ $( document ).on('focusout', ".keyThemesByStudent", function(event){   // COMMEN
 $( document ).on('click', "#addSubject", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var studentThemes = [];
+	if (typeof(studentThemes)==='undefined'){
+		window.studentThemes = [];
+	}
+	
 	$( ".keyThemesByStudent" ).each(function( index, element ) {  // <--- This "each-staement" is a leftover from when the need was to collect btns from many input-fields...
 		console.log("addSubject - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
 		if ($(element).val().trim().length > 0) { // Only inset entered values > 0
 			if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val().trim())){
-				studentThemes.push(htmlEntities($(element).val().trim()));
+
 				// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
 				// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
 
@@ -1179,6 +1202,10 @@ $( document ).on('click', "#addSubject", function(event){
 				$(element).val('');
 				console.log('addSubject - TEST');
 
+				// studentThemes.push(htmlEntities($(element).val().trim()));
+				JS.studentThemes.push(htmlEntities($(element).val().trim()));
+				JS.totStudentThemes_selectOrder.push(getDomIndex(".keyThemes" , htmlEntities($(element).val().trim())));
+
 				// window.studentThemesIndexes = [];	
 				// for (var i = 0; i < JS.studentThemes.length; i++) {
 				// 	studentThemesIndexes.push(parseInt(JS.originalNumOfThemes) + i);			// <---- NEW
@@ -1188,15 +1215,25 @@ $( document ).on('click', "#addSubject", function(event){
 	});
 	console.log("addSubject - studentThemes: " + JSON.stringify(studentThemes));
 	console.log("addSubject - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
-	JS.studentThemes = studentThemes;
+	// JS.studentThemes = studentThemes;
 	console.log("addSubject - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	
 	keyThemeMaxAmountController();
 });
 
 
+function getDomIndex(targetSelector, value){
+	$( targetSelector ).each(function( index, element ) { // ".keyThemes"
+		console.log("getDomIndex - index: " + index + ", element.val(): _" + $(element).val() + "_, value: _" + value + "_");
+		if ($(element).val() == value) {
+			return index;
+		}
+	});
+}
 
-// NOT IN USE: 
+
+
+// NOT IN USE:  
 // "if ($(element).val().trim().length > 0)" in the above event-litsener fixes the issue of students adding pure blank spaces.
 function hasCharsDiffrentFromBlankSpaces(word){
 	var len = word.length;
@@ -1345,7 +1382,8 @@ function step_3_template(){
 			// var JSS = JS.studentThemes.concat(studentSelectedThemes);
 			// console.log("step_3_template - JSS: " + JSON.stringify(JSS)); 
 
-			window.taxonomytabHeadings = ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål'];
+			// window.taxonomytabHeadings = ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål'];
+			window.taxonomytabHeadings = ['Redegørende spørgsmål', 'Undersøgende/analyserende spørgsmål', 'Diskuterende/vurderende spørgsmål'];
 			HTML += '<ul class="nav nav-tabs">';  // <-----  NATIVE BOOTSTRAP TABS
 			// for (var n in JSS){
 			for (var n in taxonomytabHeadings){
@@ -1873,7 +1911,7 @@ function saveProblemFormulation(){
 $( document ).on('click', ".problemFormulationBtn", function(event){
 	var HTML = '';
 	// HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet "???"</h4>');
-	HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet <span class="e2 label label-default"> ??? </span></h4>');
+	HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet <span class="e1 label label-default"> ??? </span></h4>');
 	// HTML += '<div class="DropdownWrap">';  // <-----   NOT NEEDED AS OF 06-04-2016
 	// HTML += 	returnDropdownMarkup(jsonData.sentenceStarters_problemFormulation);
 	// HTML += '</div>';
@@ -1900,6 +1938,25 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 		HTML += '</div>';
 		$('#textInputProblemFormulation').before(HTML);
 		$('#textInputProblemFormulation').prop('placeholder','Gå igang med at formulere dit hovedspørgsmål her - i løse træk.');
+	}
+
+	// MAKE ANIAMTIONS
+	if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
+		window.cssObj = $(this).css(['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font-size']);
+		console.log('problemFormulationBtn - cssObj: ' + JSON.stringify(cssObj));
+		window.cssObjZero = {}; window.cssObjXL = {};
+		var objKeys = Object.keys(cssObj);
+		for (var n in objKeys){
+			var size1 = parseInt(cssObj[objKeys[n]].replace('px', ''));
+			var size2 = Math.ceil(parseInt(cssObj[objKeys[n]].replace('px', ''))*1.1);
+			console.log('problemFormulationBtn - objKeys['+n+']: ' + objKeys[n] + ', size1: ' + size1 + ', size2: ' + size2);
+			cssObjZero[objKeys[n]] = '0px';
+			cssObjXL[objKeys[n]] = size2+'px';
+		}
+		// $(".problemFormulationBtn").animate(cssObjZero, 300).animate(cssObjXL, 300).animate(cssObj, 300);
+		$(this).animate(cssObjZero, 300, function() {
+			$(this).hide();
+		});
 	}
 	
 
@@ -1970,6 +2027,9 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 	console.log('problemFormulation_goOn - problemFormulationMem 2: ' + JS.problemFormulationMem);
 	$(".MsgBox_bgr").fadeOut(200, function() {
 	    $(this).remove();
+	    if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
+	    	$(".problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
+	    }
 	});
 });
 
@@ -1977,6 +2037,9 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 $( document ).on('click', ".CloseClass", function(event){
 	$(".MsgBox_bgr").fadeOut(200, function() {
 	    $(this).remove();
+	    if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
+	    	$(".problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
+	    }
 	});
 });
 
