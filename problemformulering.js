@@ -23,7 +23,7 @@
 // step 3 - Brainstorm over dine emneord. Dette gøres ved at klikke på et emneord (feks "Nationalisme") og vælg ud fra 3 dropdowns (redegørende/diskuterende/vurderende) at brskrive/brainstorme sætninger på emneordene. Der skal være en knap der viswer "mesterlære eksempler".
 
 
-// LYD-PROGRESSION DER TRIGGER TEKST - til brug i "Mester-lærer eksempler":
+// LYD-PROGRESSION DER TRIGGER TEKST - til brug i "Mester-lærer eksempler": 
 // http://www.w3schools.com/tags/tryit.asp?filename=tryhtml5_av_prop_currenttime
 
 // TAKSONMISKE FORMULERINGER:
@@ -61,12 +61,24 @@ function getSelectedIndexNum(){
     return null;
 }
 
+
+function hasSelected(){
+	for (var n in jsonData.studentSelectedProblems){
+    	if (jsonData.studentSelectedProblems[n].selected){
+    		return true;
+    	}
+    }
+    return false;
+}
+
+
 function getSelected(varType){
 	for (var n in jsonData.studentSelectedProblems){
     	if (jsonData.studentSelectedProblems[n].selected){
     		if (jsonData.studentSelectedProblems[n].hasOwnProperty(varType)){
     			return jsonData.studentSelectedProblems[n][varType];
-    		} else {
+    		} 
+    		else {
     			alert('getSelected - ERROR: varType: "' + varType + '" does not exist!');
     		}
     	}
@@ -675,6 +687,20 @@ function detectBootstrapBreakpoints(){
 }
 
 
+$( document ).on( "dynamicTextEvent", function (event, data) {
+   	console.log("dynamicTextEvent: " + data.testdata); 
+   
+	var stepNo = jsonData.currentStep;
+	console.log("dynamicTextEvent - stepNo: " + stepNo);
+
+	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+	window.DTO = Object.create(dynamicTextClass); 
+	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+	
+});
+
+
 
 //////////////////////
 //  	STEP 0 		//
@@ -732,6 +758,21 @@ function step_1_template(){
 	console.log("step_1_template - jsonData 1: " + JSON.stringify(jsonData)); 
 	jsonData.currentStep = 1;
 	osc.save('jsonData', jsonData);
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+
+	// // Set backgroundcolors by inline CSS-style:
+	// window.colorObj = {g1: null, g2: null, g3: null, f1: null};
+	// $('body').append('<span class="g1 hide"> XXXX </span><span class="g2 hide"> XXXX </span><span class="g3 hide"> XXXX </span><span class="f1 hide"> YYYY </span>');
+	// colorObj.g1 = $('.g1').css('background-color');
+	// colorObj.g2 = $('.g2').css('background-color');
+	// colorObj.g3 = $('.g3').css('background-color');
+	// colorObj.f1 = $('.f1').css('background-color');
+	// console.log("step_3_template - colorObj: " + JSON.stringify(colorObj));
+
+
 	var stepNo = 1;
 	$('#processContainer').html(returnProgressBar(stepNo));
 	// $('#audioPlayerContainer').html(returnAudioMarkup(stepNo));     // <---------- Audio 
@@ -747,6 +788,12 @@ function step_1_template(){
     }
     console.log('step_1_template - jsonData.originalNumOfProblems: ' + jsonData.originalNumOfProblems);
 
+    if (!jsonData.hasOwnProperty("studentSelectedProblems")){
+    	jsonData.studentSelectedProblems = [];
+    	// jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
+    }
+    console.log('step_1_template - studentSelectedProblems 1: ' + JSON.stringify(jsonData.studentSelectedProblems));
+
 	console.log("step_1_template - selcNo: " + selcNo); 
 	var HTML = '';
 	HTML += '<div id="step_1" class="step">';
@@ -754,10 +801,17 @@ function step_1_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_1" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>'; 
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction( '<span id="dynamicText"></span><span class="cursor">|</span>' +  insertMasterExample()):'')+'</div><div class="clear"></div>';  // + '<span id="dynamicText"></span><span class="cursor">|</span>' + 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
+	
+	HTML += 			'<div class="problemFormulationBtnWrap">';
+	HTML += 				'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
+	HTML += 			'</div>';
+
 	HTML += 			'<div id="TextContainer" class="btnActions">';
 			var JT = jsonData.keyProblems;
+			var selcNo = (hasSelected())? jsonData.studentSelectedProblems[getSelectedIndexNum()].selcNo : selcNo ;
 			for (var n in JT){
 				HTML += 	'<span class="keyProblems problemFormulationBtn btn btn-'+((parseInt(selcNo) == n)?'primary':'info')+'" >'+JT[n].name+'</span>';
 			}
@@ -772,6 +826,14 @@ function step_1_template(){
 
 	$('#audioPlayerContainer').html('');
 	// setJsAudioEventLitsner2(); 
+
+	setColorObj();
+	setCssObj($('.problemFormulationBtnWrap > .problemFormulationBtn')[0]);
+
+	$('.problemFormulationBtnWrap .problemFormulationBtn:first-child').hide();
+
+	window.DTO = Object.create(dynamicTextClass); 
+	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
 }
 
 
@@ -798,6 +860,8 @@ $( document ).on('click', ".keyProblems", function(event){
     console.log("Subjects - PRESSED");
     $('.keyProblems').removeClass('btn-primary').addClass('btn-info');
     $(this).addClass('btn-primary');
+
+    hideCssObj($('.problemFormulationBtnWrap > .problemFormulationBtn')[0]);
 
     $('.keyProblems').val('');
 
@@ -840,13 +904,11 @@ $( document ).on('click', "#step_1_goOn", function(event){
 
 	if (!jsonData.hasOwnProperty("selectedIndexNum")) {
 		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge et nøgleproblem før du kan gå videre!");
+	} else {
+		if (jsonData.hasOwnProperty("studentSelectedProblems")) {
+		 	step_2_template();
+		} 
 	}
-
-	
-	if (jsonData.hasOwnProperty("studentSelectedProblems")) {
-	 	step_2_template();
-	 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-	} 
 
 });
 
@@ -859,9 +921,14 @@ $( document ).on('click', "#step_1_goOn", function(event){
 
 function step_2_template(){
 	console.log("step_2_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_2_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
+	console.log("step_2_template - selectedIndexNum: " + jsonData.selectedIndexNum + ", studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	jsonData.currentStep = 2;
 	osc.save('jsonData', jsonData);
+
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var selcNo = JS.selcNo;
@@ -878,6 +945,10 @@ function step_2_template(){
 
     if (!JS.hasOwnProperty("studentSelectedThemes")){
     	JS.studentSelectedThemes = [];  // Contains index numbers of the pressed ".keyThemes" buttons
+    }
+
+    if (!JS.hasOwnProperty("totStudentThemes")){
+    	JS.totStudentThemes = [];  // Contains student supplied themes (text) written in the input field
     }
 
     if (!JS.hasOwnProperty("totStudentThemes_selectOrder")){
@@ -904,11 +975,11 @@ function step_2_template(){
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_2" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e2 label label-default">' + keyProblem + '</span>. '+ jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';  // OLD 17-05-2016
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte nøgleproblemet <span class="e1 label label-default">' + keyProblem + '</span> '+ '<span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';	// NEW 17-05-2016
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Du valgte <span class="e1 label label-default">' + keyProblem + '</span> som dit overordnede emne. '+ '<span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';	// NEW 17-05-2016
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div class="masterStudentBtnWrap">';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
+	HTML += 			'<div class="problemFormulationBtnWrap">';
+	HTML += 				'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
 	HTML += 			'</div>';
 
 	HTML += 			'<div id="subjectWordContainer" class="btnActions">';
@@ -949,9 +1020,44 @@ function step_2_template(){
 	// replaceWildcard2()
 
 	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+	
+	window.DTO = Object.create(dynamicTextClass); 
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
 
 }
+
+
+function hasBeenExecOnce(checkArr, checkVal) {
+	console.log('hasBeenExecOnce - CALLED');
+	if (eval('typeof('+checkArr+') === "undefined"')){
+		console.log('hasBeenExecOnce - TRUE: ' + checkArr);
+		eval('window.'+checkArr+' = []');
+	} else {
+		console.log('hasBeenExecOnce - FALSE: ' + checkArr);
+	}
+	var varArr = eval(checkArr);
+	if (!elementInArray(varArr, checkVal)){
+		varArr.push(checkVal);
+		return false;
+	} else {
+		return true;
+	}
+	// eval(checkArr+'.push('+checkVal+')');
+}
+
+console.log('hasBeenExecOnce - RESULT 1: ' + hasBeenExecOnce("testArr_1", 0));  // <----- Should be false!
+console.log('hasBeenExecOnce - RESULT 2: ' + hasBeenExecOnce("testArr_1", 0));  // <----- Should be true!
+
+console.log('hasBeenExecOnce - RESULT 1: ' + hasBeenExecOnce("testArr_2", 0));  // <----- Should be false!
+console.log('hasBeenExecOnce - RESULT 2: ' + hasBeenExecOnce("testArr_2", 0));  // <----- Should be true!
+
+
+// $( document ).on('click', "#stepNavContainer span", function(event){
+// 	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){
+// 		DTO.stopExec(0);
+// 		DTO = null;
+// 	}
+// });
 
 
 function replaceWildcardsInCmdObj(cmdObj){
@@ -961,10 +1067,12 @@ function replaceWildcardsInCmdObj(cmdObj){
 			cmdObj[n][Object.keys(cmdObj[n])] = replaceWildcard2(cmdObj[n][Object.keys(cmdObj[n])], jsonData.numOfChoosenWords);
 		}
 	}
+	console.log("replaceWildcardsInCmdObj - cmdObj["+n+"][Object.keys("+cmdObj+")]: " + JSON.stringify(cmdObj) );
 }
 
 
 function insertMasterExample(){
+	// window.insertMasterExampleActive = true;
 	var HTML = '';
 	HTML += '<div class="masterStudentBtnWrap">';
 	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
@@ -974,147 +1082,55 @@ function insertMasterExample(){
 
 
 $( document ).on('click', ".masterStudentBtn", function(event){
+
+	window.insertMasterExampleActive = true;
+	console.log("masterStudentBtn - insertMasterExampleActive: " + insertMasterExampleActive);
+
 	var HTML = '';
 	HTML += '<h3>Eksempel</h3>';
-	// HTML += '<div class="DropdownWrap">';
-	// HTML += 	returnDropdownMarkup(jsonData.sentenceStarters_problemFormulation);
-	// HTML += '</div>';
-	// HTML += '<textarea id="textInputProblemFormulation" class="textInput" val="">';
-	// 		// if ((JST.hasOwnProperty('textQuotes')) && (typeof(JST.textQuotes[quoteCount]) !== 'undefined')) {
-	// 		// 	HTML += JST.textQuotes[quoteCount];
-	// 		// }			
-	// HTML += '</textarea>';
 
 	var stepNo = jsonData.currentStep;  // <----------  ORIGINAL LIVE!
-	stepNo = 2; 						// <----------  ONLY FOR TEST
+	var masterExVideo = jsonData.steps[stepNo].masterExVideo;
+	console.log("masterStudentBtn - stepNo: " + stepNo + ", masterExVideo: " + masterExVideo);
 
-
-	HTML += '<div id="masterStudentTextContainer">&nbsp;</div>';
-
-	HTML += '<audio id="audioPlayer_masterExample" controls="controls" autoplay="autoplay">';
-    HTML += 	'<source src="'+jsonData.steps[stepNo].audioFiles+'" type=""/>';
-    HTML += 	'Your browser does not support the audio element';
-    HTML += '</audio>';
+	HTML += '<div class="embed-responsive embed-responsive-16by9 col-xs-12 col-md-12 vid_container">';
+    HTML += 	'<iframe class="embed-responsive-item" src="'+masterExVideo+'?rel=0" allowfullscreen="1"></iframe>';
+    HTML += '</div>';
 
 	UserMsgBox("body", HTML);
-
-	var audio = jsonData.steps[stepNo].audioFiles;
-		var audioSrc;
-		for (var n in audio){
-			if (audio[n].type == 'mpeg'){  // We only use mpeg files - this makes the array of objects in jsonData.steps[stepNo].audioFiles obsolete.
-				audioSrc = audio[n].name;
-				break;
-			}
-		} 
-	var audioObj = document.getElementById("audioPlayer_masterExample");
-	audioObj.src = audioSrc;  // When the "src" is set on the audioObj, the player starts to play automatically. This has to be prevented in "pause" has been pressed in a previous step.
-
 
 	$('#UserMsgBox').unbind('click');
 	$('.MsgBox_bgr').unbind('click');
 
 	$('#UserMsgBox').addClass('masterExampleClass');
 
-	var masterEx = jsonData.steps[stepNo].masterEx;
-
-	var pollTimerCount = 0;
-	window.pollTimer = setInterval(function() {
-		var timetampedWord = returnTimetampedWord(masterEx, audioObj.currentTime, 0.5);
-		if (timetampedWord !== false){
-			$( "#masterStudentTextContainer" ).animate({"margin-bottom":"1em"}, 
-				500, function() {
-			    // Animation complete.
-			    $( "#masterStudentTextContainer" ).css("margin-bottom","inherit");
-			    $('#masterStudentTextContainer').append('<div class="masterExWord" style="display:none;">'+timetampedWord+'</div>');
-				$('.masterExWord').fadeIn( 600 );
-			});
-		}
-		console.log("masterStudentBtn pollTimerCount: " + pollTimerCount + ", audioObj.currentTime: " + audioObj.currentTime+ ", typeof(currentTime): " + typeof(audioObj.currentTime));
-		++pollTimerCount;
-	}, 500);
-
 });
-
 
 
 $( document ).on('click', ".masterExampleClass .CloseClass", function(event){
-	clearInterval(pollTimer);
-	var masterExArr = jsonData.steps[jsonData.currentStep].masterEx;
-	for (var n in masterExArr){ // Remove the "done" property, so objects in the masterEx array are reset for "playing" once again...
-		delete masterExArr[n].done;
-	}
+	$(".MsgBox_bgr").fadeOut(200, function() {
+	    $(this).remove();
+	});
 });
 
-
-function returnTimetampedWord(masterExArr, playerTime, timeTolerance){
-	console.log("returnTimetampedWord X");
-	for (var n in masterExArr){
-		console.log("returnTimetampedWord playerTime: "+playerTime+", masterExArr["+n+"]: " + JSON.stringify(masterExArr[n]));
-		if ((!masterExArr[n].hasOwnProperty('done')) && (playerTime - timeTolerance <= masterExArr[n].time) && (masterExArr[n].time < playerTime + timeTolerance)) {
-			console.log("returnTimetampedWord - OK");
-			masterExArr[n].done = true;  // This ensures that each masterExArr[n].word is only returned once.
-			return masterExArr[n].word;
-		}
-	}
-	return false;
-}
 
 
 function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJDE FOR SELV INTASTEDE TEMAGER/EMNER OGSÅ!!!!
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
-	// if (typeof(studentThemesIndexes) == "undefined"){
-	// 	window.studentThemesIndexes = [];
-	// }
+	console.log("addSubject - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 
-	// if ($('.keyThemes').length > JS.originalNumOfThemes + JS.studentThemes.length){
-	// 	studentThemesIndexes.push(parseInt(JS.originalNumOfThemes-1) + JS.studentThemes.length);			// <---- NEW
-	// }
-	// console.log("keyThemeMaxAmountController - studentThemesIndexes: " + JSON.stringify(studentThemesIndexes));	
-
-	var keyThemeIndexes = [];
-	$( ".keyThemes" ).each(function( index, element ) { 
-		if ($(element).hasClass('btn-primary')) {
-			keyThemeIndexes.push($(element).index());
-			// JS.totStudentThemes.push($(element).index());
-		}
-	});
-	console.log("keyThemeMaxAmountController - keyThemeIndexes 1: " + JSON.stringify(keyThemeIndexes));	
-	keyThemeIndexes = keyThemeIndexes.reverse();
-	console.log("keyThemeMaxAmountController - keyThemeIndexes 2: " + JSON.stringify(keyThemeIndexes));
-
-	if (keyThemeIndexes.length > jsonData.numOfChoosenWords){
-		var indexNo = keyThemeIndexes[0];  
+	console.log('keyThemeMaxAmountController - JS.totStudentThemes_selectOrder 0: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
+	if (JS.totStudentThemes_selectOrder.length > jsonData.numOfChoosenWords){
+		var indexNo = JS.totStudentThemes_selectOrder[0];  
+		console.log('keyThemeMaxAmountController - indexNo: ' + indexNo + ', JS.totStudentThemes 1: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
 		$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
-		keyThemeIndexes.splice(keyThemeIndexes.length-1, 1);
-
-		// for (var n in JS.studentThemes){
-		// 	if (elementInArray(JS.totStudentThemes_selectOrder, JS.studentThemes[n])){
-
-		// 	}
-		// }
+		JS.totStudentThemes.splice(0, 1);
+		JS.totStudentThemes_selectOrder.splice(0, 1);
+		console.log('keyThemeMaxAmountController - indexNo: ' + indexNo + ', JS.totStudentThemes 2: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
 	}
 
-	
-	// if (JS.studentSelectedThemes.length + JS.studentThemes.length > jsonData.numOfChoosenWords){
-	// 	console.log("keyThemeMaxAmountController - A1");
-
-	// 	// var indexNo = JS.studentSelectedThemes[0];  									// <---- OLD
-
-	// 	var totstudentThemes = studentThemesIndexes.concat(JS.studentSelectedThemes);   // <---- NEW
-	// 	var indexNo = totstudentThemes[0];  	
-	// 									    // <---- NEW
-	// 	console.log("keyThemeMaxAmountController - totstudentThemes: " + JSON.stringify(totstudentThemes));
-	// 	console.log("keyThemeMaxAmountController - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-		
-	// 	console.log("keyThemeMaxAmountController - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
-	// 	console.log("keyThemeMaxAmountController - indexNo: " + indexNo);
-	// 	$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
-	// 	JS.studentSelectedThemes.splice(0, 1);
-	// 	console.log("keyThemeMaxAmountController - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
-	// } else {
-	// 	console.log("keyThemeMaxAmountController - A2");
-	// }
+	console.log("addSubject - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
 }
 
 
@@ -1122,17 +1138,19 @@ $( document ).on('click', ".keyThemes", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var index = $(this).index();
 	if ($(this).hasClass('btn-primary')){
+		console.log("keyThemes - studentSelectedThemes 0: " + JSON.stringify(JS.studentSelectedThemes));
 		JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
 		$('.keyThemes').eq(index).addClass('btn-info').removeClass('btn-primary');
-		console.log("keyThemes - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
 	} else {
 		if (JS.studentSelectedThemes.length >= jsonData.numOfChoosenWords){
 			JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
 		}
 		JS.studentSelectedThemes.push(index);
+		JS.totStudentThemes.push($(this).text().trim());
 		JS.totStudentThemes_selectOrder.push(index);
 		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
-		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
+		console.log("keyThemes - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
 	}
 	keyThemeMaxAmountController();
 });
@@ -1141,87 +1159,59 @@ $( document ).on('click', ".keyThemes", function(event){
 // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
 // first empty input-field is found and focus is given to that field.
 $( document ).on('keypress', ".keyThemesByStudent", function(event){
+	console.log("keypress - keyThemesByStudent - PRESSED");
 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
 		event.preventDefault(); // ...prevents the normal action of the return-key.
-		$( ".keyThemesByStudent" ).each(function( index, element ) { // for each input-field...
-			if ($(element).val().length == 0) { // If the input-field is empty...
-				$(element).focus(); // ...give the input-field focus...
-				return false;  // ... and break the each-loop.
-			}
-		});
+		console.log("keypress - keyThemesByStudent - PRESSED RETURN");
+		if ($(this).val().length > 0){
+			$( "#addSubject" ).trigger( "click" );
+		} else { // If the input-field is empty...
+			console.log("keypress - keyThemesByStudent - PRESSED");
+			$(this).focus(); // ...give the input-field focus...
+		} 
 	}
-});
-
-
-
-$( document ).on('focusout', ".keyThemesByStudent", function(event){   // COMMENTED OUT DUE TO 
-	// // Save the choosen words 1:
-	// var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	// var studentThemes = [];
-	// $( ".keyThemesByStudent" ).each(function( index, element ) {
-	// 	console.log("keyThemesByStudent - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
-	// 	if ($(element).val().trim().length > 0) { // Only inset entered values > 0
-	// 		if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val().trim())){
-	// 			studentThemes.push(htmlEntities($(element).val().trim()));
-	// 			// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
-	// 			// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
-	// 		}
-	// 	}
-	// });
-	// console.log("keyThemesByStudent - studentThemes: " + JSON.stringify(studentThemes));
-	// console.log("focusout - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
-	// JS.studentThemes = studentThemes;
-	// console.log("focusout - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	
-	// keyThemeMaxAmountController();
 });
 
 
 $( document ).on('click', "#addSubject", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	var studentThemes = [];
-	if (typeof(studentThemes)==='undefined'){
-		window.studentThemes = [];
+	var totStudentThemesMem = [];
+	if (typeof(totStudentThemesMem)==='undefined'){
+		window.totStudentThemesMem = [];
 	}
 	
-	$( ".keyThemesByStudent" ).each(function( index, element ) {  // <--- This "each-staement" is a leftover from when the need was to collect btns from many input-fields...
-		console.log("addSubject - index: " + index + ', $(element).val(): _' + $(element).val() + '_');
-		if ($(element).val().trim().length > 0) { // Only inset entered values > 0
-			if (!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $(element).val().trim())){
+	console.log('addSubject -  $(this).val(): _' + $('.keyThemesByStudent').val() + '_');
+	if ($('.keyThemesByStudent').val().trim().length > 0) { // Only inset entered values > 0
+		console.log('addSubject - TEST 1');
+		if ((!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $('.keyThemesByStudent').val().trim())) && 
+			(!elementInArray(totStudentThemesMem, $('.keyThemesByStudent').val().trim()))){
+			console.log('addSubject - TEST 2');
 
-				// jsonData.keyProblems[JS.selcNo].themes.push(htmlEntities($(element).val()));
-				// JS.studentSelectedThemes.push(jsonData.keyProblems[JS.selcNo].themes.length-1);
+			$('#subjectWordContainer').append('<span class="keyThemes btn btn-primary">'+htmlEntities($('.keyThemesByStudent').val().trim())+'</span>');
+			$('#subjectWordContainer .keyThemes').last().hide().fadeIn('slow');
 
-				// if (JS.studentSelectedThemes.length >= jsonData.numOfChoosenWords){   // NEW!!!!
-				// 	JS.studentSelectedThemes.splice(0, 1);
-				// }
-				// console.log('addSubject  - (keyThemes) - studentSelectedThemes: ' + JS.studentSelectedThemes);
-
-				$('#subjectWordContainer').append('<span class="keyThemes btn btn-primary">'+htmlEntities($(element).val().trim())+'</span>');
-				$('#subjectWordContainer .keyThemes').last().hide().fadeIn('slow');
-				$(element).val('');
-				console.log('addSubject - TEST');
-
-				// studentThemes.push(htmlEntities($(element).val().trim()));
-				JS.studentThemes.push(htmlEntities($(element).val().trim()));
-				JS.totStudentThemes_selectOrder.push(getDomIndex(".keyThemes" , htmlEntities($(element).val().trim())));
-
-				// window.studentThemesIndexes = [];	
-				// for (var i = 0; i < JS.studentThemes.length; i++) {
-				// 	studentThemesIndexes.push(parseInt(JS.originalNumOfThemes) + i);			// <---- NEW
-				// }
+			if (htmlEntities($('.keyThemesByStudent').val().trim()).length > 0){
+				JS.studentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
+				JS.totStudentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
 			}
+			$('.keyThemesByStudent').val('');
+
+			// removeEmptyElements(JS.studentThemes); // When addSubject is triggered by keyThemesByStudent, then empty elements are added
+
+			JS.totStudentThemes_selectOrder.push( $('.keyThemes').length-1);
+
 		}
-	});
-	console.log("addSubject - studentThemes: " + JSON.stringify(studentThemes));
+	}
+	
+	console.log("addSubject - totStudentThemesMem: " + JSON.stringify(totStudentThemesMem));
 	console.log("addSubject - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
-	// JS.studentThemes = studentThemes;
 	console.log("addSubject - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	
 	keyThemeMaxAmountController();
 });
 
 
+// This function is nor needed:
 function getDomIndex(targetSelector, value){
 	$( targetSelector ).each(function( index, element ) { // ".keyThemes"
 		console.log("getDomIndex - index: " + index + ", element.val(): _" + $(element).val() + "_, value: _" + value + "_");
@@ -1254,33 +1244,6 @@ console.log('hasCharsDiffrentFromBlankSpaces 6: ' + hasCharsDiffrentFromBlankSpa
 console.log('hasCharsDiffrentFromBlankSpaces 7: ' + hasCharsDiffrentFromBlankSpaces('  a') );
 
 
-
-
-// $( document ).on('focusin', ".keyThemesByStudent", function(event){  // <------  VIGTIGT 31/3-2016: Hvis der ønskes auto-genererede FLERE input-boxes, så fjern udkommenteringen af dette ".on('focusin')".
-
-// 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-
-// 	// var subjectTextsArray = [];
-// 	var filledKeyThemesByStudent = 0;
-// 	var numOfKeyThemesByStudent = $('.keyThemesByStudent').length;
-// 	$( ".keyThemesByStudent" ).each(function( index, element ) {
-// 		if ($(element).val().length > 0){
-// 			++filledKeyThemesByStudent;
-// 		}
-// 	});
-// 	console.log("focusin - numOfKeyThemesByStudent: " + numOfKeyThemesByStudent + ", filledKeyThemesByStudent: " + filledKeyThemesByStudent); 
-// 	console.log("focusin - jsonData.studentSelectedProblems[jsonData.selectedIndexNum] 1: " + JSON.stringify(jsonData.studentSelectedProblems[jsonData.selectedIndexNum])); 
-
-// 	var Ajust = 0;
-// 	if ($(this).val().length > 0) {  // This prevents an extra field of being added if an old field with text inside is being edited.
-// 		Ajust = 1;
-// 	}
-
-// 	if (filledKeyThemesByStudent == numOfKeyThemesByStudent-1+Ajust){
-// 		// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
-// 		$('.stepInput').append(returnInputBoxes4(1, 'keyThemesByStudent', '', 'skriv tema her...'));
-// 	}
-// });
 
 
 $( document ).on('click', "#step_2_goBack", function(event){
@@ -1327,12 +1290,35 @@ $( document ).on('click', "#step_2_goOn", function(event){
 
 
 function step_3_template(){
-	// $( ".problemFormulationBtn" ).trigger( "click" );
+	jsonData.previousStep = jsonData.currentStep;
+	jsonData.currentStep = 3;
+
+	window.hasBeenExecBool = false;
+	if ((jsonData.previousStep == 2) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
+		hasBeenExecBool = true;
+		$( ".problemFormulationBtn" ).trigger( "click" );
+	}
+
 	console.log("step_3_template - jsonData 1: " + JSON.stringify(jsonData)); 
 	console.log("step_3_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	console.log("step_3_template - keyProblems 1: " + JSON.stringify(jsonData.keyProblems)); 
-	jsonData.currentStep = 3;
+	
 	osc.save('jsonData', jsonData);
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+
+	// // Set backgroundcolors by inline CSS-style:
+	// window.colorObj = {g1: null, g2: null, g3: null, f1: null};
+	// $('body').append('<span class="g1 hide"> XXXX </span><span class="g2 hide"> XXXX </span><span class="g3 hide"> XXXX </span><span class="f1 hide"> YYYY </span>');
+	// colorObj.g1 = $('.g1').css('background-color');
+	// colorObj.g2 = $('.g2').css('background-color');
+	// colorObj.g3 = $('.g3').css('background-color');
+	// colorObj.f1 = $('.f1').css('background-color');
+	// console.log("step_3_template - colorObj: " + JSON.stringify(colorObj));
+	setColorObj();
+
 	var stepNo = 3;
 	$('#processContainer').html(returnProgressBar(stepNo));
 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
@@ -1352,10 +1338,12 @@ function step_3_template(){
 
 	if (!JS.hasOwnProperty('taxonomyObjArray')){
 		JS.taxonomyObjArray = [];
+		JS.taxonomyObj = {};
 
 		for (var n in JSS) {
 			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
 		}
+		JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};
 	}
 
 	console.log("step_3_template - JS 2: " + JSON.stringify(JS));
@@ -1366,12 +1354,12 @@ function step_3_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_3" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(insertKeyProblem(jsonData.steps[stepNo].instruction) + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Lav dine ??? underemner om til underspørgsmål. Find på så mange spørgsmål som muligt. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="subjectTextThemeContainer" >';
 			
-	HTML += 			'<div class="masterStudentBtnWrap">';
+	HTML += 			'<div class="problemFormulationBtnWrap">';
 	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
@@ -1414,46 +1402,30 @@ function step_3_template(){
 			for (var n in taxonomytabHeadings) { 
 				HTML += 	'<div id="tabBody_'+n+'" class="tabBody">';
 
+
 				HTML += 		'<div class="row">';
-									for (var k in JS.taxonomyObjArray){
-				HTML += 				'<div class="tabBodyDropdownContainer col-md-6 col-xs-12">';
-											// for (var k in JS.taxonomyObjArray){
-				HTML += 						'<div class="DropdownWrap">';
-				HTML += 							(n == 0)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_describing), JSS, k) : '';
-				HTML += 							(n == 1)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_analysing), JSS, k) : '';
-				HTML += 							(n == 2)? insertStudentSelectedThemes(returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_assessing), JSS, k) : '';
-				HTML += 						'</div>';
-											// }
+				HTML += 			'<div class="tabBodyDropdownContainer col-md-12 col-xs-12">';
 
-				HTML += 					'<textarea class="tabInput">';
-												// if ((JS.hasOwnProperty('textQuoteNotes')) && (typeof(JS.textQuoteNotes[quoteNoteCount]) !== 'undefined')) {
-												// 	HTML += JS.textQuoteNotes[quoteNoteCount];
-												// }			
-				HTML += 					'</textarea>';
-											if (n == 0){
-												for (var p in JS.taxonomyObjArray[k].describe) {
-													var arrLen = JS.taxonomyObjArray[k].describe.length-1;
-													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
-												}
-											}
-											if (n == 1){
-												for (var p in JS.taxonomyObjArray[k].analyse) {
-													var arrLen = JS.taxonomyObjArray[k].analyse.length-1;
-													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
-												}
-											}
-											if (n == 2){
-												for (var p in JS.taxonomyObjArray[k].assess) {
-													var arrLen = JS.taxonomyObjArray[k].assess.length-1;
-													// HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[arrLen-p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- OLD 4/5-2016
-													HTML += (arrLen > 0)? '<div class="taxonomy sortable_text_container">'+JS.taxonomyObjArray[k].describe[p]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>' : ''; // <--- NEW 4/5-2016
-												}
-											}
-				HTML += 				'</div>';
+				HTML += 			'<h4>';
+									for (var p in JS.totStudentThemes) { 
+				HTML += 				'<span class="e1 label label-default">'+JS.totStudentThemes[p]+'</span>';
 									}
+				HTML += 			'</h4>';
 
+				HTML += 				'<div class="DropdownWrap">';
+				HTML += 					(n == 0)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_describing) : '';
+				HTML += 					(n == 1)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_analysing) : '';
+				HTML += 					(n == 2)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_assessing) : '';
+				HTML += 				'</div>';
+
+				HTML += 				'<textarea class="tabInput">';
+				HTML += 				'</textarea>';
+		
+				HTML += 					(n == 0)? returnDivs(JS.taxonomyObj.describe, colorObj['g'+parseInt(3-n)]) : '';
+				HTML += 					(n == 1)? returnDivs(JS.taxonomyObj.analyse, colorObj['g'+parseInt(3-n)]) : '';
+				HTML += 					(n == 2)? returnDivs(JS.taxonomyObj.assess, colorObj['g'+parseInt(3-n)]) : '';
+
+				HTML += 			'</div>';
 				HTML += 		'</div>';
 
 				HTML += 	'</div>';
@@ -1475,6 +1447,26 @@ function step_3_template(){
 	$('#tabBody_0').fadeIn( "slow" );
 
 	window.tabHeading_index = 0;
+
+	// replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+	// window.DTO = Object.create(dynamicTextClass); 
+	// DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+
+	if (!hasBeenExecBool) {
+		$( document ).trigger( "dynamicTextEvent", [{testdata: hasBeenExecBool}] );
+	}
+}
+
+
+// <div class="taxonomy sortable_text_container" style="background-color:rgb(223, 248, 248)">www<span class="contentEdit glyphicon glyphicon-pencil"></span></div>
+
+function returnDivs(btnTextArr, style){
+	var HTML = '';
+	for (var n in btnTextArr){
+		HTML += '<div style="background-color:'+style+'" class="taxonomy sortable_text_container">'+btnTextArr[n]+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';
+	}
+	return HTML;
 }
 
 
@@ -1539,7 +1531,11 @@ function tabInput(thisObj){  // taxonomytabHeadings
 		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].push(text);	// <-------- NEW !
 		console.log('focusout - taxonomyObjArray: ' + JSON.stringify(JS.taxonomyObjArray));
 
-		$('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div class="taxonomy sortable_text_container">'+text+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+		JS.taxonomyObj[taxonomyObjKey].push(text);
+		console.log('focusout - taxonomyObj: ' + JSON.stringify(JS.taxonomyObj));
+
+		// $('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div class="taxonomy sortable_text_container">'+text+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+		$('#tabBody_'+tabHeading_index+' .tabBodyDropdownContainer:eq('+String(parseInt(tabBodyDropdown_index))+') .tabInput').after('<div style="background-color:'+colorObj['g'+parseInt(3-tabHeading_index)]+'" class="taxonomy sortable_text_container">'+text+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
 	}
 }
 
@@ -1751,7 +1747,7 @@ function contentDeleteController(thisObj){
 			console.log('focusout - A3 - TAXONOMYTEST');
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
 				console.log('focusout - A4 - TAXONOMYTEST');
-				colorSubQuestions();
+				// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
 			}
 		}
 	
@@ -1789,7 +1785,7 @@ $( document ).on('keypress', ".taxonomyEdit", function(event){
 			$(this).remove();
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
 				console.log('keypress - TAXONOMYTEST');
-				colorSubQuestions();
+				// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
 			}
 		}
 	}
@@ -1853,6 +1849,26 @@ function taxonomyEdit_2(){
 }
 
 
+function taxonomyEdit_3(){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
+
+	var objKeys = Object.keys(JS.taxonomyObj);
+	$( ".tabBody" ).each(function( index1, element1 ) {   // describe / analyse / assess...
+		
+		var elemArr = [];
+		$( ".sortable_text_container", element1 ).each(function( index2, element2 ) {  // each of the subquestions...
+			elemArr.push($(element2).text());
+		});
+
+		JS.taxonomyObj[objKeys[index1]] = elemArr;
+	});	
+
+	console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
+	console.log('taxonomyEdit_2 - taxonomyObj: ' + JSON.stringify(JS.taxonomyObj));
+}
+
+
 
 $(document).on('change', '.taxonomyDropdown', function(){
 	// var selectedText = $('#Dropdown1:selected').text();
@@ -1878,7 +1894,8 @@ function insertKeyProblem(dropdownMarkup){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
 	console.log('insertThemes - keyProblem: ' + keyProblem);
-	return dropdownMarkup.replace(/\?\?\?/g, keyProblem.toLowerCase());
+	// return dropdownMarkup.replace(/\?\?\?/g, keyProblem.toLowerCase());
+	return dropdownMarkup.replace(/\?\?\?/g, keyProblem);
 }
 // console.log('insertThemes: '+insertThemes('Det valgte tema er ???, som er et tama der aktuelt ift...'));
 
@@ -1907,11 +1924,70 @@ function saveProblemFormulation(){
 }
 
 
+
+function setColorObj() {
+	window.colorObj = {g1: null, g2: null, g3: null, f1: null, none: null};
+	$('body').append('<span class="g1 hide"> &nbsp; </span><span class="g2 hide"> &nbsp; </span><span class="g3 hide"> &nbsp; </span><span class="f1 hide"> &nbsp; </span> <span id="noColor" class="sortable_text_container hide"> &nbsp; </span>');
+	colorObj.g1 = $('.g1').css('background-color');
+	colorObj.g2 = $('.g2').css('background-color');
+	colorObj.g3 = $('.g3').css('background-color');
+	colorObj.f1 = $('.f1').css('background-color');
+	colorObj.none = $('#noColor').css('background-color');
+	console.log("setColorObj - colorObj: " + JSON.stringify(colorObj));
+}
+
+
+function setCssObj(thisObj) {
+	window.cssObj = $(thisObj).css(['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font-size']);
+	console.log('problemFormulationBtn - cssObj: ' + JSON.stringify(cssObj));
+	window.cssObjZero = {}; window.cssObjXL = {};
+	var objKeys = Object.keys(cssObj);
+	for (var n in objKeys){
+		var size1 = parseInt(cssObj[objKeys[n]].replace('px', ''));
+		var size2 = Math.ceil(parseInt(cssObj[objKeys[n]].replace('px', ''))*1.1);
+		console.log('problemFormulationBtn - objKeys['+n+']: ' + objKeys[n] + ', size1: ' + size1 + ', size2: ' + size2);
+		cssObjZero[objKeys[n]] = '0px';
+		cssObjXL[objKeys[n]] = size2+'px';
+	}
+}
+
+function hideCssObj(thisObj) {
+	$(thisObj).animate(cssObjZero, 300, function() {
+		$(thisObj).hide();
+	});
+}
+
+function showCssObj() {
+	$(".problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
+}
+
+
 // Functionality for the UserMsgBox containing the "Problem Formulation".
 $( document ).on('click', ".problemFormulationBtn", function(event){
 	var HTML = '';
 	// HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet "???"</h4>');
-	HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet <span class="e1 label label-default"> ??? </span></h4>');
+
+	// HTML += insertKeyProblem('<h4>Du valgte nøgleproblemet <span class="e1 label label-default"> ??? </span></h4>');
+
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
+
+	if (jsonData.currentStep == 1) {
+		HTML += insertKeyProblem('<h4>Du valgte emnet: <span class="e1 label label-default"> ??? </span></h4>');
+	}
+	if (jsonData.currentStep == 2) {
+		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
+		HTML += '<p>Når du vælger underemner får du automatisk hjælp til at afgrænse din problemformulering. Har du rettelser eller tilføjelser til din problemformulering?</p>';
+	}
+	if (jsonData.currentStep == 3) {
+		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
+		HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering efter at have brainstormet over underspørgsmål?</p>';
+	}
+	if (jsonData.currentStep == 4) {
+		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
+		HTML += '<p>Underspørgsmålene hjælper dig med at besvare din problemformulering. Er du nødt til at gøre dit hovedspørgsmål skarpere? Bringer problemformuleringen alle tre fag i spil? Husk at “limen” for din problemformulering er det overordnede emne<span class="e1 label label-default">'+keyProblem+'</span> </p>';
+	}
+
 	// HTML += '<div class="DropdownWrap">';  // <-----   NOT NEEDED AS OF 06-04-2016
 	// HTML += 	returnDropdownMarkup(jsonData.sentenceStarters_problemFormulation);
 	// HTML += '</div>';
@@ -1932,31 +2008,39 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 	console.log('problemFormulationBtn - jsonData: ' + JSON.stringify(jsonData));
 	if (jsonData.currentStep == 1) {
 		console.log('problemFormulationBtn - ADD');
-		HTML = '<p>Gennem hele øvelsen kan du rette i din problemformulering ved at klikke på denne knap:</p>';
-		HTML += '<div style="margin-bottom: 20px;">';
-		HTML += 	'<span class="btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
+		HTML = 'Gennem hele øvelsen kan du rette i din problemformulering ved at klikke på ';
+		HTML += '<div style="margin-bottom: 0px;">';
+		HTML += 	'<span class="btn btn-sm btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
 		HTML += '</div>';
+		HTML += 'Nu skal du i gang med at skrive din første tidlige idé til en problemformulering.';
 		$('#textInputProblemFormulation').before(HTML);
+		$('#textInputProblemFormulation').prop('placeholder','Gå igang med at formulere dit hovedspørgsmål her - i løse træk.');
+	}
+
+	if (jsonData.currentStep == 3) {
 		$('#textInputProblemFormulation').prop('placeholder','Gå igang med at formulere dit hovedspørgsmål her - i løse træk.');
 	}
 
 	// MAKE ANIAMTIONS
 	if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
-		window.cssObj = $(this).css(['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font-size']);
-		console.log('problemFormulationBtn - cssObj: ' + JSON.stringify(cssObj));
-		window.cssObjZero = {}; window.cssObjXL = {};
-		var objKeys = Object.keys(cssObj);
-		for (var n in objKeys){
-			var size1 = parseInt(cssObj[objKeys[n]].replace('px', ''));
-			var size2 = Math.ceil(parseInt(cssObj[objKeys[n]].replace('px', ''))*1.1);
-			console.log('problemFormulationBtn - objKeys['+n+']: ' + objKeys[n] + ', size1: ' + size1 + ', size2: ' + size2);
-			cssObjZero[objKeys[n]] = '0px';
-			cssObjXL[objKeys[n]] = size2+'px';
-		}
-		// $(".problemFormulationBtn").animate(cssObjZero, 300).animate(cssObjXL, 300).animate(cssObj, 300);
-		$(this).animate(cssObjZero, 300, function() {
-			$(this).hide();
-		});
+		// window.cssObj = $(this).css(['padding-top', 'padding-right', 'padding-bottom', 'padding-left', 'font-size']);
+		// console.log('problemFormulationBtn - cssObj: ' + JSON.stringify(cssObj));
+		// window.cssObjZero = {}; window.cssObjXL = {};
+		// var objKeys = Object.keys(cssObj);
+		// for (var n in objKeys){
+		// 	var size1 = parseInt(cssObj[objKeys[n]].replace('px', ''));
+		// 	var size2 = Math.ceil(parseInt(cssObj[objKeys[n]].replace('px', ''))*1.1);
+		// 	console.log('problemFormulationBtn - objKeys['+n+']: ' + objKeys[n] + ', size1: ' + size1 + ', size2: ' + size2);
+		// 	cssObjZero[objKeys[n]] = '0px';
+		// 	cssObjXL[objKeys[n]] = size2+'px';
+		// }
+		
+		// $(this).animate(cssObjZero, 300, function() {
+		// 	$(this).hide();
+		// });
+
+		setCssObj(this);
+		hideCssObj(this);
 	}
 	
 
@@ -2021,26 +2105,66 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 	// 	JS.problemFormulationMem.push(textInputProblemFormulation);
 	// }
 
+	console.log('problemFormulation_saveHide - CLICKED');
+
+	if (typeof(insertMasterExampleActive) === 'undefined'){
+		window.insertMasterExampleActive = false;
+	}
+	console.log("problemFormulation_saveHide - insertMasterExampleActive: " + insertMasterExampleActive);
+
 	saveProblemFormulation();
 
+	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+ 		$('.problemFormulationBtn').hide();
+	}
+
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	console.log('problemFormulation_goOn - problemFormulationMem 2: ' + JS.problemFormulationMem);
+	console.log('problemFormulation_saveHide - problemFormulationMem 2: ' + JS.problemFormulationMem);
 	$(".MsgBox_bgr").fadeOut(200, function() {
 	    $(this).remove();
-	    if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
+	    if ((!$(".problemFormulationBtn").hasClass('keyProblems')) && (!insertMasterExampleActive)){  // keyProblems has problemFormulationBtn, why this exception has been added...
+	    	console.log('problemFormulation_saveHide - animate 1');
 	    	$(".problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
 	    }
+
+	    if ((jsonData.currentStep == 1) && (!insertMasterExampleActive)){  // keyProblems has problemFormulationBtn, why this exception has been added...
+	    	console.log('problemFormulation_saveHide - animate 2');
+	    	$(".problemFormulationBtnWrap .problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
+	    }
+
+	 	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'problemFormulation_saveHide'}] );
+		}
 	});
+
+	insertMasterExampleActive = false;
 });
 
 // Functionality for the UserMsgBox containing the "Problem Formulation".
 $( document ).on('click', ".CloseClass", function(event){
+
+	console.log('CloseClass - CLICKED');
+
+	if (typeof(insertMasterExampleActive) === 'undefined'){
+		window.insertMasterExampleActive = false;
+	}
+	console.log("CloseClass - insertMasterExampleActive 2: " + insertMasterExampleActive);
+
+	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+ 		$('.problemFormulationBtn').hide();
+	}
+
 	$(".MsgBox_bgr").fadeOut(200, function() {
 	    $(this).remove();
-	    if (!$(this).hasClass('keyProblems')){  // keyProblems has problemFormulationBtn, why this exception has been added...
-	    	$(".problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
-	    }
+	    	
+	    $(".problemFormulationBtnWrap .problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
+
+	    if (hasBeenExecBool){ 	// hasBeenExecBool is set to true ine step 3 and 4.
+	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'CloseClass'}] );
+		}
 	});
+
+	
 });
 
 // Functionality for the UserMsgBox containing the "Problem Formulation".
@@ -2060,22 +2184,22 @@ $( document ).on('click', "#step_3_goBack", function(event){
 
 
 $( document ).on('click', "#step_3_goOn", function(event){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 
-	taxonomyEdit_2();
+	// taxonomyEdit_2();
+	taxonomyEdit_3();
 
 	var TextTheme = htmlEntities($('#textInputTheme').val());
 
 	// TextTheme = 'TEST'; // <--------------------------------   VIGTIGT: FIND UD AF HVILKET MINIMUMSKRAV FAGREDAKTØRENE HAR TIL DETTE SKRIDT!!!
 	
-	// if (TextTheme.length > 0){
+	if ((JS.taxonomyObj.describe.length >= 2) && (JS.taxonomyObj.analyse.length >= 2) && (JS.taxonomyObj.assess.length >= 2)){
 	
-		
 		step_4_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
 		
-	// } else {
-	// 	UserMsgBox("body", '<h4>OBS</h4> Du skal formulere hvad dit tema handler om i tekstboksen. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til din formulering.');
-	// }
+	} else {
+		UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum skrive to spørgsmål til hvert niveau.');
+	}
 });
 
 
@@ -2092,18 +2216,41 @@ function step_4_template(){
 	console.log("step_4_template - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	jsonData.previousStep = jsonData.currentStep;
 	jsonData.currentStep = 4;
-	osc.save('jsonData', jsonData);
+
+	window.hasBeenExecBool = false;
+	if ((jsonData.previousStep == 3) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
+		hasBeenExecBool = true;
+		$( ".problemFormulationBtn" ).trigger( "click" );
+	}
+	
+	osc.save('jsonData', jsonData);if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+
+	// // Set backgroundcolors by inline CSS-style:
+	// window.colorObj = {g1: null, g2: null, g3: null, f1: null};
+	// $('body').append('<span class="g1 hide"> XXXX </span><span class="g2 hide"> XXXX </span><span class="g3 hide"> XXXX </span><span class="f1 hide"> YYYY </span>');
+	// colorObj.g1 = $('.g1').css('background-color');
+	// colorObj.g2 = $('.g2').css('background-color');
+	// colorObj.g3 = $('.g3').css('background-color');
+	// colorObj.f1 = $('.f1').css('background-color');
+	// console.log("step_4_template - colorObj: " + JSON.stringify(colorObj));
+	setColorObj();
+
 	var stepNo = 4;
 	$('#processContainer').html(returnProgressBar(stepNo));
 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	// Set backgroundcolors by inline CSS-style:
-	var colorObj = {g3: null, f1: null};
-	$('body').append('<span class="g3 hide"> XXXX </span><span class="f1 hide"> YYYY </span>');
-	colorObj.g3 = $('.g3').css('background-color');
-	colorObj.f1 = $('.f1').css('background-color');
-	console.log("step_4_template - colorObj: " + JSON.stringify(colorObj));
+	// // Set backgroundcolors by inline CSS-style:
+	// var colorObj = {g1: null, g2: null, g3: null, f1: null};
+	// $('body').append('<span class="g1 hide"> XXXX </span><span class="g2 hide"> XXXX </span><span class="g3 hide"> XXXX </span><span class="f1 hide"> YYYY </span>');
+	// colorObj.g3 = $('.g1').css('background-color');
+	// colorObj.g3 = $('.g2').css('background-color');
+	// colorObj.g3 = $('.g3').css('background-color');
+	// colorObj.f1 = $('.f1').css('background-color');
+	// console.log("step_4_template - colorObj: " + JSON.stringify(colorObj));
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	console.log("step_4_template - JS.taxonomyObjArray: " + JSON.stringify(JS.taxonomyObjArray));
@@ -2112,6 +2259,7 @@ function step_4_template(){
 	var SortableOrderArray_is_new = false;
 	if (!JS.hasOwnProperty('SortableOrderArray')){
 		JS.SortableOrderArray = [];
+		SortableOrderIndexArray = [];
 		SortableOrderArray_is_new = true;
 	}
 
@@ -2125,10 +2273,10 @@ function step_4_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_4" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Nu skal du sortere i alle dine spørgsmål. Træk sætningerne op eller ned og leg med deres rækkefølge og sammenhæng. Vælg de bedste spørgsmål ud ved at klikke på stjerneikonet. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	
-	HTML += 			'<div class="masterStudentBtnWrap">';
+	HTML += 			'<div class="problemFormulationBtnWrap">';
 	// HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: SORTER UNDERSPØRGSMÅL</span>';
 	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
@@ -2138,24 +2286,49 @@ function step_4_template(){
 	window.barHeight = jsonData.numOfSubQuestions - 1; 
 	console.log('step_4_template - jsonData.numOfSubQuestions: ' + jsonData.numOfSubQuestions + ', barHeight: ' + barHeight + ', typeof(barHeight): ' + typeof(barHeight));
 
+	// var count = 0;
+	// for (var n in JS.taxonomyObjArray) { 
+	// 	var taxonomyObjkey = Object.keys(JS.taxonomyObjArray[n]);
+	// 	for (var k in taxonomyObjkey) { 
+	// 		var key = taxonomyObjkey[k];
+	// 		if (key != 'studentSelectedTheme'){ // studentSelectedTheme has to be ignored...
+	// 			for (var t in JS.taxonomyObjArray[n][key]) { 
+	// 				var arrLen = JS.taxonomyObjArray[n][key].length-1;
+	// 				// HTML += '<div id="Sort_'+count+'" data-address="{n:'+n+',key:'+key+',t:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
+	// 				// HTML += '<div style="background-color:'+((count <= barHeight)? colorObj.g3 : colorObj.f1)+'" id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
+	// 				// HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';  // <---- OLD 4/5-2016
+	// 				HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';            // <---- NEW 4/5-2016
+	// 				// HTML += (count == barHeight)? '<div id="barHeight">----------------------------------</div>' : '';
+	// 				// JS.SortableOrderArray.push(JS.taxonomyObjArray[n][key][arrLen-t]);  															// <------ OLD! 
+	// 				TSortableOrderArray.push(((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] ));	// <------ NEW!
+	// 				++count;
+	// 			}
+	// 		}
+	// 	}
+	// }
+
+	console.log('step_4_template - taxonomyObjkey: ' + taxonomyObjkey);
+
 	var count = 0;
-	for (var n in JS.taxonomyObjArray) { 
-		var taxonomyObjkey = Object.keys(JS.taxonomyObjArray[n]);
-		for (var k in taxonomyObjkey) { 
-			var key = taxonomyObjkey[k];
-			if (key != 'studentSelectedTheme'){ // studentSelectedTheme has to be ignored...
-				for (var t in JS.taxonomyObjArray[n][key]) { 
-					var arrLen = JS.taxonomyObjArray[n][key].length-1;
-					// HTML += '<div id="Sort_'+count+'" data-address="{n:'+n+',key:'+key+',t:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
-					// HTML += '<div style="background-color:'+((count <= barHeight)? colorObj.g3 : colorObj.f1)+'" id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+JS.taxonomyObjArray[n][key][arrLen-t]+'</div>';
-					// HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';  // <---- OLD 4/5-2016
-					HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';            // <---- NEW 4/5-2016
-					// HTML += (count == barHeight)? '<div id="barHeight">----------------------------------</div>' : '';
-					// JS.SortableOrderArray.push(JS.taxonomyObjArray[n][key][arrLen-t]);  															// <------ OLD! 
-					TSortableOrderArray.push(((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObjArray[n][key][arrLen-t] : JS.SortableOrderArray[count] ));	// <------ NEW!
-					++count;
-				}
-			}
+	var taxonomyObjkey = Object.keys(JS.taxonomyObj);
+	console.log('step_4_template - taxonomyObjkey: ' + taxonomyObjkey);
+	for (var k in taxonomyObjkey) { 
+		var key = taxonomyObjkey[k];
+		console.log('step_4_template - k: ' + k + ', key: ' + key);
+		for (var t in JS.taxonomyObj[key]) { 
+			var arrLen = JS.taxonomyObj[key].length;
+			
+			// HTML += '<div id="Sort_'+count+'" data-address="{_n_:'+n+',_key_:_'+key+'_,_t_:'+t+'}" class="taxonomy Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObj[key][t] : JS.SortableOrderArray[count] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';            // <---- NEW 4/5-2016
+
+			// HTML += '<div id="Sort_'+count+'" style="background-color:'+colorObj['g'+String(3-k)]+'" class="markStar Sortable sortable_text_container">'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObj[key][t] : JS.SortableOrderArray[count] )+'<span class="contentMark glyphicon '+(((JS.hasOwnProperty('markedThemes')) && (elementInArray(JS.markedThemes, count)))?'glyphicon-star':'glyphicon-star-empty')+'"></span></div>';            // <---- NEW 23/5-2016
+			HTML += '<div id="Sort_'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? count : JS.SortableOrderIndexArray[count])+'" style="background-color:'+
+					((SortableOrderArray_is_new || jsonData.previousStep == 3)? colorObj['g'+String(3-k)] : returnSavedColor(count) )+
+					'" class="markStar Sortable sortable_text_container">'+
+					((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObj[key][t] : JS.SortableOrderArray[count] )+
+					'<span class="contentMark glyphicon '+(((JS.hasOwnProperty('markedThemes')) && (elementInArray(JS.markedThemes, count)))?'glyphicon-star':'glyphicon-star-empty')+'"></span></div>';            // <---- NEW 24/5-2016
+
+			TSortableOrderArray.push(((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObj[key][arrLen-t] : JS.SortableOrderArray[count] ));	// <------ NEW!
+			++count;
 		}
 	}
 
@@ -2181,7 +2354,18 @@ function step_4_template(){
 
 	makeSortable();
 
-	colorSubQuestions();
+	// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
+
+	addDragAndMarkCallOut();
+
+	// replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+	// window.DTO = Object.create(dynamicTextClass); 
+	// DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+
+	if (!hasBeenExecBool) {
+		$( document ).trigger( "dynamicTextEvent", [{testdata: hasBeenExecBool}] );
+	}
 }
 
 
@@ -2195,9 +2379,10 @@ function makeSortable() {
 	    update: function(event, ui) {
 	    	console.log('makeSortable - UPDATE');
 	    	updateSortableOrderArray(2);
+	    	updateSortableOrderIndexArray(2);
 	    	// $( "#subjectSentenceSortableContainer" ).sortable( "refresh" );  // "Refresh" anvende ikke således.
 	    	// repositionBarHeight();
-	    	colorSubQuestions();
+	    	// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
 	    },
 	    start: function(event, ui) {
 	    	console.log('makeSortable - START');
@@ -2210,23 +2395,39 @@ function makeSortable() {
 }
 
 
-// function repositionBarHeight(){
-// 		var barHeightPos;
-// 		$( "#subjectSentenceSortableContainer div" ).each(function( index, element ) {
-// 			if ($(element).attr('id') == ''){
+function returnSavedColor(index) {
+	console.log('returnSavedColor - CALLED');
+	// console.log("returnSavedColor - studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var count = 0;
+	var taxonomyObjkey = Object.keys(JS.taxonomyObj);
+	var sortedIndex = JS.SortableOrderIndexArray[index];
+	console.log('returnSavedColor - taxonomyObjkey: ' + taxonomyObjkey);
+	var totLen = 0;
+	var count = 0;
+	for (var k in taxonomyObjkey) { 
+		var key = taxonomyObjkey[k];
+		totLen += JS.taxonomyObj[key].length;
+		console.log('returnSavedColor - k: ' + k + ', key: ' + key + ', count: ' + count + ', totLen: ' + totLen);
+		if (sortedIndex < totLen){
+			return colorObj['g'+String(3-count)];
+		}
+		++count;
+	}
+}
 
-// 			}
-// 		});	
-// }
 
 function colorSubQuestions(){ // Set backgroundcolors by inline CSS-style:
 	if (typeof(colorObj) === 'undefined'){
-		window.colorObj = {g3: null, f1: null, none: null};
-		$('body').append('<span class="g3 hide"> &nbsp; </span><span class="f1 hide"> &nbsp; </span> <span id="noColor" class="sortable_text_container hide"> &nbsp; </span>');
-		colorObj.g3 = $('.g3').css('background-color');
-		colorObj.f1 = $('.f1').css('background-color');
-		colorObj.none = $('#noColor').css('background-color');
-		console.log("colorSubQuestions - colorObj: " + JSON.stringify(colorObj));
+		// window.colorObj = {g1: null, g2: null, g3: null, f1: null, none: null};
+		// $('body').append('<span class="g1 hide"> &nbsp; </span><span class="g2 hide"> &nbsp; </span><span class="g3 hide"> &nbsp; </span><span class="f1 hide"> &nbsp; </span> <span id="noColor" class="sortable_text_container hide"> &nbsp; </span>');
+		// colorObj.g1 = $('.g1').css('background-color');
+		// colorObj.g2 = $('.g2').css('background-color');
+		// colorObj.g3 = $('.g3').css('background-color');
+		// colorObj.f1 = $('.f1').css('background-color');
+		// colorObj.none = $('#noColor').css('background-color');
+		// console.log("colorSubQuestions - colorObj: " + JSON.stringify(colorObj));
+		setColorObj();
 	}
 	var numOfSubQuestions = $('#subjectSentenceSortableContainer div').length;
 	console.log("colorSubQuestions - jsonData.numOfSubQuestions: " + jsonData.numOfSubQuestions);
@@ -2250,16 +2451,16 @@ function updateSortableOrderArray(callNo){
 	$( ".Sortable" ).each(function( index, element ) {
 		SortableOrderArray.push($(element).text());
 
-		var eds = $(element).attr('data-address');
-		console.log('updateSortableOrderArray - callNo: '+callNo+', eds 1: _' + eds + '_');
+		// var eds = $(element).attr('data-address');
+		// console.log('updateSortableOrderArray - callNo: '+callNo+', eds 1: _' + eds + '_');
 
-		eds = eds.replace(/_/g, '"'); 
-		console.log('updateSortableOrderArray - callNo: '+callNo+', eds 2: _' + eds + '_');
+		// eds = eds.replace(/_/g, '"'); 
+		// console.log('updateSortableOrderArray - callNo: '+callNo+', eds 2: _' + eds + '_');
 
-		var edo = JSON.parse(eds);
 		// var edo = JSON.parse(eds);
-		console.log('updateSortableOrderArray - callNo: '+callNo+', edo: ' + edo + ', typeof(edo): ' + typeof(edo));
-		console.log('updateSortableOrderArray - callNo: '+callNo+', edo.n: ' + edo.n);
+		// // var edo = JSON.parse(eds);
+		// console.log('updateSortableOrderArray - callNo: '+callNo+', edo: ' + edo + ', typeof(edo): ' + typeof(edo));
+		// console.log('updateSortableOrderArray - callNo: '+callNo+', edo.n: ' + edo.n);
 
 		// IMPORTANT:
 		// ========== 
@@ -2280,6 +2481,114 @@ function updateSortableOrderArray(callNo){
 }
 
 
+function updateSortableOrderIndexArray(callNo){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var SortableOrderIndexArray = [];
+	$( ".Sortable" ).each(function( index, element ) {
+		SortableOrderIndexArray.push($(element).prop('id').replace('Sort_', ''));
+	}); 
+	console.log('updateSortableOrderIndexArray - callNo: '+callNo+', SortableOrderIndexArray: ' + JSON.stringify(SortableOrderIndexArray));
+	JS.SortableOrderIndexArray = SortableOrderIndexArray;
+}
+
+
+function updateMarkedThemes(){
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var markedArr = [];
+	$( ".Sortable" ).each(function( index, element ) {
+		if ($(element).children().hasClass('glyphicon-star')){
+			// markedArr.push($(element).prop('id').replace('Sort_', ''));
+			markedArr.push(index);
+		}
+	}); 
+	console.log('updateSortableOrderIndexArray - markedArr: ' + JSON.stringify(markedArr));
+	JS.markedThemes = markedArr;
+}
+
+
+$( document ).on('click', ".markStar", function(event){
+	console.log('markStar - click');
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	window.markedArr = (typeof(markedArr) !== 'undefined')? markedArr : (JS.hasOwnProperty('markedThemes')? JS.markedThemes : []);
+	if ($(this).children().hasClass('glyphicon-star-empty')){
+			console.log('markStar - A0');
+			$(this).children().removeClass('glyphicon-star-empty').addClass('glyphicon-star');
+			markedArr.push(parseInt($(this).prop('id').replace('Sort_', '')));
+		if (markedArr.length > 5){  // <----------------   The maximal number og star-marked subquestions are presently 5!
+			console.log('markStar - A1');
+			var starIndex = markedArr[0]
+			markedArr = markedArr.slice(1,markedArr.length);
+			// $(this).children().removeClass('glyphicon-star').addClass('glyphicon-star-empty');  // <--- OLD
+			// $('.markStar').eq(starIndex).children().removeClass('glyphicon-star').addClass('glyphicon-star-empty');  // <--- NEW
+
+			console.log('markStar - ID: ' + $(this).parent().prop('id') + ', starIndex: ' + starIndex); // subjectSentenceSortableContainer
+			console.log('markStar - Sort_ID: ' + $(this).parent().find('#Sort_'+starIndex).prop('id'));
+
+			$(this).parent().find('#Sort_'+starIndex).children().removeClass('glyphicon-star').addClass('glyphicon-star-empty');    // <--- NEWEST
+			// $(this).parent().find('Sort_'+starIndex).children().css('background-color:#F00');    // <--- NEWEST
+		}
+	} else {
+		console.log('markStar - A2');
+		$(this).children().removeClass('glyphicon-star').addClass('glyphicon-star-empty');
+		markedArr = markedArr.slice(1,markedArr.length);
+	}
+	console.log('markStar - markedArr: ' + markedArr);
+	JS.markedThemes = markedArr;
+});
+
+
+function addDragAndMarkCallOut(){  // <----- EVENT SEQUENCE: mousedown > focusout > click
+	console.log('addNotesOnStars - CALLED');
+	var HTML = '';
+	HTML += '<div class="label label-primary dragCallOut">';
+	HTML += 	'<h5>Træk op/ned</h5>';
+	HTML += '</div>';
+	HTML += '<span class="glyphicon glyphicon-arrow-down dragCallOutArrow"></span>';
+	HTML += '<div class="label label-primary markCallOut">';
+	HTML += 	'<h5>Marker</h5>';
+	HTML += '</div>';
+	HTML += '<span class="glyphicon glyphicon-arrow-down markCallOutArrow"></span>';
+	// $('.markStar:first-child').after(HTML);
+	
+	// $('.contentMark:first-child').after(HTML); 
+	$('.contentMark').eq(0).after(HTML);
+}
+
+
+function countTaxonomyAndMarkings(){
+	console.log('checkCriteriaTaxonomyAndMarkings - CALLED ');
+	var colorArr = [String(colorObj.g1),String(colorObj.g2),String(colorObj.g3)];  // g1 = assess, g2 = analyse, g3 = describe
+	var taxObj = {"describe": 0, "analyse": 0, "assess": 0};
+	$( ".Sortable" ).each(function( index, element ) {
+		if ($(element).children().hasClass('glyphicon-star')){
+			console.log('countTaxonomyAndMarkings - STAR ');
+			if ($(this).css('background-color') == colorArr[0]) ++taxObj.assess;
+			if ($(this).css('background-color') == colorArr[1]) ++taxObj.analyse;
+			if ($(this).css('background-color') == colorArr[2]) ++taxObj.describe;
+		}
+	}); 
+	console.log('countTaxonomyAndMarkings - taxObj: ' + JSON.stringify(taxObj) );
+
+	return taxObj;
+}
+
+
+$( document ).on('mousedown', ".markStar", function(event){ 
+	$('.dragCallOut').fadeOut(500, function() {
+        $(this).remove();
+    });
+	$('.dragCallOutArrow').fadeOut(300, function() {
+        $(this).remove();
+    });
+	$('.markCallOut').fadeOut(500, function() {
+        $(this).remove();
+    });
+	$('.markCallOutArrow').fadeOut(300, function() {
+        $(this).remove();
+    });
+});
+
+
 $( document ).on('click', "#step_4_goBack", function(event){
 	step_3_template();
 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
@@ -2289,9 +2598,30 @@ $( document ).on('click', "#step_4_goBack", function(event){
 
 $( document ).on('click', "#step_4_goOn", function(event){
 
-	updateSortableOrderArray(3);
-	step_5_template();
+	var taxObj = countTaxonomyAndMarkings();
 
+	if (taxObj.describe + taxObj.analyse + taxObj.assess >= 4){  // The criteria is at least 4 subquestions in total (de to the number between step 5 and 6). 
+
+		if (taxObj.assess + taxObj.analyse > 0){  // The criteria is at least ONE subquestion at a higher level of taxonomy (e.g. "analyse" OR "assessing") 
+
+			// All callOuts has to be removed before the following updates are called.
+			$('.dragCallOut').remove();
+			$('.dragCallOutArrow').remove();
+			$('.markCallOut').remove();
+			$('.markCallOutArrow').remove();
+
+			updateSortableOrderArray(3);
+			updateSortableOrderIndexArray(3);
+			updateMarkedThemes();
+			step_5_template();
+
+		} else {
+			UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum tilføje en stjerne til andet end redegørende niveau.');
+		}
+
+	} else {
+		UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum markere 4 underspørgsmål.');
+	}
 });
 
 
@@ -2303,6 +2633,16 @@ $( document ).on('click', "#step_4_goOn", function(event){
 function step_5_template(){
 	jsonData.previousStep = jsonData.currentStep;
 	jsonData.currentStep = 5;
+
+	// if ((jsonData.previousStep == 4) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
+	// 	$( ".problemFormulationBtn" ).trigger( "click" );
+	// }
+
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+	
 	osc.save('jsonData', jsonData);
 	console.log("step_5_template - quoteCount: " + ((typeof(quoteCount) !== 'undefined')?quoteCount:'undefined'));
 	console.log("step_5_template - jsonData 1: " + JSON.stringify(jsonData)); 
@@ -2332,10 +2672,11 @@ function step_5_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_5" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>' + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>' ):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div class="masterStudentBtnWrap">';
+	HTML += 			'<div class="problemFormulationBtnWrap">';
 	HTML += 					'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
 	HTML += 			'</div>';
 
@@ -2346,9 +2687,17 @@ function step_5_template(){
 							HTML += (problemFormulationMemNum < 0)? '' : JS.problemFormulationMem[problemFormulationMemNum];
 	HTML += 			'</textarea>';
 
-						for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
-							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
-							TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
+						// for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
+						// 	HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+						// 	TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
+						// }
+						// JS.subQuestionArray = TsubQuestionArray;
+
+						var supQuestionNum = (subQuestionArray_is_new || jsonData.previousStep == 4)? JS.markedThemes.length :JS.subQuestionArray.length;
+						for (var i = 0; i < supQuestionNum; i++) {
+							var index = JS.markedThemes[i];
+							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+							TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] ));
 						}
 						JS.subQuestionArray = TsubQuestionArray;
 
@@ -2360,7 +2709,12 @@ function step_5_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
+	// setJsAudioEventLitsner2();
+
+	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+	window.DTO = Object.create(dynamicTextClass); 
+	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
 }
 
 
@@ -2383,12 +2737,19 @@ $( document ).on('click', "#step_5_goBack", function(event){
 $( document ).on('click', "#step_5_goOn", function(event){
 	var problemFormulation = $('#textInputProblemFormulation').val();
 	console.log('step_5_goOn - problemFormulation : ' + problemFormulation);
+
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	
 	if (problemFormulation.length > 0) {
-		saveProblemFormulation();
-		updateSubQuestionArray();
-		
-		step_6_template();
+
+		if (JS.subQuestionArray.length >= 4){
+			saveProblemFormulation();
+			updateSubQuestionArray();
+			
+			step_6_template();
+		} else {
+			UserMsgBox("body", "<h4>OBS</h4> Du skal minimum have 4 underspørgsmål!");
+		}
 
 	} else {
 		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive tekst til din problemformulering før du kan gå videre!");
@@ -2407,7 +2768,18 @@ $( document ).on('click', "#step_5_goOn", function(event){
 //////////////////////
 
 function step_6_template(){
+	jsonData.previousStep = jsonData.currentStep;
 	jsonData.currentStep = 6;
+
+	// if ((jsonData.previousStep == 5) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
+	// 	$( ".problemFormulationBtn" ).trigger( "click" );
+	// }
+
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+	
 	osc.save('jsonData', jsonData);
 	console.log("step_6_template - quoteCount: " + ((typeof(quoteCount) !== 'undefined')?quoteCount:'undefined'));
 	console.log("step_6_template - jsonData 1: " + JSON.stringify(jsonData)); 
@@ -2425,7 +2797,8 @@ function step_6_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
@@ -2438,19 +2811,23 @@ function step_6_template(){
 	// 1 problemformulering
 	HTML += 				'<div>';
 				HTML += 		'<h3>Stilladseret skrive guide</h3>';
-				HTML += 		'<h4>Nøgleproblem</h4> ';
-				HTML += 		'<p >'+jsonData.keyProblems[JS.selcNo].name+'</p>';
-				HTML += 		'<h4>Valgte temaer</h4> ';
-								for (var n in JS.studentSelectedThemes){
-				HTML += 			'<p>'+jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]+'</p>';
-								}
+
+				// HTML += 		'<h4>Nøgleproblem</h4> ';
+				// HTML += 		'<p >'+jsonData.keyProblems[JS.selcNo].name+'</p>';
+
+				// HTML += 		'<h4>Valgte temaer</h4> ';
+				// 				for (var n in JS.studentSelectedThemes){
+				// HTML += 			'<p>'+jsonData.keyProblems[JS.selcNo].themes[JS.studentSelectedThemes[n]]+'</p>';
+				// 				}
+
+				HTML += 		'<h4>Problemformulering</h4> ';
+
+				HTML += 		'<p>'+JS.problemFormulationMem[JS.problemFormulationMem.length - 1]+'</p>';
+
 				HTML += 		'<h4>Underspørgsmål</h4> ';
 								for (var n in JS.subQuestionArray){
 				HTML += 			'<p>'+JS.subQuestionArray[n]+'</p>';
 								}
-				HTML += 		'<h4>Problemformulering</h4> ';
-
-				HTML += 		'<p>'+JS.problemFormulationMem[JS.problemFormulationMem.length - 1]+'</p>';
 								
 				
 	HTML += 				'</div>';
@@ -2463,7 +2840,12 @@ function step_6_template(){
 	
 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
+	// setJsAudioEventLitsner2();
+
+	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+	window.DTO = Object.create(dynamicTextClass); 
+	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
 }
 
 
@@ -2533,70 +2915,68 @@ $( document ).on('click', "#step_6_download", function(event){
 });
 
 
-// 1 nøgleproblem
+// 1 nøgleproblem 
 // 3 emner
 // 4 underspørgsmål
 // 1 problemformulering
 function wordTemplate() {
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	var text = jsonData.keyProblems[JST.selcNo];
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
 	var HTML = '';
 	HTML += '<!DOCTYPE html>';
 	HTML += '<html>';
 	HTML += 	'<head>';
 	HTML += 	'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';  // Fixes issue with danish characters on Internet Explore 
 	HTML += 		'<style type="text/css">';
-	HTML += 			'body {font-family: arial;}';
-	HTML += 			'h1 {}';
+	HTML += 			'body {font-family: arial}';
+	HTML += 			'h1 {text-align: center; padding: 25px; background-color: #45818E; color: #FFF}';
 	HTML += 			'h2 {}';
-	HTML += 			'h3 {font-style: italic; color: #717272;}';
-	HTML += 			'h4 {color: #56bfc5;}';
+	HTML += 			'h3 {font-style: italic; color: #717272}';
+	HTML += 			'h4 {color: #56bfc5}';
 	HTML += 			'h5 {}';
 	HTML += 			'h6 {}';
-	HTML += 			'.selected {color: #56bfc5; width: 25%;}';
+	HTML += 			'.selected {color: #56bfc5; width: 25%}';
 	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
-	HTML += 			'table {padding: 8px; width: 100%;}';
-	HTML += 			'td {width: 25%;}';
-	HTML += 			'ol {color: #717272;}';
+	HTML += 			'table {padding: 8px; width: 100%}';
+	HTML += 			'td {width: 25%}';
+	HTML += 			'ol {color: #000}';
+	HTML += 			'.checkQuestion{background-color: #D0E0E3; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
+	HTML += 			'.useMaterial{background-color: #FFD966; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
+	HTML += 			'.innerSpacer{margin: 10px}';
 	HTML += 		'</style>';
 	HTML += 	'</head>';
 	HTML += 	'<body>';
-	HTML += 		'<h1>'+JST.headAndIntro[0]+'</h1>';
+	HTML += 		'<h1>'+keyProblem+'</h1>';
 	// HTML += 		'<hr/>';
-	HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
-	HTML += 		'<p><b>Indledning:</b> '+JST.headAndIntro[1]+'</p>';
 
-	// HTML += 			'<h3>Din valgte tekst: </h3>';
-	// HTML += 			'<h4>"'+text.title+'" af '+text.author+', '+text.year+'</h4>';
+	HTML += 		'<h2>Problemformulering</h2> ';
+	HTML += 		'<p>'+JS.problemFormulationMem[JS.problemFormulationMem.length - 1]+'</p>';
 
-	HTML += 		'<p><b>Temaudlægning:</b> '+JST.TextTheme+'</p>';
-	HTML += 		'<hr/>';
-	for (var n in JST.textQuotes){
-		HTML += 		'<p><b>Citat '+String(parseInt(n)+1)+':</b> &quot;<i>'+JST.textQuotes[n]+'</i>&quot;</p>';
-		HTML += 		'<p><b>Citatudlægning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p>';
-		HTML += 		'<hr/>';
-		HTML += 		(n < jsonData.numOfChoosenWords-1)?'<p><b>Sætning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p><hr/>':'';
-		// HTML += 		'<hr/>';
-	}
-	HTML += 		'<p><b>Fortolkning:</b> ';
-	for (var n in JST.textPassages){
-		HTML += 		JST.textPassages[n]+' ';
-	}
-	HTML += 		'<hr/>';
-	HTML += 		'<p><b>Afslutning:</b> '+JST.conclusion+'</p>';
-	HTML += 		'<hr/>';
-	HTML += 		'<div class="instruktion">';
-	HTML += 			'<h3>Gennemlæs din tekst. Hænger den sammen i forhold til:</h3>';
-	HTML += 			'<ol>';
-	HTML += 				'<li>Tydelige overgange mellem afsnit.</li>';
-	HTML += 				'<li>Sammenhæng mellem sætningerne.</li>';
-	HTML += 				'<li>Godt og levende sprog.</li>';
-	HTML += 				'<li>Korrekt brug af punktum og komma.</li>';
-	HTML += 				'<li>Så få formuleringsmæssige uklarheder og stavefejl som muligt.</li>';
-	HTML += 			'</ol>';
-	HTML += 			'<h3>Når du har gennemgået disse trin, har du en rigtig god tekst!</h3>';
-	HTML += 			'<hr/>';
+	// HTML += 		'<hr/>';
+
+	HTML += 		'<h2>Underspørgsmål</h2> ';
+	HTML += 		'<ol>';
+					for (var n in JS.subQuestionArray){
+	HTML += 			'<li>'+JS.subQuestionArray[n]+'</li>';
+					}
+	HTML += 		'</ol>';
+
+	HTML += 		'<h2>Tjekspørgsmål til problemformuleringen:</h2> '; 
+	HTML += 		'<div class="checkQuestion">';
+	// HTML += 			'<div class="innerSpacer">';
+	HTML += 				'<p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
+	HTML += 				'<p><b>Taksonomi:</b> Lægger problemformuleringen op til undersøgelse, diskussion og vurdering - dvs. ikke kun til redegørelse?</p>';
+	HTML += 				'<p><b>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p>';
+	// HTML += 			'</div>';
 	HTML += 		'</div>';
+
+	HTML += 		'<div class="useMaterial">';
+	HTML += 			'<p><b>Anvendelse af materiale:</b> Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!</p>';
+	HTML += 		'</div>';
+
+// Anvendelse af materiale: Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!
+
+
 	HTML += 	'</body>';
 	HTML += '</html>';
 	// document.write(HTML);
@@ -2605,582 +2985,582 @@ function wordTemplate() {
 
 
 
-//#################################
-//
-//		OLD STEP 4
-//
-//#################################
+// //#################################
+// //
+// //		OLD STEP 4
+// //
+// //#################################
 
-//////////////////////
-//  	STEP 7		//	WRITE TEXTS TO CONNECT YOUR PASSAGES
-//////////////////////
+// //////////////////////
+// //  	STEP 7		//	WRITE TEXTS TO CONNECT YOUR PASSAGES
+// //////////////////////
 
-function step_7_template(){
-	jsonData.currentStep = 7;
-	osc.save('jsonData', jsonData);
-	console.log("step_7_template - quoteCount: " + ((typeof(textPassageCount) !== 'undefined')?textPassageCount:'undefined'));
-	console.log("step_7_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_7_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount === null)) { 
-		window.textPassageCount = 0;
-		console.log("step_7_template - textPassageCount DEFINED! ");
-	} else {
-		if (textPassageCount < jsonData.numOfChoosenWords-2){
-			++textPassageCount;
-		}
-		// ++textPassageCount;
-	}
+// function step_7_template(){
+// 	jsonData.currentStep = 7;
+// 	osc.save('jsonData', jsonData);
+// 	console.log("step_7_template - quoteCount: " + ((typeof(textPassageCount) !== 'undefined')?textPassageCount:'undefined'));
+// 	console.log("step_7_template - jsonData 1: " + JSON.stringify(jsonData)); 
+// 	console.log("step_7_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount === null)) { 
+// 		window.textPassageCount = 0;
+// 		console.log("step_7_template - textPassageCount DEFINED! ");
+// 	} else {
+// 		if (textPassageCount < jsonData.numOfChoosenWords-2){
+// 			++textPassageCount;
+// 		}
+// 		// ++textPassageCount;
+// 	}
 
-	console.log("step_7_template - textPassageCount: " + textPassageCount);
+// 	console.log("step_7_template - textPassageCount: " + textPassageCount);
 
-	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
-	var textPassages = [];
-	if (JST.hasOwnProperty("textPassages")){
-		// selcNo = getSelected('selcNo');
-		textPassages = JST.textPassages;
-	}
-	var stepNo = 7;
-	$('#processContainer').html(returnProgressBar(stepNo));
-	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-	var HTML = '';
-	HTML += '<div id="step_7" class="step">';
-	HTML +=     '<div class="row">';
-	HTML += 		'<div class="col-xs-12 col-md-12">';
+// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
+// 	var textPassages = [];
+// 	if (JST.hasOwnProperty("textPassages")){
+// 		// selcNo = getSelected('selcNo');
+// 		textPassages = JST.textPassages;
+// 	}
+// 	var stepNo = 7;
+// 	$('#processContainer').html(returnProgressBar(stepNo));
+// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
+// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
+// 	var HTML = '';
+// 	HTML += '<div id="step_7" class="step">';
+// 	HTML +=     '<div class="row">';
+// 	HTML += 		'<div class="col-xs-12 col-md-12">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_7" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_7" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div id="TextAndQuoteContainer">';
+// 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
+// 	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
 	
-	HTML += 				'<div id="textPassageContainer" class="btnActions">';
-				for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-					HTML += 	'<span class="textPassageBtn btn btn-'+((i==textPassageCount)?'primary':'info')+'">Sætning '+String(i+1)+'</span>';
-				}
-	HTML += 				'</div>';
+// 	HTML += 				'<div id="textPassageContainer" class="btnActions">';
+// 				for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
+// 					HTML += 	'<span class="textPassageBtn btn btn-'+((i==textPassageCount)?'primary':'info')+'">Sætning '+String(i+1)+'</span>';
+// 				}
+// 	HTML += 				'</div>';
 
-	HTML += 				'<div id="textOverviewContainer" >';
-				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
-									'<h4>Tema</h4>'+JST.studentTheme +'<br/><br/>'+
-									'<h4>Temaudlægning</h4>'+JST.TextTheme+
-								'</div>';
-				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
-					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
-									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
-									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot;<br/><br/>'+
-									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
-									JST.textQuoteNotes[i]+
-								'</div>';
-				}
-	HTML += 				'</div>';
+// 	HTML += 				'<div id="textOverviewContainer" >';
+// 				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
+// 									'<h4>Tema</h4>'+JST.studentTheme +'<br/><br/>'+
+// 									'<h4>Temaudlægning</h4>'+JST.TextTheme+
+// 								'</div>';
+// 				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
+// 					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
+// 									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
+// 									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot;<br/><br/>'+
+// 									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
+// 									JST.textQuoteNotes[i]+
+// 								'</div>';
+// 				}
+// 	HTML += 				'</div>';
 
 
-	HTML += 			'</div>';
+// 	HTML += 			'</div>';
 
-	// HTML += 			'<div class="QuoteHolder TextHolder"> &quot;<i>';
-	// 			HTML += JST.textQuotes[textPassageCount];
-	// HTML += 			'<i>&quot; </div>';
+// 	// HTML += 			'<div class="QuoteHolder TextHolder"> &quot;<i>';
+// 	// 			HTML += JST.textQuotes[textPassageCount];
+// 	// HTML += 			'<i>&quot; </div>';
 
-	HTML += 				'<div class="DropdownWrap">';
-	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_interpretation);
-	HTML += 				'</div>';
+// 	HTML += 				'<div class="DropdownWrap">';
+// 	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_interpretation);
+// 	HTML += 				'</div>';
 
-	HTML += 			'<textarea id="textInput_'+textPassageCount+'" val="" class="textInput">';
-			if ((JST.hasOwnProperty('textPassages')) && (typeof(JST.textPassages[textPassageCount]) !== 'undefined')) {
-				HTML += JST.textPassages[textPassageCount];
-			}			
-	HTML += 			'</textarea>';
-	HTML += 		'</div>';
-	HTML += 	'</div>';
-	HTML += '</div>';
-	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 7 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
+// 	HTML += 			'<textarea id="textInput_'+textPassageCount+'" val="" class="textInput">';
+// 			if ((JST.hasOwnProperty('textPassages')) && (typeof(JST.textPassages[textPassageCount]) !== 'undefined')) {
+// 				HTML += JST.textPassages[textPassageCount];
+// 			}			
+// 	HTML += 			'</textarea>';
+// 	HTML += 		'</div>';
+// 	HTML += 	'</div>';
+// 	HTML += '</div>';
+// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
+// 	errObj.updateErrorObj("STEP 7 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	
-	$('#DataInput').html(HTML);
+// 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
-}
-
-
-$(document).on('change', '#Dropdown1b', function(){
-	// var selectedText = $('#Dropdown1:selected').text();
-	var interpretation = $('#Dropdown1b').val();
-	console.log("textInputTheme - interpretation: " + interpretation);
-	$('#textInput_'+textPassageCount).val(interpretation);
-});
+// 	setJsAudioEventLitsner2();
+// }
 
 
-$( document ).on('click', ".textPassageBtn", function(event){
-	var index = $(this).index();
-	console.log("quoteBtn - index: " + index);
+// $(document).on('change', '#Dropdown1b', function(){
+// 	// var selectedText = $('#Dropdown1:selected').text();
+// 	var interpretation = $('#Dropdown1b').val();
+// 	console.log("textInputTheme - interpretation: " + interpretation);
+// 	$('#textInput_'+textPassageCount).val(interpretation);
+// });
+
+
+// $( document ).on('click', ".textPassageBtn", function(event){
+// 	var index = $(this).index();
+// 	console.log("quoteBtn - index: " + index);
 	 
-	// -----------------------
-	console.log("quoteNoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	if (!JST.hasOwnProperty('textPassages')){
-		JST.textPassages = [];
-		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-			JST.textPassages.push('');
-		};
-	}
+// 	// -----------------------
+// 	console.log("quoteNoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	if (!JST.hasOwnProperty('textPassages')){
+// 		JST.textPassages = [];
+// 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
+// 			JST.textPassages.push('');
+// 		};
+// 	}
 
-	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
-	console.log("quoteNoteBtn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
-	console.log("quoteNoteBtn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
+// 	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
+// 	console.log("quoteNoteBtn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
+// 	console.log("quoteNoteBtn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
 	
-	if (textPassageCount < jsonData.numOfChoosenWords-1){
-		// JSN.subjectTexts_sentences.push(sentence);
-		JST.textPassages[textPassageCount] = sentence;
-		// step_4_template();
-		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	} 
-	// else {
-	// 	JST.subjectTexts_sentences[textPassageCount] = sentence;
-	// 	// step_4b_template();
-	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-	// 	// makeSortable();
-	// }
+// 	if (textPassageCount < jsonData.numOfChoosenWords-1){
+// 		// JSN.subjectTexts_sentences.push(sentence);
+// 		JST.textPassages[textPassageCount] = sentence;
+// 		// step_4_template();
+// 		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	} 
+// 	// else {
+// 	// 	JST.subjectTexts_sentences[textPassageCount] = sentence;
+// 	// 	// step_4b_template();
+// 	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 	// 	// makeSortable();
+// 	// }
 
-	// -----------------------
-	textPassageCount = index-1; 
-	step_7_template();  
-	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-});
+// 	// -----------------------
+// 	textPassageCount = index-1; 
+// 	step_7_template();  
+// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
+// });
 
 
-$( document ).on('click', "#step_7_goBack", function(event){
-	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount == 0)){
-		step_6_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-		// $(".textInputQuoteNote").focus();  // Sets the focus in the textarea when the template loades.
-		textPassageCount = null;
-		console.log("step_4_goBack - textPassageCount: " + textPassageCount);
-	} else {
-		--textPassageCount; // Once...
-		--textPassageCount;	// twice... because of the inscreasement inside step_XXX_template
-		step_7_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-		// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-	}
-});
+// $( document ).on('click', "#step_7_goBack", function(event){
+// 	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount == 0)){
+// 		step_6_template();
+// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 		// $(".textInputQuoteNote").focus();  // Sets the focus in the textarea when the template loades.
+// 		textPassageCount = null;
+// 		console.log("step_4_goBack - textPassageCount: " + textPassageCount);
+// 	} else {
+// 		--textPassageCount; // Once...
+// 		--textPassageCount;	// twice... because of the inscreasement inside step_XXX_template
+// 		step_7_template();
+// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 		// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
+// 	}
+// });
 
-$( document ).on('click', "#step_7_goOn", function(event){
-	console.log("step_7_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	if (!JST.hasOwnProperty('textPassages')){
-		JST.textPassages = [];
-		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-			JST.textPassages.push('');
-		};
-	}
+// $( document ).on('click', "#step_7_goOn", function(event){
+// 	console.log("step_7_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	if (!JST.hasOwnProperty('textPassages')){
+// 		JST.textPassages = [];
+// 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
+// 			JST.textPassages.push('');
+// 		};
+// 	}
 
-	var btnPrimaryText = $("#subjectWordSentenceContainer .btn-primary").text();
+// 	var btnPrimaryText = $("#subjectWordSentenceContainer .btn-primary").text();
 
-	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
-	console.log("step_7_goOn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
-	console.log("step_7_goOn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
-	if (sentence.length > 0) {
-		// if (quoteCount < jsonData.numOfChoosenWords-1){
-		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
-		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
+// 	console.log("step_7_goOn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
+// 	console.log("step_7_goOn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
+// 	if (sentence.length > 0) {
+// 		// if (quoteCount < jsonData.numOfChoosenWords-1){
+// 		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
+// 		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
 			
-		// 	step_4_template();
+// 		// 	step_4_template();
 			
-		// } else {
-			JST.textPassages[textPassageCount] = sentence;
-			console.log("step_7_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-			if (!hasNonEmptyStrElm( JST.textPassages )){
-				// JSN.subjectTexts_sentences[quoteCount] = sentence;
-				console.log("step_7_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
-				console.log("step_7_goOn - jsonData: " + JSON.stringify(jsonData));
-				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
-				step_8_template();
-				// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-				// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
-				// makeSortable();
-			} else {
-				UserMsgBox("body", '<h4>OBS</h4> Du skal skrive sætninger i tekstboksene der forbinder dine tekstafsnit - du mangler at skrive tekst til '+returnMissingElements('textPassages', 'sætning')+'. Tryk på sætningsknapperne og skriv tekst i tekstboksene.');
-			}
-		// }
+// 		// } else {
+// 			JST.textPassages[textPassageCount] = sentence;
+// 			console.log("step_7_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 			if (!hasNonEmptyStrElm( JST.textPassages )){
+// 				// JSN.subjectTexts_sentences[quoteCount] = sentence;
+// 				console.log("step_7_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 				console.log("step_7_goOn - jsonData: " + JSON.stringify(jsonData));
+// 				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
+// 				step_8_template();
+// 				// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 				// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
+// 				// makeSortable();
+// 			} else {
+// 				UserMsgBox("body", '<h4>OBS</h4> Du skal skrive sætninger i tekstboksene der forbinder dine tekstafsnit - du mangler at skrive tekst til '+returnMissingElements('textPassages', 'sætning')+'. Tryk på sætningsknapperne og skriv tekst i tekstboksene.');
+// 			}
+// 		// }
 
-	} else {
-		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive sætninger i tekstboksene før du kan gå videre!");
-	}
+// 	} else {
+// 		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive sætninger i tekstboksene før du kan gå videre!");
+// 	}
 
-});
-
-
-//////////////////////
-//  	STEP 8 		//  WRITE YOUR CONCLUSION BY WRITING TWO SENTENCES
-//////////////////////
+// });
 
 
-function step_8_template(){
-	console.log("step_8_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	jsonData.currentStep = 8;
-	osc.save('jsonData', jsonData);
-	var stepNo = 8;
+// //////////////////////
+// //  	STEP 8 		//  WRITE YOUR CONCLUSION BY WRITING TWO SENTENCES
+// //////////////////////
 
-	$('#processContainer').html(returnProgressBar(stepNo));
-	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// function step_8_template(){
+// 	console.log("step_8_template - jsonData 1: " + JSON.stringify(jsonData)); 
+// 	jsonData.currentStep = 8;
+// 	osc.save('jsonData', jsonData);
+// 	var stepNo = 8;
 
-	var HTML = '';
-	HTML += '<div id="step_8" class="step">';
-	HTML +=     '<div class="row">';
-	HTML += 		'<div class="col-xs-12 col-md-12">';
+// 	$('#processContainer').html(returnProgressBar(stepNo));
+// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
+// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
+
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+
+// 	var HTML = '';
+// 	HTML += '<div id="step_8" class="step">';
+// 	HTML +=     '<div class="row">';
+// 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_8" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_8" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div id="subjectTextConclusionContainer" class="btnActions">';
+// 	HTML += 			'<div id="subjectTextConclusionContainer" class="btnActions">';
 			
-	HTML += 				'<div class="DropdownWrap">';
-	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_conclusion);
-	HTML += 				'</div>';
+// 	HTML += 				'<div class="DropdownWrap">';
+// 	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_conclusion);
+// 	HTML += 				'</div>';
 
-	HTML += 				'<textarea id="textInputConclusion" val="">';
-				if (JST.hasOwnProperty('conclusion')) {
-					HTML += JST.conclusion;
-				}			
-	HTML += 				'</textarea>';
+// 	HTML += 				'<textarea id="textInputConclusion" val="">';
+// 				if (JST.hasOwnProperty('conclusion')) {
+// 					HTML += JST.conclusion;
+// 				}			
+// 	HTML += 				'</textarea>';
 
-	HTML += 			'</div>';
-	HTML += 		'</div>';
-	HTML += 	'</div>';
-	HTML += '</div>';
-	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 8 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
+// 	HTML += 			'</div>';
+// 	HTML += 		'</div>';
+// 	HTML += 	'</div>';
+// 	HTML += '</div>';
+// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
+// 	errObj.updateErrorObj("STEP 8 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	
-	$('#DataInput').html(HTML);
+// 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
-}
+// 	setJsAudioEventLitsner2();
+// }
 
-$(document).on('change', '#Dropdown2', function(){
-	// var selectedText = $('#Dropdown1:selected').text();
-	var textInput = $('#Dropdown2').val();
-	console.log("textInputTheme - textInput: " + textInput);
-	$('#textInputConclusion').val(textInput);
-});
-
-
-$( document ).on('click', "#step_8_goBack", function(event){
-	step_7_template();
-	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-});
+// $(document).on('change', '#Dropdown2', function(){
+// 	// var selectedText = $('#Dropdown1:selected').text();
+// 	var textInput = $('#Dropdown2').val();
+// 	console.log("textInputTheme - textInput: " + textInput);
+// 	$('#textInputConclusion').val(textInput);
+// });
 
 
-$( document ).on('click', "#step_8_goOn", function(event){
+// $( document ).on('click', "#step_8_goBack", function(event){
+// 	step_7_template();
+// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
+// });
 
-	var conclusion = htmlEntities($('#textInputConclusion').val());
-	if (conclusion.length > 0){
-		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-		if (!JST.hasOwnProperty('conclusion')){
-			JST.conclusion = null;
-		}
 
-		JST.conclusion = conclusion;
+// $( document ).on('click', "#step_8_goOn", function(event){
+
+// 	var conclusion = htmlEntities($('#textInputConclusion').val());
+// 	if (conclusion.length > 0){
+// 		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 		if (!JST.hasOwnProperty('conclusion')){
+// 			JST.conclusion = null;
+// 		}
+
+// 		JST.conclusion = conclusion;
 		
-		step_9_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-		// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
+// 		step_9_template();
+// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 		// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
 		
-	} else {
-		UserMsgBox("body", '<h4>OBS</h4> Du skal du skrive et par afsluttende sætninger, der kort og præcist konkluderer, hvad du har fundet ud af. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til formulering af dine sætninger.');
-	}
-});
+// 	} else {
+// 		UserMsgBox("body", '<h4>OBS</h4> Du skal du skrive et par afsluttende sætninger, der kort og præcist konkluderer, hvad du har fundet ud af. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til formulering af dine sætninger.');
+// 	}
+// });
 
 
 
-//#################################
-//
-//		OLD STEP 4
-//
-//#################################
+// //#################################
+// //
+// //		OLD STEP 4
+// //
+// //#################################
 
-//////////////////////
-//  	STEP 9		//	WRITE A HEADING AND AN INTRODUCTION
-//////////////////////
+// //////////////////////
+// //  	STEP 9		//	WRITE A HEADING AND AN INTRODUCTION
+// //////////////////////
 
-function step_9_template(){
-	jsonData.currentStep = 9;
-	osc.save('jsonData', jsonData);
-	// console.log("step_9_template - headAndIntroCount: " + ((typeof(headAndIntroCount) !== 'undefined')?headAndIntroCount:'undefined'));
-	console.log("step_9_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_9_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount === null)) { 
-	// 	window.headAndIntroCount = 0;
-	// } else {
-	// 	++headAndIntroCount;
-	// }
+// function step_9_template(){
+// 	jsonData.currentStep = 9;
+// 	osc.save('jsonData', jsonData);
+// 	// console.log("step_9_template - headAndIntroCount: " + ((typeof(headAndIntroCount) !== 'undefined')?headAndIntroCount:'undefined'));
+// 	console.log("step_9_template - jsonData 1: " + JSON.stringify(jsonData)); 
+// 	console.log("step_9_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount === null)) { 
+// 	// 	window.headAndIntroCount = 0;
+// 	// } else {
+// 	// 	++headAndIntroCount;
+// 	// }
 
-	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
-	var headAndIntro = ['', ''];
-	if (JST.hasOwnProperty("headAndIntro")){
-		// selcNo = getSelected('selcNo');
-		headAndIntro = JST.headAndIntro;
-	} else {
-		JST.headAndIntro = headAndIntro;
-	}
-	console.log("step_9_template - headAndIntro: " + headAndIntro);
-	// var headAndIntroArray = ["Overskrift", "Indledning"];
-	var stepNo = 9;
+// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
+// 	var headAndIntro = ['', ''];
+// 	if (JST.hasOwnProperty("headAndIntro")){
+// 		// selcNo = getSelected('selcNo');
+// 		headAndIntro = JST.headAndIntro;
+// 	} else {
+// 		JST.headAndIntro = headAndIntro;
+// 	}
+// 	console.log("step_9_template - headAndIntro: " + headAndIntro);
+// 	// var headAndIntroArray = ["Overskrift", "Indledning"];
+// 	var stepNo = 9;
 
-	$('#processContainer').html(returnProgressBar(stepNo));
-	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
+// 	$('#processContainer').html(returnProgressBar(stepNo));
+// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
+// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var HTML = '';
-	HTML += '<div id="step_9" class="step">';
-	HTML +=     '<div class="row">';
-	HTML += 		'<div class="col-xs-12 col-md-12">';
+// 	var HTML = '';
+// 	HTML += '<div id="step_9" class="step">';
+// 	HTML +=     '<div class="row">';
+// 	HTML += 		'<div class="col-xs-12 col-md-12">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_9" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_9" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	
-			HTML +=					returnInputBoxes4(1, 'headerField', ((typeof(headAndIntro[0])!=='undefined') && (headAndIntro[0]!==''))?headAndIntro[0]:'', 'Skriv din overskrift her...');
-	// }
-	// if (headAndIntroCount == 1) {
-			HTML += 	'<textarea class="introField" val="" placeholder="Skriv din indledning her..." >';
-					if ((typeof(headAndIntro[1])!=='undefined') && (headAndIntro[1]!=='')) {
-						HTML += headAndIntro[1];
-					}			
-			HTML += 	'</textarea>';
-	// }
+// 			HTML +=					returnInputBoxes4(1, 'headerField', ((typeof(headAndIntro[0])!=='undefined') && (headAndIntro[0]!==''))?headAndIntro[0]:'', 'Skriv din overskrift her...');
+// 	// }
+// 	// if (headAndIntroCount == 1) {
+// 			HTML += 	'<textarea class="introField" val="" placeholder="Skriv din indledning her..." >';
+// 					if ((typeof(headAndIntro[1])!=='undefined') && (headAndIntro[1]!=='')) {
+// 						HTML += headAndIntro[1];
+// 					}			
+// 			HTML += 	'</textarea>';
+// 	// }
 
-	HTML += 		'</div>';
-	HTML += 	'</div>';
-	HTML += '</div>';
-	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 9 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
+// 	HTML += 		'</div>';
+// 	HTML += 	'</div>';
+// 	HTML += '</div>';
+// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
+// 	errObj.updateErrorObj("STEP 9 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	
-	$('#DataInput').html(HTML);
+// 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
-}
-
-
-
-$( document ).on('focusout', ".headerField", function(event){
-// $( document ).on('focusin', ".studentTheme", function(event){  
-	var headerField = htmlEntities($('.headerField').val());
-	console.log("focusout - headerField: _" + headerField + "_");
-	// if (headerField.length > 0) {
-		// var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[0] = headerField;
-	// }
-});
-
-$( document ).on('focusout', ".introField", function(event){
-// $( document ).on('focusin', ".studentTheme", function(event){  
-	var introField = htmlEntities($('.introField').val());
-	console.log("focusout - introField: _" + introField + "_");
-	// if (introField.length > 0) {
-		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[1] = introField;
-	// }
-});
+// 	setJsAudioEventLitsner2();
+// }
 
 
-$( document ).on('click', "#step_9_goBack", function(event){
-	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount == 0)){
-		step_8_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-		// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
-		// headAndIntroCount = null;
-		console.log("step_9_goBack - headAndIntroCount: " + headAndIntroCount);
-	// } else {
-	// 	--headAndIntroCount; // Once...
-	// 	--headAndIntroCount; // twice... because of the inscreasement inside step_XXX_template
-	// 	step_9_template();
-	// setJsAudioEventLitsner2();  
-	// }
-});
 
-$( document ).on('click', "#step_9_goOn", function(event){
-	console.log("step_9_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// $( document ).on('focusout', ".headerField", function(event){
+// // $( document ).on('focusin', ".studentTheme", function(event){  
+// 	var headerField = htmlEntities($('.headerField').val());
+// 	console.log("focusout - headerField: _" + headerField + "_");
+// 	// if (headerField.length > 0) {
+// 		// var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[0] = headerField;
+// 	// }
+// });
+
+// $( document ).on('focusout', ".introField", function(event){
+// // $( document ).on('focusin', ".studentTheme", function(event){  
+// 	var introField = htmlEntities($('.introField').val());
+// 	console.log("focusout - introField: _" + introField + "_");
+// 	// if (introField.length > 0) {
+// 		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[1] = introField;
+// 	// }
+// });
+
+
+// $( document ).on('click', "#step_9_goBack", function(event){
+// 	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount == 0)){
+// 		step_8_template();
+// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 		// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
+// 		// headAndIntroCount = null;
+// 		console.log("step_9_goBack - headAndIntroCount: " + headAndIntroCount);
+// 	// } else {
+// 	// 	--headAndIntroCount; // Once...
+// 	// 	--headAndIntroCount; // twice... because of the inscreasement inside step_XXX_template
+// 	// 	step_9_template();
+// 	// setJsAudioEventLitsner2();  
+// 	// }
+// });
+
+// $( document ).on('click', "#step_9_goOn", function(event){
+// 	console.log("step_9_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	
-	console.log("step_9_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-	if (!hasNonEmptyStrElm( JST.headAndIntro )){
-		// JSN.subjectTexts_sentences[quoteCount] = sentence;
-		console.log("step_9_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
-		// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
-		step_10_template();
-		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-		// makeSortable();
-	} else {
-		UserMsgBox("body", '<h4>OBS</h4> Du skal en overskrift og indledning til din analyse - du mangler at skrive tekst til '+returnMissingElements('headAndIntro', ["overskriften", "indledningen"]));
-	}
-});
+// 	console.log("step_9_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 	if (!hasNonEmptyStrElm( JST.headAndIntro )){
+// 		// JSN.subjectTexts_sentences[quoteCount] = sentence;
+// 		console.log("step_9_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
+// 		// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
+// 		step_10_template();
+// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 		// makeSortable();
+// 	} else {
+// 		UserMsgBox("body", '<h4>OBS</h4> Du skal en overskrift og indledning til din analyse - du mangler at skrive tekst til '+returnMissingElements('headAndIntro', ["overskriften", "indledningen"]));
+// 	}
+// });
 
 
-//////////////////////
-//  	STEP 10		//	DOWNLOAD YOUR WORD-FILE
-//////////////////////
+// //////////////////////
+// //  	STEP 10		//	DOWNLOAD YOUR WORD-FILE
+// //////////////////////
 
-function step_10_template(){
-	jsonData.currentStep = 10;
-	osc.save('jsonData', jsonData);
-	console.log("step_10_template - jsonData 1: " + JSON.stringify(jsonData)); 
-	console.log("step_10_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+// function step_10_template(){
+// 	jsonData.currentStep = 10;
+// 	osc.save('jsonData', jsonData);
+// 	console.log("step_10_template - jsonData 1: " + JSON.stringify(jsonData)); 
+// 	console.log("step_10_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 
-	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
+// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
 	
-	var stepNo = 10;
+// 	var stepNo = 10;
 
-	$('#processContainer').html(returnProgressBar(stepNo));
-	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
+// 	$('#processContainer').html(returnProgressBar(stepNo));
+// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
+// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
 
-	var HTML = '';
-	HTML += '<div id="step_10" class="step">';
-	HTML +=     '<div class="row">';
-	HTML += 		'<div class="col-xs-12 col-md-12">';
+// 	var HTML = '';
+// 	HTML += '<div id="step_10" class="step">';
+// 	HTML +=     '<div class="row">';
+// 	HTML += 		'<div class="col-xs-12 col-md-12">';
 
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_10" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_10" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div id="TextAndQuoteContainer">';
+// 	HTML += 			'<div id="TextAndQuoteContainer">';
 			
-	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
+// 	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
 
-	HTML += 				'<div id="textOverviewContainer" >';
-				HTML += 		'<h3>'+JST.headAndIntro[0]+'</h3>';
-				HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
-				HTML += 		'<h4>Indledning</h4> ';
-				HTML += 		'<p>'+JST.headAndIntro[1]+'</p>';
-				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
-									'<h4>Tema</h4>'+JST.studentTheme+'<br/><br/>'+
-									'<h4>Temaudlægning</h4>'+JST.TextTheme+'<br/>'+
-								'</div>';
-				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
-					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
-									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
-									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot; <br/><br/>'+
-									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
-									JST.textQuoteNotes[i]+
-								'</div>';
-					// HTML += 	(typeof(JST.textPassages[i]!=='undefined'))?'<p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p>':'';
-					// HTML += 	'<span class="textOverviewSubHeading">Sætning '+String(parseInt(i)+1)+':</span> <br/>';
-					HTML += 	(i < jsonData.numOfChoosenWords-1)?'<div class="textOverview"><h4>Sætning '+String(parseInt(i)+1)+'</h4> <p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p></div>':'';
-				}
-				HTML += 		'<h4>Afslutning</h4>';
-				HTML += 		'<p>'+JST.conclusion+'</p>';
-	HTML += 				'</div>';
-	HTML += 			'</div>';
-	HTML += 		'</div>';
-	HTML += 	'</div>';
-	HTML += '</div>';
-	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-	errObj.updateErrorObj("STEP 10 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
+// 	HTML += 				'<div id="textOverviewContainer" >';
+// 				HTML += 		'<h3>'+JST.headAndIntro[0]+'</h3>';
+// 				HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
+// 				HTML += 		'<h4>Indledning</h4> ';
+// 				HTML += 		'<p>'+JST.headAndIntro[1]+'</p>';
+// 				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
+// 									'<h4>Tema</h4>'+JST.studentTheme+'<br/><br/>'+
+// 									'<h4>Temaudlægning</h4>'+JST.TextTheme+'<br/>'+
+// 								'</div>';
+// 				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
+// 					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
+// 									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
+// 									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot; <br/><br/>'+
+// 									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
+// 									JST.textQuoteNotes[i]+
+// 								'</div>';
+// 					// HTML += 	(typeof(JST.textPassages[i]!=='undefined'))?'<p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p>':'';
+// 					// HTML += 	'<span class="textOverviewSubHeading">Sætning '+String(parseInt(i)+1)+':</span> <br/>';
+// 					HTML += 	(i < jsonData.numOfChoosenWords-1)?'<div class="textOverview"><h4>Sætning '+String(parseInt(i)+1)+'</h4> <p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p></div>':'';
+// 				}
+// 				HTML += 		'<h4>Afslutning</h4>';
+// 				HTML += 		'<p>'+JST.conclusion+'</p>';
+// 	HTML += 				'</div>';
+// 	HTML += 			'</div>';
+// 	HTML += 		'</div>';
+// 	HTML += 	'</div>';
+// 	HTML += '</div>';
+// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
+// 	errObj.updateErrorObj("STEP 10 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
 	
-	$('#DataInput').html(HTML);
+// 	$('#DataInput').html(HTML);
 
-	setJsAudioEventLitsner2();
-}
+// 	setJsAudioEventLitsner2();
+// }
 
 
-$( document ).on('click', "#step_10_goBack", function(event){
-	step_9_template();
-	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-	// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
-});
+// $( document ).on('click', "#step_10_goBack", function(event){
+// 	step_9_template();
+// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
+// 	// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
+// });
 
-$( document ).on('click', "#step_10_download", function(event){
+// $( document ).on('click', "#step_10_download", function(event){
 	
-	var HTML = wordTemplate();
-	// console.log("step_10_download - wordTemplate: " + HTML);
-	// UserMsgBox("body", HTML);
+// 	var HTML = wordTemplate();
+// 	// console.log("step_10_download - wordTemplate: " + HTML);
+// 	// UserMsgBox("body", HTML);
 
-	var converted = htmlDocx.asBlob(HTML);
-    console.log("step_10_download - converted: " + JSON.stringify(converted));
-	saveAs(converted, 'Min analyse.docx');
-});
+// 	var converted = htmlDocx.asBlob(HTML);
+//     console.log("step_10_download - converted: " + JSON.stringify(converted));
+// 	saveAs(converted, 'Min analyse.docx');
+// });
 
-// 1 nøgleproblem
-// 3 emner
-// 4 underspørgsmål
-// 1 problemformulering
-function wordTemplate_OLD() {
-	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	var text = jsonData.keyProblems[JST.selcNo];
-	var HTML = '';
-	HTML += '<!DOCTYPE html>';
-	HTML += '<html>';
-	HTML += 	'<head>';
-	HTML += 	'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';  // Fixes issue with danish characters on Internet Explore 
-	HTML += 		'<style type="text/css">';
-	HTML += 			'body {font-family: arial;}';
-	HTML += 			'h1 {}';
-	HTML += 			'h2 {}';
-	HTML += 			'h3 {font-style: italic; color: #717272;}';
-	HTML += 			'h4 {color: #56bfc5;}';
-	HTML += 			'h5 {}';
-	HTML += 			'h6 {}';
-	HTML += 			'.selected {color: #56bfc5; width: 25%;}';
-	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
-	HTML += 			'table {padding: 8px; width: 100%;}';
-	HTML += 			'td {width: 25%;}';
-	HTML += 			'ol {color: #717272;}';
-	HTML += 		'</style>';
-	HTML += 	'</head>';
-	HTML += 	'<body>';
-	HTML += 		'<h1>'+JST.headAndIntro[0]+'</h1>';
-	// HTML += 		'<hr/>';
-	HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
-	HTML += 		'<p><b>Indledning:</b> '+JST.headAndIntro[1]+'</p>';
+// // 1 nøgleproblem
+// // 3 emner
+// // 4 underspørgsmål
+// // 1 problemformulering
+// function wordTemplate_OLD() {
+// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	var text = jsonData.keyProblems[JST.selcNo];
+// 	var HTML = '';
+// 	HTML += '<!DOCTYPE html>';
+// 	HTML += '<html>';
+// 	HTML += 	'<head>';
+// 	HTML += 	'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';  // Fixes issue with danish characters on Internet Explore 
+// 	HTML += 		'<style type="text/css">';
+// 	HTML += 			'body {font-family: arial;}';
+// 	HTML += 			'h1 {}';
+// 	HTML += 			'h2 {}';
+// 	HTML += 			'h3 {font-style: italic; color: #717272;}';
+// 	HTML += 			'h4 {color: #56bfc5;}';
+// 	HTML += 			'h5 {}';
+// 	HTML += 			'h6 {}';
+// 	HTML += 			'.selected {color: #56bfc5; width: 25%;}';
+// 	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
+// 	HTML += 			'table {padding: 8px; width: 100%;}';
+// 	HTML += 			'td {width: 25%;}';
+// 	HTML += 			'ol {color: #717272;}';
+// 	HTML += 		'</style>';
+// 	HTML += 	'</head>';
+// 	HTML += 	'<body>';
+// 	HTML += 		'<h1>'+JST.headAndIntro[0]+'</h1>';
+// 	// HTML += 		'<hr/>';
+// 	HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
+// 	HTML += 		'<p><b>Indledning:</b> '+JST.headAndIntro[1]+'</p>';
 
-	// HTML += 			'<h3>Din valgte tekst: </h3>';
-	// HTML += 			'<h4>"'+text.title+'" af '+text.author+', '+text.year+'</h4>';
+// 	// HTML += 			'<h3>Din valgte tekst: </h3>';
+// 	// HTML += 			'<h4>"'+text.title+'" af '+text.author+', '+text.year+'</h4>';
 
-	HTML += 		'<p><b>Temaudlægning:</b> '+JST.TextTheme+'</p>';
-	HTML += 		'<hr/>';
-	for (var n in JST.textQuotes){
-		HTML += 		'<p><b>Citat '+String(parseInt(n)+1)+':</b> &quot;<i>'+JST.textQuotes[n]+'</i>&quot;</p>';
-		HTML += 		'<p><b>Citatudlægning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p>';
-		HTML += 		'<hr/>';
-		HTML += 		(n < jsonData.numOfChoosenWords-1)?'<p><b>Sætning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p><hr/>':'';
-		// HTML += 		'<hr/>';
-	}
-	HTML += 		'<p><b>Fortolkning:</b> ';
-	for (var n in JST.textPassages){
-		HTML += 		JST.textPassages[n]+' ';
-	}
-	HTML += 		'<hr/>';
-	HTML += 		'<p><b>Afslutning:</b> '+JST.conclusion+'</p>';
-	HTML += 		'<hr/>';
-	HTML += 		'<div class="instruktion">';
-	HTML += 			'<h3>Gennemlæs din tekst. Hænger den sammen i forhold til:</h3>';
-	HTML += 			'<ol>';
-	HTML += 				'<li>Tydelige overgange mellem afsnit.</li>';
-	HTML += 				'<li>Sammenhæng mellem sætningerne.</li>';
-	HTML += 				'<li>Godt og levende sprog.</li>';
-	HTML += 				'<li>Korrekt brug af punktum og komma.</li>';
-	HTML += 				'<li>Så få formuleringsmæssige uklarheder og stavefejl som muligt.</li>';
-	HTML += 			'</ol>';
-	HTML += 			'<h3>Når du har gennemgået disse trin, har du en rigtig god tekst!</h3>';
-	HTML += 			'<hr/>';
-	HTML += 		'</div>';
-	HTML += 	'</body>';
-	HTML += '</html>';
-	// document.write(HTML);
-	return HTML;
-}
+// 	HTML += 		'<p><b>Temaudlægning:</b> '+JST.TextTheme+'</p>';
+// 	HTML += 		'<hr/>';
+// 	for (var n in JST.textQuotes){
+// 		HTML += 		'<p><b>Citat '+String(parseInt(n)+1)+':</b> &quot;<i>'+JST.textQuotes[n]+'</i>&quot;</p>';
+// 		HTML += 		'<p><b>Citatudlægning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p>';
+// 		HTML += 		'<hr/>';
+// 		HTML += 		(n < jsonData.numOfChoosenWords-1)?'<p><b>Sætning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p><hr/>':'';
+// 		// HTML += 		'<hr/>';
+// 	}
+// 	HTML += 		'<p><b>Fortolkning:</b> ';
+// 	for (var n in JST.textPassages){
+// 		HTML += 		JST.textPassages[n]+' ';
+// 	}
+// 	HTML += 		'<hr/>';
+// 	HTML += 		'<p><b>Afslutning:</b> '+JST.conclusion+'</p>';
+// 	HTML += 		'<hr/>';
+// 	HTML += 		'<div class="instruktion">';
+// 	HTML += 			'<h3>Gennemlæs din tekst. Hænger den sammen i forhold til:</h3>';
+// 	HTML += 			'<ol>';
+// 	HTML += 				'<li>Tydelige overgange mellem afsnit.</li>';
+// 	HTML += 				'<li>Sammenhæng mellem sætningerne.</li>';
+// 	HTML += 				'<li>Godt og levende sprog.</li>';
+// 	HTML += 				'<li>Korrekt brug af punktum og komma.</li>';
+// 	HTML += 				'<li>Så få formuleringsmæssige uklarheder og stavefejl som muligt.</li>';
+// 	HTML += 			'</ol>';
+// 	HTML += 			'<h3>Når du har gennemgået disse trin, har du en rigtig god tekst!</h3>';
+// 	HTML += 			'<hr/>';
+// 	HTML += 		'</div>';
+// 	HTML += 	'</body>';
+// 	HTML += '</html>';
+// 	// document.write(HTML);
+// 	return HTML;
+// }
 
 
 
@@ -3460,12 +3840,15 @@ $(window).on('resize', function() {
 
 $(document).ready(function() {
 
+	window.hasBeenExecBool = false; // Step 3 an 4 onetime runs.
+
+	window.showNaggingBox = true; // If true this shows "the NaggingBox"/problemformulationbox. It is set to false during development.
 
 	returnLastStudentSession(); // This function gives the student the possibility of loading the last "session".
 
 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016   // <------------  Commented out d. 08-04-2016
 
-	window.DTO = Object.create(dynamicTextClass); 
+	// window.DTO = Object.create(dynamicTextClass); 
 
 
 
@@ -3786,7 +4169,10 @@ var dynamicTextClass = {
         {"wait": 1000},
         {"add": " - således."},
         {"wait": 3000},
-        {"add": " Dette er enden på denne lille præsentation :-)"}
+        {"add": " Dette er enden på denne lille præsentation :-)"},
+        {"wait": 3000},
+        {"removeCursor": 300},
+        {"stopExec": 0}
     ],
     interval : null,
     init : function(){ // ARGUMENTS: 1: tagetSelector, 2: cmdObj (which is optional. If cmdObj is omitted, the default cmdObj above is loaded).
@@ -3802,14 +4188,14 @@ var dynamicTextClass = {
         var chars = text.split('');
         console.log('add - chars: ' + chars);
         xthis = this;
-        var timeId = setInterval(function(){ 
+        this.timeId_add = setInterval(function(){ 
             if (count < chars.length){
                 console.log('add - count: ' + count + ', chars['+count+']: ' + chars[count]);
                 $(xthis.tagetSelector).append(String(chars[count])); 
                 ++count;
             } else {
                 console.log('add - clearInterval');
-                clearInterval(timeId);         // Clear the "write timer" timeId
+                clearInterval(xthis.timeId_add);         // Clear the "write timer" timeId
                 xthis.findCmd();
             }
         }, xthis.typeSpeed);
@@ -3831,7 +4217,7 @@ var dynamicTextClass = {
         console.log('del - text: ' + text + ', textlen: ' + textlen + ', spaceArr: ' + spaceArr + ', numOfWordChars: ' + numOfWordChars);
         xthis = this;
         var count = 0;
-        var timeId = setInterval(function(){ 
+        this.timeId_del = setInterval(function(){ 
             if (count < textlen-numOfWordChars+numOfChars){
                 console.log('del - count: ' + count);
                 text = text.slice(0,-1);
@@ -3839,7 +4225,7 @@ var dynamicTextClass = {
                 ++count;
             } else {
                 console.log('del - clearInterval');
-                clearInterval(timeId);         // First, clear the "write timer" timeId
+                clearInterval(xthis.timeId_del);         // First, clear the "write timer" timeId
                 xthis.findCmd();
             }
         }, xthis.typeSpeed);
@@ -3858,13 +4244,13 @@ var dynamicTextClass = {
         $(this.tagetSelector).html(text);
         this.findCmd(); 
     },
-    mark : function(text){
+    mark : function(text){  // Not in use yet...
         console.log('mark - CALLED');
     }, 
     wait : function(timeout){  // This method waits a number of milliseconds given by the argument "timeout", before the next command/method is executed.
         console.log('wait - CALLED');
         xthis = this;
-        setTimeout(function(){ 
+        this.timeId_wait = setTimeout(function(){ 
             xthis.findCmd(); 
         }, timeout);
     }, 
@@ -3873,7 +4259,7 @@ var dynamicTextClass = {
         xthis = this;
         this.cmdCount = (typeof(this.cmdCount) === 'undefined')? 0 : this.cmdCount + 1;
         if (this.cmdCount < this.cmdObj.length){
-            console.log('findCmd - cmdCount: ' + this.cmdCount);
+            console.log('findCmd - cmdCount: ' + this.cmdCount + ", Object.keys(this.cmdObj): " + Object.keys(this.cmdObj));
             var cmd = Object.keys(this.cmdObj[this.cmdCount]);
             var arg = this.cmdObj[this.cmdCount][cmd];
             arg = (typeof(arg) === "string")? '"'+arg+'"' : arg;
@@ -3883,16 +4269,18 @@ var dynamicTextClass = {
         console.log('findCmd - cmdCount 2: ' + this.cmdCount);
     },
     startCursorBlink: function() { // This method initiates cursor blink with a "blink speed" given by cursorBlink.
+        console.log('startCursorBlink - CALLED');
         var xthis = this;
-        this.cursorTimer = setInterval(function(){
+        this.timeId_cursor = setInterval(function(){
             $('.cursor').fadeOut(xthis.cursorBlink).fadeIn(xthis.cursorBlink);
         }, xthis.cursorBlink*2);
     }, 
     removeCursor: function(fadeTime){ // This method removes the cursor from the application - the speed by which it is removed is determined by "fadeTime".
-    	clearInterval(this.cursorTimer);
-    	$('.cursor').fadeOut(fadeTime);
+        console.log('removeCursor - CALLED');
+        clearInterval(this.timeId_cursor);
+        $('.cursor').fadeOut(fadeTime);
     },
-    helper_spaceIndexes: function(str){  // This method is a helper method - it returns an array containing the positions of blank space chars in a string "str" given as argument.
+    helper_spaceIndexes: function(str){  // this method is a helper method - it returns an array containing the positions of blank space chars in a string "str" given as argument.
         spaceArr = [];
         var pos = 0; var count = -1;
         while ((str.indexOf(' ', pos) !== -1)) {
@@ -3901,16 +4289,17 @@ var dynamicTextClass = {
             pos += 1;
         }
         return spaceArr;
+    },
+    stopExec: function(timeout){ // This method stops the object instantiated from dynamicTextClass. When used, the object instantiated needs to be instantiated again.
+        console.log('stopExec - CALLED');
+        var xthis = this;
+        setTimeout(function(){  // Remove all timers...
+            xthis.removeCursor(0);
+            clearInterval(xthis.timeId_del);
+            clearInterval(xthis.timeId_add);
+            clearInterval(xthis.timeId_cursor);
+            clearTimeout(xthis.timeId_wait);
+        }, timeout);
     }
 }
-
-
-
-$(document).ready(function() {
-
-    var DTO = Object.create(dynamicTextClass); 
-    // DTO.init('#dynamicText', jsonData);  	// Own data...
-    // DTO.init('#dynamicText');  			 	// Demo data...
-
-});
 

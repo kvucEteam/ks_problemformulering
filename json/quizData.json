@@ -22,7 +22,7 @@
     	{"name" : "Sprog", "description" : "<h4>Sprog</h4> <p>Er der nogle særlige træk ved sproget, som virker vigtige i forhold til temaet? Er der et særligt billedsprog? Gentagelser? Fagsprog, slang og/eller dialekt?</p>"}    
     ],
 	"numOfChoosenWords" : 3,
-    "numOfSubQuestions" : 4,
+    "numOfSubQuestions" : 4, 
 	"sentenceStarters_problemFormulation" : 
 		{"id":"Dropdown1", "class":"Dropdown", "selected": "0",
             "options":[
@@ -39,7 +39,7 @@
     "sentenceStarters_taxonomy_describing" : 
 		{"id":"Dropdown_describing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-            	{"value":"Faktuelle spørgsmål - ??? - brainstorm-hjælp"},
+            	{"value":"Faktuelle spørgsmål - brainstorm-hjælp"},
                 {"value":"Hvad/hvem er...?"},
                 {"value":"Hvad kendetegner...?"},
                 {"value":"Hvad menes der med...?"},
@@ -50,7 +50,7 @@
     "sentenceStarters_taxonomy_analysing" : 
 		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-            	{"value":"Undersøgende spørgsmål - ??? - brainstorm-hjælp"},
+            	{"value":"Undersøgende spørgsmål - brainstorm-hjælp"},
                 {"value":"Hvordan forholder... sig til...?"},
                 {"value":"Hvordan har... udviklet sig?"},
                 {"value":"Hvilke årsager er der til...?"},
@@ -62,7 +62,7 @@
     "sentenceStarters_taxonomy_assessing" : 
 		{"id":"Dropdown_analysing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
-                {"value":"Diskuterende/vurderende spørgsmål - ??? - brainstorm-hjælp"},
+                {"value":"Diskuterende/vurderende spørgsmål - brainstorm-hjælp"},
                 {"value":"Hvilke konsekvenser har...?"},
                 {"value":"Hvilke muligheder er der for...?"},
                 {"value":"Hvilke af de nævnte årsager...?"},
@@ -122,72 +122,83 @@
 		},{
 			"step" : 1,
 			"header" : "STEP 1 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Vælg et nøgleproblem",
+			"instruction" : [
+                {"insert": "Vælg et nøgleproblem."},
+                {"wait": 1000},
+                {"add": " Hvilket emne vil du undersøge?"},
+                {"wait": 1000},
+                {"removeCursor": 600}
+            ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}],
+            "masterExVideo" : "https://www.youtube.com/embed/a_TasFGEOaM"
 		},{
 			"step" : 2,
 			"header" : "STEP 2 - Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
             "instruction" : [
-                {"insert": "Hvilke ??? underemner kunne du tænke dig at arbejde med?"},
-                {"wait": 2000},
+                {"insert": "Hvilke ??? underemner vil du bruge til at belyse eller udfolde dit emne?"},
+                {"wait": 1000},
                 {"add": " Kan du se en sammenhæng mellem nogle af emnerne?"},
-                {"wait": 2000},
+                {"wait": 1000},
                 {"removeCursor": 600}
             ],
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
-			"masterEx" : [{"time": 1, "word": "Nu har du valgt en tekst"}, {"time": 5, "word": "DIT TEKSTARBEJDE"}, {"time": 9, "word": "Et eller flere temaer"}, {"time": 11.5, "word": "Fokuseret analyse"}, {"time": 16, "word": "Omdrejningspunkt"}, {"time": 22, "word": "Skriv evt eget tema!"}]
+			"masterExVideo" : "https://www.youtube.com/embed/a_TasFGEOaM"
 		},{
 			"step" : 3,
 			"header" : "STEP 3 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Lav de tre valgte underemner om til underspørgsmål. Find på så mange spørgsmål som du kan.",
+			"OLD_instruction" : "Lav de tre valgte underemner om til underspørgsmål. Find på så mange spørgsmål som du kan.",
+            "instruction" : [
+                {"wait": 1000},
+                {"add": " Har du tilføjet spørgsmål i alle tre faneblade?"},
+                {"wait": 1000},
+                {"removeCursor": 600}
+            ],
 			"audioFiles" : [{"name": "audio/step_3.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}],
+            "masterExVideo" : "https://www.youtube.com/embed/a_TasFGEOaM"
 		},{
 			"step" : 4,
 			"header" : "STEP 4 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
+			"OLD_instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
+            "instruction" : [
+                {"wait": 1000},
+                {"add": " De underspørgsmål, som du markerer med stjerner, skal du arbejde videre med i næste del af øvelsen."},
+                {"wait": 1000},
+                {"removeCursor": 600}
+            ],
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}],
+            "masterExVideo" : "https://www.youtube.com/embed/a_TasFGEOaM"
 		},{
 			"step" : 5,
 			"header" : "STEP 5 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
+			"OLD_instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
+            "instruction" : [
+                {"insert": "Her er din problemformulering og dine bedste underspørgsmål. Nu skal du omformulere og finpudse din tekst. Er der en sammenhæng mellem problemformuleringen og underspørgsmålene? Er der en rød tråd i underspørgsmålene? Kommer alle tre fag i spil?"},
+                {"wait": 1000},
+                {"add": " Løfter din besvarelse sig op over det redegørende niveau?"},
+                {"wait": 1000},
+                {"removeCursor": 600}
+            ],
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}]
+			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}],
+            "masterExVideo" : "https://www.youtube.com/embed/a_TasFGEOaM" 
 		},{
 			"step" : 6,
 			"header" : "STEP 6 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
+			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
+            "instruction" : [
+                {"insert": "Klik på “download” knappen for at hente dit arbejde som en Wordfil, et Google drev-dokument eller en Open office-fil."},
+                {"wait": 1000},
+                {"add": " Du kan arbejde videre med at lave en afgrænset problemformulering og nogle relevante underspørgsmål."},
+                {"wait": 1000},
+                {"removeCursor": 600}
+            ],
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}]
-		},{
-			"step" : 7,
-			"header" : "STEP 7 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Formulér ???-1 sætninger, der kobler tekstens tema med de udvalgte citater og giver dit bud på en fortolkning.",
-			"audioFiles" : [{"name": "audio/step_7.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_7_goBack", "text":"Gå tilbage"}, {"id": "step_7_goOn", "text":"Gå videre"}]
-		},{
-			"step" : 8,
-			"header" : "STEP 8 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Skriv et par afsluttende sætninger",
-			"audioFiles" : [{"name": "audio/step_8.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_8_goBack", "text":"Gå tilbage"}, {"id": "step_8_goOn", "text":"Gå videre"}]
-		},{
-			"step" : 9,
-			"header" : "STEP 9 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Skriv en overskrift og indledning til din analyse",
-			"audioFiles" : [{"name": "audio/step_9.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_9_goBack", "text":"Gå tilbage"}, {"id": "step_9_goOn", "text":"Gå videre"}]
-		},{
-			"step" : 10,
-			"header" : "STEP 10 - Skriv en problemformulering med underspørgsmål",
-			"instruction" : "Download din analyse",
-			"explanation" : "Download Word-filen. Den indeholder en vejledning til, hvordan du kan arbejde videre med din skønlitterære analyse.",
-			"audioFiles" : [{"name": "audio/step_10.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_10_goBack", "text":"Gå tilbage"}, {"id": "step_10_download", "text":"DOWNLOAD"}]
 		}
 	]
 }

@@ -4,6 +4,10 @@
         Objekt styling
 *************************************/
 
+.MsgBox_bgr{
+    z-index: 110;
+}
+
 .Dropdown {
     width: 100%;
     margin: 0px 15px 15px 0px;
@@ -23,7 +27,7 @@
 }
 
 .textOverview{
-    margin-bottom: 20px;
+    margin-bottom: 20px; 
 }
 
 .textOverviewSubHeading{
@@ -195,7 +199,7 @@ textarea {
     margin-top: 1px;
 }
 
-.glyphicon-pencil{
+.glyphicon-pencil, .glyphicon-star-empty, .glyphicon-star{
     margin-right: 10px;
 }
 
@@ -270,7 +274,7 @@ textarea {
     margin-bottom: 10px;
     /*overflow: auto;*/
     overflow: unset;
-    padding: 20px 1% 20px 20px;
+    padding: 10px 1% 10px 20px;
 }
 
 
@@ -319,10 +323,18 @@ textarea {
     color: #717272;
 }
 
+.nav-tabs > li > a, 
+.nav-tabs > li > a:focus, 
+.nav-tabs > li > a:hover{
+    color: #000;
+}
+
 .nav-tabs > li.active > a, 
 .nav-tabs > li.active > a:focus, 
 .nav-tabs > li.active > a:hover{
-    color: #05a0a8;
+    /*color: #05a0a8;*/
+    color: #000;
+    font-weight: 700;
 }
 
 .cssGreen{
@@ -334,7 +346,7 @@ textarea {
     margin-bottom: 0px;
 }
 
-.contentEdit{
+.contentEdit, .contentMark{
     float: right;
 }
 
@@ -342,7 +354,7 @@ textarea {
     float: right;
     position: relative;
     z-index: 10000;
-    cursor: crosshair;
+    /*cursor: crosshair;*/
 }
 
 .deleteCallOut {
@@ -369,7 +381,68 @@ textarea {
 }
 
 #step_2 .input-group{
-    margin-left: 0px; margin-right: 10px;
+    margin-left: 0px; margin-right: 0px;
 }
 
+.tabBodyDropdownContainer .label{
+    margin-right: 10px;
+}
 
+.tabBodyDropdownContainer .Dropdown{
+    margin-top: 10px;
+}
+
+.problemFormulationBtnWrap{
+    padding-top: 0px;
+    height: 50px;
+}
+
+.masterStudentBtnWrap{
+    padding-top: 15px;
+}
+
+#textInputProblemFormulation{
+    margin-top: 5px;
+}
+
+/*****************************************/
+
+.markStar{
+    position: relative;
+}
+
+.dragCallOut{
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: 50%;
+    top: -43px;
+    z-index: 100;
+}
+
+.dragCallOutArrow {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 55%;
+    top: -19px;
+    z-index: 99;
+}
+
+.markCallOut{
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: -15px;
+    top: -43px;
+    z-index: 100;
+}
+
+.markCallOutArrow {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 14px;
+    top: -19px;
+    z-index: 99;
+}
