@@ -228,12 +228,13 @@ function returnInputBoxes3(numOfBoxes, Class, placeholderText){
 
 
 function returnProgressBar(stepNo){
-	var progress = Math.round(stepNo/(jsonData.steps.length-1)*100);
+	// var progress = Math.round(stepNo/(jsonData.steps.length-1)*100);  // This gives a stepsize of 17% over 6 steps in total where step 0 has 0% progress
+	var progress = Math.round((stepNo+1)/(jsonData.steps.length)*100);   // This gives a stepsize of 17% over 6 steps in total where step 0 has 0% progress
 	console.log("returnProgressBar - progress: " + progress + ", jsonData.steps.length: " + jsonData.steps.length);
 	var HTML = '';
 	HTML += '<div class="row">';
     HTML += 	'<div class="col-xs-12 col-md-12">';
-	HTML += 		'<div id="processBarContainer"><div id="processBar" style="width:'+progress+'%;'+((progress==100)?'border-radius: 2px;':'')+'">&nbsp;</div></div> <div id="processVal">'+ String(progress) + '% </div>';
+	HTML += 		'<div id="processBarContainer"><div id="processBar" style="width:'+progress+'%;'+((progress==100)?'border-radius: 1px;':'')+'">&nbsp;</div></div> <div id="processVal">'+ String(progress) + '% </div>';
 	HTML += 	'</div>';
 	HTML += '</div>';
 	return HTML;
@@ -325,6 +326,18 @@ function removeEmptyElements(Tarray){
 	return Tarray;
 }
 console.log('removeEmptyElements: ' + JSON.stringify(removeEmptyElements([1,2,,3,,4,'',5,'',6])));
+
+
+function removeElementIfExist(Tarray, element){
+	console.log('removeElementIfExist - Tarray: ' + JSON.stringify(Tarray));
+	for (var i in Tarray){
+		if (Tarray[i] === element) {
+			Tarray.splice(i, 1);
+		}
+	}
+	return Tarray;
+}
+console.log('removeElementIfExist: ' + JSON.stringify(removeElementIfExist([1,2,,3,,4,'',5,'',6], 3)));
 
 
 
@@ -995,16 +1008,15 @@ function step_2_template(){
 
 				for (var n in JT){
 					console.log("step_2_template - n: " + n + ", elementInArray: " + elementInArray(JS.studentSelectedThemes, n));
-					HTML += 	'<span class="keyThemes btn btn-'+((elementInArray(JS.studentSelectedThemes, n))?'primary':'info')+'" >'+JT[n]+'</span>';
+					// HTML += 	'<span class="keyThemes btn btn-'+((elementInArray(JS.studentSelectedThemes, n))?'primary':'info')+'" >'+JT[n]+'</span>';  // totStudentThemes
+					HTML += 	'<span class="keyThemes btn btn-'+((elementInArray(JS.totStudentThemes, JT[n]))?'primary':'info')+'" >'+JT[n]+'</span>';
 				}
 
 	HTML += 			'</div>';
 
 	HTML += 			'<div class="stepInput">';
-	// HTML += 				'<span class="helperText helperTextInput">Tilføj evt. et ekstra emne:</span>';
-								// returnInputBoxes4(numOfBoxes, Class, savedValues, placeholderText)
-	// HTML += 					returnInputBoxes4(JS.studentThemes.length, 'keyThemesByStudent', JS.studentThemes, 'skriv tema her...');
-	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'Skriv evt. dit eget emne');
+	// HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'Skriv evt. dit eget emne');
+	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', '', 'Skriv evt. dit eget emne');
 	HTML +=						'<span id="addSubject" class="vuc-primary btn btn-primary">Tilføj emne</span>';
 	HTML += 			'</div>';
 
@@ -1074,8 +1086,12 @@ function replaceWildcardsInCmdObj(cmdObj){
 function insertMasterExample(){
 	// window.insertMasterExampleActive = true;
 	var HTML = '';
-	HTML += '<div class="masterStudentBtnWrap">';
-	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	HTML += '<div class="masterStudentBtnWrap">';  // EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL
+	if (jsonData.currentStep = 5) {
+		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
+	} else {
+		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	}
 	HTML += '</div>';
 	return HTML;
 }
@@ -1120,14 +1136,14 @@ function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJ
 
 	console.log("addSubject - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 
-	console.log('keyThemeMaxAmountController - JS.totStudentThemes_selectOrder 0: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
+	console.log('keyThemeMaxAmountController -X- JS.totStudentThemes_selectOrder 0: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
 	if (JS.totStudentThemes_selectOrder.length > jsonData.numOfChoosenWords){
 		var indexNo = JS.totStudentThemes_selectOrder[0];  
-		console.log('keyThemeMaxAmountController - indexNo: ' + indexNo + ', JS.totStudentThemes 1: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
+		console.log('keyThemeMaxAmountController -X- indexNo: ' + indexNo + ', JS.totStudentThemes 1: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
 		$('.keyThemes').eq(indexNo).addClass('btn-info').removeClass('btn-primary');
 		JS.totStudentThemes.splice(0, 1);
 		JS.totStudentThemes_selectOrder.splice(0, 1);
-		console.log('keyThemeMaxAmountController - indexNo: ' + indexNo + ', JS.totStudentThemes 2: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
+		console.log('keyThemeMaxAmountController -X- indexNo: ' + indexNo + ', JS.totStudentThemes 2: ' + JSON.stringify(JS.totStudentTheme) + ', JS.totStudentThemes_selectOrder 2: ' + JSON.stringify(JS.totStudentThemes_selectOrder));
 	}
 
 	console.log("addSubject - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
@@ -1137,11 +1153,12 @@ function keyThemeMaxAmountController() {  // <------   20/4-2016: SKAL TAGE HØJ
 $( document ).on('click', ".keyThemes", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var index = $(this).index();
+	console.log("keyThemes -X- studentSelectedThemes 0: " + JSON.stringify(JS.studentSelectedThemes) + ", totStudentThemes_selectOrder 0: " + JSON.stringify(JS.totStudentThemes_selectOrder) + ", totStudentThemes 0: " + JSON.stringify(JS.totStudentThemes));
 	if ($(this).hasClass('btn-primary')){
-		console.log("keyThemes - studentSelectedThemes 0: " + JSON.stringify(JS.studentSelectedThemes));
 		JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
+		JS.totStudentThemes_selectOrder.splice(returnElementNumInArray(JS.totStudentThemes_selectOrder, index), 1);
+		JS.totStudentThemes.splice(returnElementNumInArray(JS.totStudentThemes, $(this).text().trim()), 1);
 		$('.keyThemes').eq(index).addClass('btn-info').removeClass('btn-primary');
-		console.log("keyThemes - studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes));
 	} else {
 		if (JS.studentSelectedThemes.length >= jsonData.numOfChoosenWords){
 			JS.studentSelectedThemes.splice(returnElementNumInArray(JS.studentSelectedThemes, index), 1);
@@ -1150,8 +1167,9 @@ $( document ).on('click', ".keyThemes", function(event){
 		JS.totStudentThemes.push($(this).text().trim());
 		JS.totStudentThemes_selectOrder.push(index);
 		$('.keyThemes').eq(index).addClass('btn-primary').removeClass('btn-info');
-		console.log("keyThemes - studentSelectedThemes 2: " + JSON.stringify(JS.studentSelectedThemes));
+		console.log("keyThemes -X- studentSelectedThemes: " + JSON.stringify(JS.studentSelectedThemes));
 	}
+	console.log("keyThemes -X- studentSelectedThemes 1: " + JSON.stringify(JS.studentSelectedThemes) + ", totStudentThemes_selectOrder 1: " + JSON.stringify(JS.totStudentThemes_selectOrder) + ", totStudentThemes 1: " + JSON.stringify(JS.totStudentThemes));
 	keyThemeMaxAmountController();
 });
 
@@ -1193,6 +1211,8 @@ $( document ).on('click', "#addSubject", function(event){
 			if (htmlEntities($('.keyThemesByStudent').val().trim()).length > 0){
 				JS.studentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
 				JS.totStudentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
+				var selcNo = jsonData.studentSelectedProblems[jsonData.selectedIndexNum].selcNo;
+				jsonData.keyProblems[selcNo].themes.push(htmlEntities($('.keyThemesByStudent').val().trim())); // <------- NEW 02-06-2016
 			}
 			$('.keyThemesByStudent').val('');
 
@@ -1341,9 +1361,9 @@ function step_3_template(){
 		JS.taxonomyObj = {};
 
 		for (var n in JSS) {
-			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
+			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});  // OLD STRUCTURE - NOT IN USE!
 		}
-		JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};
+		JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};    // NEW STRUCTURE - IN USE!
 	}
 
 	console.log("step_3_template - JS 2: " + JSON.stringify(JS));
@@ -1360,7 +1380,7 @@ function step_3_template(){
 	HTML += 			'<div id="subjectTextThemeContainer" >';
 			
 	HTML += 			'<div class="problemFormulationBtnWrap">';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
+	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
 			// var studentSelectedThemes = [];
@@ -2012,7 +2032,7 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 		HTML += '<div style="margin-bottom: 0px;">';
 		HTML += 	'<span class="btn btn-sm btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
 		HTML += '</div>';
-		HTML += 'Nu skal du i gang med at skrive din første tidlige idé til en problemformulering.';
+		HTML += 'Nu skal du i gang med at skrive din første tidlige idé til en problemformulering:';
 		$('#textInputProblemFormulation').before(HTML);
 		$('#textInputProblemFormulation').prop('placeholder','Gå igang med at formulere dit hovedspørgsmål her - i løse træk.');
 	}
@@ -2132,7 +2152,9 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 	    	$(".problemFormulationBtnWrap .problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
 	    }
 
-	 	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+	    console.log("UserMsgbox - problemFormulation_saveHide - jsonData.currentStep: " + jsonData.currentStep + ", hasBeenExecBool: " + hasBeenExecBool);
+	 	if ((hasBeenExecBool) && ((jsonData.currentStep != 3) || (jsonData.currentStep != 4))) {  // hasBeenExecBool is set to true ine step 3 and 4.
+	 	// if (hasBeenExecBool) { 
 	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'problemFormulation_saveHide'}] );
 		}
 	});
@@ -2159,7 +2181,9 @@ $( document ).on('click', ".CloseClass", function(event){
 	    	
 	    $(".problemFormulationBtnWrap .problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
 
-	    if (hasBeenExecBool){ 	// hasBeenExecBool is set to true ine step 3 and 4.
+	    console.log("UserMsgbox - CloseClass - jsonData.currentStep: " + jsonData.currentStep + ", hasBeenExecBool: " + hasBeenExecBool);
+	    if ((hasBeenExecBool) && ((jsonData.currentStep != 3) || (jsonData.currentStep != 4))) { 	// hasBeenExecBool is set to true ine step 3 and 4.
+	    // if (hasBeenExecBool) { 
 	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'CloseClass'}] );
 		}
 	});
@@ -2194,6 +2218,13 @@ $( document ).on('click', "#step_3_goOn", function(event){
 	// TextTheme = 'TEST'; // <--------------------------------   VIGTIGT: FIND UD AF HVILKET MINIMUMSKRAV FAGREDAKTØRENE HAR TIL DETTE SKRIDT!!!
 	
 	if ((JS.taxonomyObj.describe.length >= 2) && (JS.taxonomyObj.analyse.length >= 2) && (JS.taxonomyObj.assess.length >= 2)){
+
+		ajustMarkedThemes(); 
+
+		JS.taxonomyObj_old = JSON.parse(JSON.stringify(JS.taxonomyObj)); // Make a copy 
+		console.log("step_3_goOn - taxonomyObj: " + JSON.stringify(JS.taxonomyObj) + "\ntaxonomyObj_old: " + JSON.stringify(JS.taxonomyObj_old)); 
+
+		// JS.taxonomyObj_mark = objectfyThemes();  // <------- taxonomyObj_mark NOT IN USE 02-06-2016
 	
 		step_4_template();
 		
@@ -2201,6 +2232,83 @@ $( document ).on('click', "#step_3_goOn", function(event){
 		UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum skrive to spørgsmål til hvert niveau.');
 	}
 });
+
+
+function ajustMarkedThemes(){  // <---- This function ajust the marked themes in step 4 if changes has been made to the themes.
+
+	var count = 0;
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var TSortableOrderArray = [];
+	if (typeof(JS.markedThemes) !== 'undefined') {  // If the user has marked themes AND been at step 5 and gone back to this step, then...
+		var TmarkedThemes = [];
+		console.log("ajustMarkedThemes - taxonomyObj 1: " + JSON.stringify(JS.taxonomyObj) + "\ntaxonomyObj_old 1: " + JSON.stringify(JS.taxonomyObj_old)); 
+		var taxonomyObjkey = Object.keys(JS.taxonomyObj);
+		for (var k in taxonomyObjkey) { 
+			var key = taxonomyObjkey[k];
+			console.log('objectfyThemes - k: ' + k + ', key: ' + key);
+			for (var t in JS.taxonomyObj[key]) { 
+				// if (elementInArray(JS.markedThemes, count)) { // If the index "count" is in markedThemes, then we might need to remove it...
+				// 	if (typeof(JS.taxonomyObj_old[key][t]) !== 'undefined') { 
+				// 		if (!elementInArray(JS.taxonomyObj_old[key], JS.taxonomyObj[key][t])){ // If the new value is NOT a mamber of the old array, then we need to remove the index:
+				// 			JS.markedThemes = removeElementIfExist(JS.markedThemes, count);
+				// 		} else {
+				// 			// var index = returnElementNumInArray(JS.taxonomyObj_old[key], JS.taxonomyObj[key][t]);
+				// 			// var index = returnElementNumInArray(JS.SortableOrderArray, JS.taxonomyObj[key][t]);  // SortableOrderArray containes all the values in a sorted manner.
+				// 			// TmarkedThemes.push(count);
+				// 		}
+				// 	} else {  // If the new taxonomyObj does not contain the t value, then the index "count" in markedThemes needs to be removed...
+				// 		JS.markedThemes = removeElementIfExist(JS.markedThemes, count);
+				// 	}
+
+				// 	// if (elementInArray(JS.taxonomyObj_old[key], JS.taxonomyObj[key][t])){
+				// 	// 	var index = returnElementNumInArray(, JS.taxonomyObj[key][t]);  // SortableOrderArray containes all the values in a sorted manner.
+				// 	// 	TmarkedThemes.push(index);
+				// 	// }
+				// }
+
+				TSortableOrderArray.push(JS.taxonomyObj[key][t]);
+				++count;
+			}
+		}
+		console.log("ajustMarkedThemes - SortableOrderArray: " + JSON.stringify(JS.SortableOrderArray) + ", TSortableOrderArray: " + JSON.stringify(TSortableOrderArray)); 
+
+		// for (var n in TSortableOrderArray){
+		// 	if (elementInArray(JS.SortableOrderArray, TSortableOrderArray[n])) {
+		// 		TmarkedThemes.push(n);
+		// 	}
+		// }
+
+		for (var n in JS.markedThemes){
+			if (elementInArray(TSortableOrderArray, JS.SortableOrderArray[JS.markedThemes[n]])) {
+				var index = returnElementNumInArray(TSortableOrderArray, JS.SortableOrderArray[JS.markedThemes[n]]);
+				TmarkedThemes.push(index);
+			}
+		}
+			
+		JS.markedThemes = TmarkedThemes;
+	}
+} 
+
+
+function objectfyThemes(){  // NOT IN USE 02-06-2016
+	var count = 0;
+	var Tobj = {"describe": [], "analyse": [], "assess": []}; 
+	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+	var taxonomyObjkey = Object.keys(JS.taxonomyObj);
+	for (var k in taxonomyObjkey) { 
+		var key = taxonomyObjkey[k];
+		console.log('objectfyThemes - k: ' + k + ', key: ' + key);
+		for (var t in JS.taxonomyObj[key]) { 
+			// var arrLen = JS.taxonomyObj[key].length;
+			// Tobj[key][arrLen-t] =  JS.taxonomyObj[key][arrLen-t]
+			Tobj[key].push({id: count, val: JS.taxonomyObj[key][t], mark: false, sortNo: count});
+			++count;
+		}
+	}
+	console.log('objectfyThemes - taxonomyObj: ' + JSON.stringify(JS.taxonomyObj) + ', Tobj: ' + JSON.stringify(Tobj));
+	
+	return Tobj;
+} 
 
 
 
@@ -2223,7 +2331,9 @@ function step_4_template(){
 		$( ".problemFormulationBtn" ).trigger( "click" );
 	}
 	
-	osc.save('jsonData', jsonData);if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+	osc.save('jsonData', jsonData);
+
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
 		DTO.stopExec(0);
 		DTO = null;
 	}
@@ -2278,7 +2388,7 @@ function step_4_template(){
 	
 	HTML += 			'<div class="problemFormulationBtnWrap">';
 	// HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span><span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: SORTER UNDERSPØRGSMÅL</span>';
-	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET PROBLEMFORMULERING</span>';
+	HTML += 					'<span class="problemFormulationBtn btn btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING</span>';
 	HTML += 			'</div>';
 
 	HTML += 			'<div id="subjectSentenceSortableContainer" class="btnActions">';
@@ -2673,12 +2783,12 @@ function step_5_template(){
 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_5" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>' + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>' ):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'+ insertMasterExample() ):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
-	HTML += 			'<div class="problemFormulationBtnWrap">';
-	HTML += 					'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
-	HTML += 			'</div>';
+	// HTML += 			'<div class="problemFormulationBtnWrap">';
+	// HTML += 					'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
+	// HTML += 			'</div>';
 
 						var placeholderText = 'Hvis du endnu ikke har skrevet et udkast til din problemformulering, skal du gøre det her.';
 	HTML += 			'<textarea id="textInputProblemFormulation" class="textInput" val="" placeholder="'+placeholderText+'">';
@@ -2929,53 +3039,48 @@ function wordTemplate() {
 	HTML += 	'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';  // Fixes issue with danish characters on Internet Explore 
 	HTML += 		'<style type="text/css">';
 	HTML += 			'body {font-family: arial}';
-	HTML += 			'h1 {text-align: center; padding: 25px; background-color: #45818E; color: #FFF}';
+	HTML += 			'h1 {}';
 	HTML += 			'h2 {}';
-	HTML += 			'h3 {font-style: italic; color: #717272}';
+	HTML += 			'h3 {color: #333}';
 	HTML += 			'h4 {color: #56bfc5}';
 	HTML += 			'h5 {}';
 	HTML += 			'h6 {}';
 	HTML += 			'.selected {color: #56bfc5; width: 25%}';
 	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
-	HTML += 			'table {width:60%; margin-left:70px}';
-	HTML += 			'td {padding:50px 50px 50px 50px}';
+	HTML += 			'table {width:95%; margin-left:12px}';
+	HTML += 			'td {padding:10px 10px 10px 10px}';
 	HTML += 			'ol {color: #000}';
-	HTML += 			'.checkQuestion{background-color: #D0E0E3; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
-	HTML += 			'.useMaterial{background-color: #FFD966; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
+	HTML += 			'.checkQuestion{background-color: #acefed; padding: 10px 10px 10px 10px; margin-bottom: 25px}';  // g2
+	HTML += 			'.useMaterial{background-color: #d2d4ec; padding: 10px 10px 10px 10px; margin-bottom: 25px}';  // e2
 	HTML += 			'.innerSpacer{margin: 10px}';
+	HTML +=				'.spacer{}';
 	HTML += 		'</style>';
 	HTML += 	'</head>';
 	HTML += 	'<body>';
 	HTML += 		'<h1>'+keyProblem+'</h1>';
-	// HTML += 		'<hr/>';
 
-	HTML += 		'<h2>Problemformulering</h2> ';
+	HTML += 		'<h3>Problemformulering</h3> ';
 	HTML += 		'<p>'+JS.problemFormulationMem[JS.problemFormulationMem.length - 1]+'</p>';
 
-	// HTML += 		'<hr/>';
-
-	HTML += 		'<h2>Underspørgsmål</h2> ';
-	HTML += 		'<ol>';
+	HTML += 		'<h3>Underspørgsmål</h3> ';
+	HTML += 		'<ul>';
 					for (var n in JS.subQuestionArray){
 	HTML += 			'<li>'+JS.subQuestionArray[n]+'</li>';
 					}
-	HTML += 		'</ol>';
+	HTML += 		'</ul>';
 
-	HTML += 		'<h2>Tjekspørgsmål til problemformuleringen:</h2> '; 
-	HTML += 		'<div><table class="checkQuestion">';
-	// HTML += 			'<div class="innerSpacer">';
-	HTML += 				'<tr><td><p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
-	HTML += 				'<p><b>Taksonomi:</b> Lægger problemformuleringen op til undersøgelse, diskussion og vurdering - dvs. ikke kun til redegørelse?</p>';
-	HTML += 				'<p><b></tr></td>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p>';
-	// HTML += 			'</div>';
-	HTML += 		'</table></di>';
+	HTML += 		'<h3>Tjekspørgsmål til problemformuleringen:</h3> '; 
+	HTML += 		'<table class="checkQuestion">';
+	HTML += 			'<tr><td><p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
+	HTML += 			'<p><b>Taksonomi:</b> Lægger problemformuleringen op til undersøgelse, diskussion og vurdering - dvs. ikke kun til redegørelse?</p>';
+	HTML += 			'<p><b>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p></td></tr>';
+	HTML += 		'</table>';
 
-	HTML += 		'<div class="useMaterial">';
+	HTML += 		'<div class="spacer">&nbsp;</div>'
+
+	HTML += 		'<table class="useMaterial">';
 	HTML += 			'<p><b>Anvendelse af materiale:</b> Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!</p>';
-	HTML += 		'</div>';
-
-// Anvendelse af materiale: Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!
-
+	HTML += 		'</table>';
 
 	HTML += 	'</body>';
 	HTML += '</html>';
@@ -4179,8 +4284,8 @@ var dynamicTextClass = {
         this.tagetSelector = arguments[0];
         if (typeof(arguments[1]) !== 'undefined') this.cmdObj = arguments[1];
 
-        this.findCmd();
-        this.startCursorBlink();
+        this.findCmd();             // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
+        this.startCursorBlink();    // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
     },
     add : function(text){   // This method types the text given as argument. The typing speed is given by "typeSpeed".
         console.log('add - CALLED');
