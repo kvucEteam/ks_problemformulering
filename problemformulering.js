@@ -2937,8 +2937,8 @@ function wordTemplate() {
 	HTML += 			'h6 {}';
 	HTML += 			'.selected {color: #56bfc5; width: 25%}';
 	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
-	HTML += 			'table {padding: 8px; width: 100%}';
-	HTML += 			'td {width: 25%}';
+	HTML += 			'table {width:60%; margin-left:70px}';
+	HTML += 			'td {padding:50px 50px 50px 50px}';
 	HTML += 			'ol {color: #000}';
 	HTML += 			'.checkQuestion{background-color: #D0E0E3; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
 	HTML += 			'.useMaterial{background-color: #FFD966; padding: 1px 10px 10px 10px; margin-bottom: 10px}';
@@ -2962,13 +2962,13 @@ function wordTemplate() {
 	HTML += 		'</ol>';
 
 	HTML += 		'<h2>Tjekspørgsmål til problemformuleringen:</h2> '; 
-	HTML += 		'<div class="checkQuestion">';
+	HTML += 		'<div><table class="checkQuestion">';
 	// HTML += 			'<div class="innerSpacer">';
-	HTML += 				'<p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
+	HTML += 				'<tr><td><p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
 	HTML += 				'<p><b>Taksonomi:</b> Lægger problemformuleringen op til undersøgelse, diskussion og vurdering - dvs. ikke kun til redegørelse?</p>';
-	HTML += 				'<p><b>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p>';
+	HTML += 				'<p><b></tr></td>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p>';
 	// HTML += 			'</div>';
-	HTML += 		'</div>';
+	HTML += 		'</table></di>';
 
 	HTML += 		'<div class="useMaterial">';
 	HTML += 			'<p><b>Anvendelse af materiale:</b> Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!</p>';
