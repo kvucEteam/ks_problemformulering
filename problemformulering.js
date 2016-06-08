@@ -553,7 +553,7 @@ function returnLastStudentSession() {
 
 		window.safariUserHasAgreed = false;
 
-		UserMsgBox("body", '<h4>ADVARSEL</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade wordfilen til sidst i øvelsen.</p><br> <p>Brug i stedet <b>Chrome</b> (<a href="https://www.google.dk/chrome/browser/desktop/">Hent den her</a>) eller <b>Firefox</b>  (<a href="https://www.mozilla.org/da/firefox/new/">Hent den her</a>).</p><br> <p>Mvh <a href="https://www.vucdigital.dk">vucdigital.dk</a> </p>');
+		UserMsgBox("body", '<h4>OBS</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade wordfilen til sidst i øvelsen.</p><br> <p>Brug i stedet <b>Chrome</b> (<a href="https://www.google.dk/chrome/browser/desktop/">Hent den her</a>) eller <b>Firefox</b>  (<a href="https://www.mozilla.org/da/firefox/new/">Hent den her</a>).</p><br> <p>Mvh <a href="https://www.vucdigital.dk">vucdigital.dk</a> </p>');
 		
 		$('#UserMsgBox').addClass('UserMsgBox_safari');
 		$('.MsgBox_bgr').addClass('MsgBox_bgr_safari');
@@ -701,16 +701,24 @@ function detectBootstrapBreakpoints(){
 
 
 $( document ).on( "dynamicTextEvent", function (event, data) {
-   	console.log("dynamicTextEvent: " + data.testdata); 
-   
-	var stepNo = jsonData.currentStep;
-	console.log("dynamicTextEvent - stepNo: " + stepNo);
-
-	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
-
-	window.DTO = Object.create(dynamicTextClass); 
-	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+	if (typeof(thisStepNoMem) === 'undefined'){
+		window.thisStepNoMem = null;
+	}
 	
+	// if (thisStepNoMem != data.currentStep){
+	if (thisStepNoMem != jsonData.currentStep){
+	   	console.log("dynamicTextEvent: " + data.testdata); 
+	   
+		var stepNo = jsonData.currentStep;
+		console.log("dynamicTextEvent - stepNo: " + stepNo);
+
+		replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+		window.DTO = Object.create(dynamicTextClass); 
+		DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+
+		thisStepNoMem = jsonData.currentStep;
+	}
 });
 
 
@@ -727,6 +735,12 @@ function step_0_template(){
 	// jsonData.autoPlay = true;
 	// osc.save('jsonData', jsonData);  // Not necessary to save step 0! 
 	// osc.exist('jsonData');	// Not necessary to save step 0!
+
+	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
+		DTO.stopExec(0);
+		DTO = null;
+	}
+
 	var stepNo = 0;
 	$('#processContainer').html(returnProgressBar(stepNo));
 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
@@ -749,6 +763,8 @@ function step_0_template(){
 	$('#DataInput').html(HTML);
 
 	setJsAudioEventLitsner2(); 
+
+	window.scrollTo(0, 0);
 }
 
 $( document ).on('click', "#step_0_goOn", function(event){
@@ -847,6 +863,8 @@ function step_1_template(){
 
 	window.DTO = Object.create(dynamicTextClass); 
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
+
+	window.scrollTo(0, 0);
 }
 
 
@@ -1036,6 +1054,7 @@ function step_2_template(){
 	window.DTO = Object.create(dynamicTextClass); 
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
 
+	window.scrollTo(0, 0);
 }
 
 
@@ -1087,7 +1106,7 @@ function insertMasterExample(){
 	// window.insertMasterExampleActive = true;
 	var HTML = '';
 	HTML += '<div class="masterStudentBtnWrap">';  // EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL
-	if (jsonData.currentStep = 5) {
+	if (jsonData.currentStep == 5) {
 		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
 	} else {
 		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
@@ -1316,6 +1335,7 @@ function step_3_template(){
 	window.hasBeenExecBool = false;
 	if ((jsonData.previousStep == 2) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
 		hasBeenExecBool = true;
+		problemFormulationBtn_pressed = true;  // Only for step 3 and 4.
 		$( ".problemFormulationBtn" ).trigger( "click" );
 	}
 
@@ -1476,6 +1496,8 @@ function step_3_template(){
 	if (!hasBeenExecBool) {
 		$( document ).trigger( "dynamicTextEvent", [{testdata: hasBeenExecBool}] );
 	}
+
+	window.scrollTo(0, 0);
 }
 
 
@@ -1615,12 +1637,13 @@ $( document ).on('click', ".taxonomy", function(event){
 	$(this).addClass('taxonomyEdit');
 	console.log('taxonomy - text: _'+text+'_');
 
-	$(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', text, 'Skriv eller klik væk for at slette...'));
+	$(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', text, 'Skriv dit underspørgsmål her'));     // <-------  Text changed 07-06-2016: TLY does not want the delete-feature.
 	// $(this).html(returnInputBoxes4(1, 'taxonomyTextEdit', '<span class="taxonomyTextEditContainer">'+text+'</span>', 'Skriv eller klik væk for at slette...'));
 	// $(this).html('<input type="text" class="taxonomyTextEdit form-control" value="'+text+'" placeholder="Skriv eller klik væk for at slette..." aria-describedby="sizing-addon2">');
 
 	$('.input-group', this).append('<span class="contentDelete glyphicon glyphicon-trash"></span>');
 	window.contentDelete = false;
+
 
 	// $('.taxonomyTextEdit', this).focus();  // This jus sets the focus. To set the focus at the end, see the following:
 
@@ -1763,7 +1786,8 @@ function contentDeleteController(thisObj){
 			$(thisObj).removeClass('taxonomyEdit');
 			// taxonomyEdit(text, $(this));
 		} else {
-			$(thisObj).remove();
+			// $(thisObj).remove();   // <-------  Commented out 07-06-2016: TLY does not want this delete-feature. 
+			$(thisObj).addClass('taxonomy').removeClass('taxonomyEdit');  //  Added 07-06-2016 to compensate for the delete-feature. 
 			console.log('focusout - A3 - TAXONOMYTEST');
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
 				console.log('focusout - A4 - TAXONOMYTEST');
@@ -1802,12 +1826,15 @@ $( document ).on('keypress', ".taxonomyEdit", function(event){
 			$(this).removeClass('taxonomyEdit');
 			// taxonomyEdit(text, $(this));
 		} else {
-			$(this).remove();
+			// $(this).remove();   // <-------  Commented out 07-06-2016: TLY does not want this delete-feature.
+			$(this).addClass('taxonomy').removeClass('taxonomyEdit');  //  Added 07-06-2016 to compensate for the delete-feature.
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
 				console.log('keypress - TAXONOMYTEST');
 				// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
 			}
 		}
+
+		$(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');  // Added 07-06-2016 - it was missing!
 	}
 });
 
@@ -1891,12 +1918,20 @@ function taxonomyEdit_3(){
 
 
 $(document).on('change', '.taxonomyDropdown', function(){
-	// var selectedText = $('#Dropdown1:selected').text();
+	var tagName = $(this).prop("tagName")
+	console.log("taxonomyDropdown - tagName: " + tagName);
 	var taxonomyDropdown = $(this).val();
 	console.log("taxonomyDropdown - taxonomyDropdown: " + taxonomyDropdown);
 	var tabBodyObj = $(this).closest('.tabBodyDropdownContainer'); 
 	$('.tabInput', tabBodyObj).val(taxonomyDropdown);
 	$('.tabInput', tabBodyObj).focus();
+
+	var HTML = '';
+	HTML += ($(this).prop("id").indexOf('describing') !== -1)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_describing) : '';
+	HTML += ($(this).prop("id").indexOf('analysing') !== -1)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_analysing) : '';
+	HTML += ($(this).prop("id").indexOf('assessing') !== -1)? returnDropdownMarkup(jsonData.sentenceStarters_taxonomy_assessing) : '';
+	console.log("taxonomyDropdown - HTML: " + HTML);
+	$(this).parent().html(HTML);
 });
 
 
@@ -1992,6 +2027,8 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
 	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
 
+	console.log('problemFormulationBtn - jsonData.currentStep: ' + jsonData.currentStep);
+
 	if (jsonData.currentStep == 1) {
 		HTML += insertKeyProblem('<h4>Du valgte emnet: <span class="e1 label label-default"> ??? </span></h4>');
 	}
@@ -2032,9 +2069,9 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 		HTML += '<div style="margin-bottom: 0px;">';
 		HTML += 	'<span class="btn btn-sm btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
 		HTML += '</div>';
-		HTML += 'Nu skal du i gang med at skrive din første tidlige idé til en problemformulering:';
+		HTML += 'Nu skal du i gang med at skrive din første idé til en problemformulering:';
 		$('#textInputProblemFormulation').before(HTML);
-		$('#textInputProblemFormulation').prop('placeholder','Gå igang med at formulere dit hovedspørgsmål her - i løse træk.');
+		$('#textInputProblemFormulation').prop('placeholder','Skriv dit første udkast til din problemformulering her.');
 	}
 
 	if (jsonData.currentStep == 3) {
@@ -2153,8 +2190,8 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 	    }
 
 	    console.log("UserMsgbox - problemFormulation_saveHide - jsonData.currentStep: " + jsonData.currentStep + ", hasBeenExecBool: " + hasBeenExecBool);
-	 	if ((hasBeenExecBool) && ((jsonData.currentStep != 3) || (jsonData.currentStep != 4))) {  // hasBeenExecBool is set to true ine step 3 and 4.
-	 	// if (hasBeenExecBool) { 
+	 	// if ((hasBeenExecBool) && ((jsonData.currentStep != 3) || (jsonData.currentStep != 4))) {  // hasBeenExecBool is set to true ine step 3 and 4.
+	 	if (hasBeenExecBool) { 
 	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'problemFormulation_saveHide'}] );
 		}
 	});
@@ -2172,7 +2209,7 @@ $( document ).on('click', ".CloseClass", function(event){
 	}
 	console.log("CloseClass - insertMasterExampleActive 2: " + insertMasterExampleActive);
 
-	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+	if ((hasBeenExecBool) && (problemFormulationBtn_pressed)) {  // hasBeenExecBool is set to true ine step 3 and 4.
  		$('.problemFormulationBtn').hide();
 	}
 
@@ -2182,14 +2219,20 @@ $( document ).on('click', ".CloseClass", function(event){
 	    $(".problemFormulationBtnWrap .problemFormulationBtn").show().animate(cssObjXL, 300).animate(cssObj, 300);
 
 	    console.log("UserMsgbox - CloseClass - jsonData.currentStep: " + jsonData.currentStep + ", hasBeenExecBool: " + hasBeenExecBool);
-	    if ((hasBeenExecBool) && ((jsonData.currentStep != 3) || (jsonData.currentStep != 4))) { 	// hasBeenExecBool is set to true ine step 3 and 4.
-	    // if (hasBeenExecBool) { 
+	    // if ((hasBeenExecBool) && ((jsonData.currentStep != 3) && (jsonData.currentStep != 4))) { 	// hasBeenExecBool is set to true ine step 3 and 4.
+	    if (hasBeenExecBool) { 
 	 		$( document ).trigger( "dynamicTextEvent", [{testdata: 'CloseClass'}] );
 		}
 	});
 
 	
 });
+
+
+$( document ).on('mousedown', ".btn", function(event){ // This prevents the problemFormulationBtn to hide in step 3 and 4
+	window.problemFormulationBtn_pressed = ($(this).hasClass('problemFormulationBtn'))? true : false;
+});
+
 
 // Functionality for the UserMsgBox containing the "Problem Formulation".
 $(document).on('change', '#Dropdown1', function(){
@@ -2229,7 +2272,7 @@ $( document ).on('click', "#step_3_goOn", function(event){
 		step_4_template();
 		
 	} else {
-		UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum skrive to spørgsmål til hvert niveau.');
+		UserMsgBox("body", '<h4>OBS</h4> Du skal som minimum skrive to spørgsmål til hvert niveau.');
 	}
 });
 
@@ -2328,6 +2371,7 @@ function step_4_template(){
 	window.hasBeenExecBool = false;
 	if ((jsonData.previousStep == 3) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
 		hasBeenExecBool = true;
+		problemFormulationBtn_pressed = true;  // Only for step 3 and 4.
 		$( ".problemFormulationBtn" ).trigger( "click" );
 	}
 	
@@ -2434,6 +2478,7 @@ function step_4_template(){
 			HTML += '<div id="Sort_'+((SortableOrderArray_is_new || jsonData.previousStep == 3)? count : JS.SortableOrderIndexArray[count])+'" style="background-color:'+
 					((SortableOrderArray_is_new || jsonData.previousStep == 3)? colorObj['g'+String(3-k)] : returnSavedColor(count) )+
 					'" class="markStar Sortable sortable_text_container">'+
+					// '" class="markStar taxonomy Sortable sortable_text_container">'+
 					((SortableOrderArray_is_new || jsonData.previousStep == 3)? JS.taxonomyObj[key][t] : JS.SortableOrderArray[count] )+
 					'<span class="contentMark glyphicon '+(((JS.hasOwnProperty('markedThemes')) && (elementInArray(JS.markedThemes, count)))?'glyphicon-star':'glyphicon-star-empty')+'"></span></div>';            // <---- NEW 24/5-2016
 
@@ -2476,6 +2521,10 @@ function step_4_template(){
 	if (!hasBeenExecBool) {
 		$( document ).trigger( "dynamicTextEvent", [{testdata: hasBeenExecBool}] );
 	}
+
+	// var scroll = $( ".container-fluid" ).scrollTop( 0 );
+	// console.log('step_4_template - scroll: ' + scroll);
+	window.scrollTo(0, 0);
 }
 
 
@@ -2710,9 +2759,11 @@ $( document ).on('click', "#step_4_goOn", function(event){
 
 	var taxObj = countTaxonomyAndMarkings();
 
-	if (taxObj.describe + taxObj.analyse + taxObj.assess >= 4){  // The criteria is at least 4 subquestions in total (de to the number between step 5 and 6). 
+	// if (taxObj.describe + taxObj.analyse + taxObj.assess >= 4){  // The criteria is at least 4 subquestions in total (de to the number between step 5 and 6). 
+	if (taxObj.describe + taxObj.analyse + taxObj.assess >= 3){  // As of 06-06-2016 (approved by Mikkel Kryel), the criteria is at least 3 subquestions in total. 
 
-		if (taxObj.assess + taxObj.analyse > 0){  // The criteria is at least ONE subquestion at a higher level of taxonomy (e.g. "analyse" OR "assessing") 
+		// if (taxObj.assess + taxObj.analyse > 0){  // The criteria is at least ONE subquestion at a higher level of taxonomy (e.g. "analyse" OR "assessing") 
+		if (taxObj.assess > 0){  // As of 06-06-2016 (approved by Mikkel Kryel), the criteria is at least ONE subquestion at the highest level of taxonomy (e.g. "assessing") 
 
 			// All callOuts has to be removed before the following updates are called.
 			$('.dragCallOut').remove();
@@ -2726,11 +2777,12 @@ $( document ).on('click', "#step_4_goOn", function(event){
 			step_5_template();
 
 		} else {
-			UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum tilføje en stjerne til andet end redegørende niveau.');
+			// UserMsgBox("body", '<h4>OBS</h4> Du skal som minimum tilføje en stjerne til andet end redegørende niveau.');
+			UserMsgBox("body", '<h4>OBS</h4> Du skal som minimum tilføje en stjerne til et underspørgsmål på et diskuterende/vurderende niveau.');
 		}
 
 	} else {
-		UserMsgBox("body", '<h4>Advarsel</h4> Du skal som minimum markere 4 underspørgsmål.');
+		UserMsgBox("body", '<h4>OBS</h4> Du skal som minimum markere 3 underspørgsmål.');
 	}
 });
 
@@ -2779,7 +2831,7 @@ function step_5_template(){
 	var HTML = '';
 	HTML += '<div id="step_5" class="step">';
 	HTML +=     '<div class="row">';
-	HTML += 		'<div class="col-xs-12 col-md-12">';
+	HTML += 		'<div id="subQuestionContainer" class="col-xs-12 col-md-12">';
 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_5" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>' + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
@@ -2812,6 +2864,9 @@ function step_5_template(){
 						JS.subQuestionArray = TsubQuestionArray;
 
 	HTML += 		'</div>';
+
+	HTML += 	'<span id="addSubQuestion" class="btn btn-info"> <span class="glyphicon glyphicon-plus"></span> Tilføj underspørgsmål </span>';
+
 	HTML += 	'</div>';
 	HTML += '</div>';
 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
@@ -2825,6 +2880,8 @@ function step_5_template(){
 
 	window.DTO = Object.create(dynamicTextClass); 
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+
+	window.scrollTo(0, 0);
 }
 
 
@@ -2839,6 +2896,28 @@ function updateSubQuestionArray(){
 }
 
 
+$( document ).on('click', "#addSubQuestion", function(event){
+	$('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container"> (Klik for at skrive dit nye underspørgsmål) <span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+});
+
+
+$( document ).on('click', ".newSubQuestion", function(event){
+	// console.log('newSubQuestion - tagName: ' + $(this).children().children().prop("tagName") + ', id: ' + $(this).children().children().prop("id") + ', class: ' + $(this).children().children().prop("class"));
+	// window.newSubQuestionDefaultText = $(this).text();
+	if ($(this).has( ".glyphicon-trash" ).length > 0){
+		$('input', this).attr('placeholder', '');
+		$('input', this).attr('value', '');
+		// $(this).has('input').css( "background-color", "red" );
+	}
+});
+
+// $( document ).on('focusout', ".newSubQuestion", function(event){
+// 	if ($(this).text().trim() === ''){
+//     	$(this).text(newSubQuestionDefaultText);
+//     }
+// });
+
+
 $( document ).on('click', "#step_5_goBack", function(event){
 	updateSubQuestionArray();
 	step_4_template();
@@ -2849,28 +2928,29 @@ $( document ).on('click', "#step_5_goOn", function(event){
 	console.log('step_5_goOn - problemFormulation : ' + problemFormulation);
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+
+	console.log('step_5_goOn - JS.subQuestionArray : ' + JS.subQuestionArray);
 	
 	if (problemFormulation.length > 0) {
 
-		if (JS.subQuestionArray.length >= 4){
-			saveProblemFormulation();
-			updateSubQuestionArray();
+		saveProblemFormulation();
+		updateSubQuestionArray();
+		
+		if (JS.subQuestionArray.length >= 3){
+			// saveProblemFormulation();
+			// updateSubQuestionArray();
 			
 			step_6_template();
 		} else {
-			UserMsgBox("body", "<h4>OBS</h4> Du skal minimum have 4 underspørgsmål!");
+			UserMsgBox("body", "<h4>OBS</h4> Du skal som minimum skrive 3 underspørgsmål.");
 		}
 
 	} else {
-		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive tekst til din problemformulering før du kan gå videre!");
+		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive en problemformulering, før du kan gå videre.");
 	}
 
 });
 
-
-//####################################################################################################################
-//											      DEV-LINE
-//####################################################################################################################
 
 
 //////////////////////
@@ -2896,6 +2976,8 @@ function step_6_template(){
 	console.log("step_6_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
 	
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  
+
+	var keyProblem = jsonData.keyProblems[JS.selcNo].name;
 	
 	var stepNo = 6;
 	$('#processContainer').html(returnProgressBar(stepNo));
@@ -2908,7 +2990,8 @@ function step_6_template(){
 
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'):'')+'</div><div class="clear"></div>';
+	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
@@ -2920,7 +3003,7 @@ function step_6_template(){
 	// 4 underspørgsmål
 	// 1 problemformulering
 	HTML += 				'<div>';
-				HTML += 		'<h3>Stilladseret skrive guide</h3>';
+				HTML += 		'<h3>Overordnet emne: <span class="e1 label label-default">' + keyProblem + '</span></h3>';
 
 				// HTML += 		'<h4>Nøgleproblem</h4> ';
 				// HTML += 		'<p >'+jsonData.keyProblems[JS.selcNo].name+'</p>';
@@ -2956,6 +3039,8 @@ function step_6_template(){
 
 	window.DTO = Object.create(dynamicTextClass); 
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+
+	window.scrollTo(0, 0);
 }
 
 
@@ -3090,583 +3175,13 @@ function wordTemplate() {
 
 
 
-// //#################################
-// //
-// //		OLD STEP 4
-// //
-// //#################################
-
-// //////////////////////
-// //  	STEP 7		//	WRITE TEXTS TO CONNECT YOUR PASSAGES
-// //////////////////////
-
-// function step_7_template(){
-// 	jsonData.currentStep = 7;
-// 	osc.save('jsonData', jsonData);
-// 	console.log("step_7_template - quoteCount: " + ((typeof(textPassageCount) !== 'undefined')?textPassageCount:'undefined'));
-// 	console.log("step_7_template - jsonData 1: " + JSON.stringify(jsonData)); 
-// 	console.log("step_7_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount === null)) { 
-// 		window.textPassageCount = 0;
-// 		console.log("step_7_template - textPassageCount DEFINED! ");
-// 	} else {
-// 		if (textPassageCount < jsonData.numOfChoosenWords-2){
-// 			++textPassageCount;
-// 		}
-// 		// ++textPassageCount;
-// 	}
-
-// 	console.log("step_7_template - textPassageCount: " + textPassageCount);
-
-// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
-// 	var textPassages = [];
-// 	if (JST.hasOwnProperty("textPassages")){
-// 		// selcNo = getSelected('selcNo');
-// 		textPassages = JST.textPassages;
-// 	}
-// 	var stepNo = 7;
-// 	$('#processContainer').html(returnProgressBar(stepNo));
-// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-// 	var HTML = '';
-// 	HTML += '<div id="step_7" class="step">';
-// 	HTML +=     '<div class="row">';
-// 	HTML += 		'<div class="col-xs-12 col-md-12">';
-
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_7" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
-
-// 	HTML += 			'<div id="TextAndQuoteContainer">';
-			
-// 	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
-	
-// 	HTML += 				'<div id="textPassageContainer" class="btnActions">';
-// 				for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-// 					HTML += 	'<span class="textPassageBtn btn btn-'+((i==textPassageCount)?'primary':'info')+'">Sætning '+String(i+1)+'</span>';
-// 				}
-// 	HTML += 				'</div>';
-
-// 	HTML += 				'<div id="textOverviewContainer" >';
-// 				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
-// 									'<h4>Tema</h4>'+JST.studentTheme +'<br/><br/>'+
-// 									'<h4>Temaudlægning</h4>'+JST.TextTheme+
-// 								'</div>';
-// 				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
-// 					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
-// 									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
-// 									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot;<br/><br/>'+
-// 									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
-// 									JST.textQuoteNotes[i]+
-// 								'</div>';
-// 				}
-// 	HTML += 				'</div>';
-
-
-// 	HTML += 			'</div>';
-
-// 	// HTML += 			'<div class="QuoteHolder TextHolder"> &quot;<i>';
-// 	// 			HTML += JST.textQuotes[textPassageCount];
-// 	// HTML += 			'<i>&quot; </div>';
-
-// 	HTML += 				'<div class="DropdownWrap">';
-// 	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_interpretation);
-// 	HTML += 				'</div>';
-
-// 	HTML += 			'<textarea id="textInput_'+textPassageCount+'" val="" class="textInput">';
-// 			if ((JST.hasOwnProperty('textPassages')) && (typeof(JST.textPassages[textPassageCount]) !== 'undefined')) {
-// 				HTML += JST.textPassages[textPassageCount];
-// 			}			
-// 	HTML += 			'</textarea>';
-// 	HTML += 		'</div>';
-// 	HTML += 	'</div>';
-// 	HTML += '</div>';
-// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-// 	errObj.updateErrorObj("STEP 7 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
-	
-// 	$('#DataInput').html(HTML);
-
-// 	setJsAudioEventLitsner2();
-// }
-
-
-// $(document).on('change', '#Dropdown1b', function(){
-// 	// var selectedText = $('#Dropdown1:selected').text();
-// 	var interpretation = $('#Dropdown1b').val();
-// 	console.log("textInputTheme - interpretation: " + interpretation);
-// 	$('#textInput_'+textPassageCount).val(interpretation);
-// });
-
-
-// $( document ).on('click', ".textPassageBtn", function(event){
-// 	var index = $(this).index();
-// 	console.log("quoteBtn - index: " + index);
-	 
-// 	// -----------------------
-// 	console.log("quoteNoteBtn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-// 	if (!JST.hasOwnProperty('textPassages')){
-// 		JST.textPassages = [];
-// 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-// 			JST.textPassages.push('');
-// 		};
-// 	}
-
-// 	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
-// 	console.log("quoteNoteBtn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
-// 	console.log("quoteNoteBtn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
-	
-// 	if (textPassageCount < jsonData.numOfChoosenWords-1){
-// 		// JSN.subjectTexts_sentences.push(sentence);
-// 		JST.textPassages[textPassageCount] = sentence;
-// 		// step_4_template();
-// 		console.log("quoteBtn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	} 
-// 	// else {
-// 	// 	JST.subjectTexts_sentences[textPassageCount] = sentence;
-// 	// 	// step_4b_template();
-// 	// 	console.log("quoteBtn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-// 	// 	// makeSortable();
-// 	// }
-
-// 	// -----------------------
-// 	textPassageCount = index-1; 
-// 	step_7_template();  
-// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-// });
-
-
-// $( document ).on('click', "#step_7_goBack", function(event){
-// 	if ((typeof(textPassageCount) === 'undefined') || (textPassageCount == 0)){
-// 		step_6_template();
-// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 		// $(".textInputQuoteNote").focus();  // Sets the focus in the textarea when the template loades.
-// 		textPassageCount = null;
-// 		console.log("step_4_goBack - textPassageCount: " + textPassageCount);
-// 	} else {
-// 		--textPassageCount; // Once...
-// 		--textPassageCount;	// twice... because of the inscreasement inside step_XXX_template
-// 		step_7_template();
-// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 		// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-// 	}
-// });
-
-// $( document ).on('click', "#step_7_goOn", function(event){
-// 	console.log("step_7_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-// 	if (!JST.hasOwnProperty('textPassages')){
-// 		JST.textPassages = [];
-// 		for (var i = 0; i < jsonData.numOfChoosenWords-1; i++) {
-// 			JST.textPassages.push('');
-// 		};
-// 	}
-
-// 	var btnPrimaryText = $("#subjectWordSentenceContainer .btn-primary").text();
-
-// 	var sentence = htmlEntities($('#textInput_'+textPassageCount).val());
-// 	console.log("step_7_goOn - textPassageCount: " + textPassageCount + ", sentence: " + sentence);
-// 	console.log("step_7_goOn - $('#textInput_'+textPassageCount).val(): " + $('#textInput_'+textPassageCount).val());
-// 	if (sentence.length > 0) {
-// 		// if (quoteCount < jsonData.numOfChoosenWords-1){
-// 		// 	JSN.subjectTexts_sentences[quoteCount] = sentence;
-// 		// 	console.log("step_4_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems));
-			
-// 		// 	step_4_template();
-			
-// 		// } else {
-// 			JST.textPassages[textPassageCount] = sentence;
-// 			console.log("step_7_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-// 			if (!hasNonEmptyStrElm( JST.textPassages )){
-// 				// JSN.subjectTexts_sentences[quoteCount] = sentence;
-// 				console.log("step_7_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
-// 				console.log("step_7_goOn - jsonData: " + JSON.stringify(jsonData));
-// 				// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
-// 				step_8_template();
-// 				// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 				// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
-// 				// makeSortable();
-// 			} else {
-// 				UserMsgBox("body", '<h4>OBS</h4> Du skal skrive sætninger i tekstboksene der forbinder dine tekstafsnit - du mangler at skrive tekst til '+returnMissingElements('textPassages', 'sætning')+'. Tryk på sætningsknapperne og skriv tekst i tekstboksene.');
-// 			}
-// 		// }
-
-// 	} else {
-// 		UserMsgBox("body", "<h4>OBS</h4> Du skal skrive sætninger i tekstboksene før du kan gå videre!");
-// 	}
-
-// });
-
-
-// //////////////////////
-// //  	STEP 8 		//  WRITE YOUR CONCLUSION BY WRITING TWO SENTENCES
-// //////////////////////
-
-
-// function step_8_template(){
-// 	console.log("step_8_template - jsonData 1: " + JSON.stringify(jsonData)); 
-// 	jsonData.currentStep = 8;
-// 	osc.save('jsonData', jsonData);
-// 	var stepNo = 8;
-
-// 	$('#processContainer').html(returnProgressBar(stepNo));
-// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-
-// 	var HTML = '';
-// 	HTML += '<div id="step_8" class="step">';
-// 	HTML +=     '<div class="row">';
-// 	HTML += 		'<div class="col-xs-12 col-md-12">';
-	
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_8" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
-
-// 	HTML += 			'<div id="subjectTextConclusionContainer" class="btnActions">';
-			
-// 	HTML += 				'<div class="DropdownWrap">';
-// 	HTML += 					returnDropdownMarkup(jsonData.sentenceStarters_conclusion);
-// 	HTML += 				'</div>';
-
-// 	HTML += 				'<textarea id="textInputConclusion" val="">';
-// 				if (JST.hasOwnProperty('conclusion')) {
-// 					HTML += JST.conclusion;
-// 				}			
-// 	HTML += 				'</textarea>';
-
-// 	HTML += 			'</div>';
-// 	HTML += 		'</div>';
-// 	HTML += 	'</div>';
-// 	HTML += '</div>';
-// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-// 	errObj.updateErrorObj("STEP 8 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
-	
-// 	$('#DataInput').html(HTML);
-
-// 	setJsAudioEventLitsner2();
-// }
-
-// $(document).on('change', '#Dropdown2', function(){
-// 	// var selectedText = $('#Dropdown1:selected').text();
-// 	var textInput = $('#Dropdown2').val();
-// 	console.log("textInputTheme - textInput: " + textInput);
-// 	$('#textInputConclusion').val(textInput);
-// });
-
-
-// $( document ).on('click', "#step_8_goBack", function(event){
-// 	step_7_template();
-// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 	// $(".textInput").focus();  // Sets the focus in the textarea when the template loades.
-// });
-
-
-// $( document ).on('click', "#step_8_goOn", function(event){
-
-// 	var conclusion = htmlEntities($('#textInputConclusion').val());
-// 	if (conclusion.length > 0){
-// 		var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-// 		if (!JST.hasOwnProperty('conclusion')){
-// 			JST.conclusion = null;
-// 		}
-
-// 		JST.conclusion = conclusion;
-		
-// 		step_9_template();
-// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 		// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
-		
-// 	} else {
-// 		UserMsgBox("body", '<h4>OBS</h4> Du skal du skrive et par afsluttende sætninger, der kort og præcist konkluderer, hvad du har fundet ud af. Brug evt. sætningsstarterne i dropdownmenuen som inspiration til formulering af dine sætninger.');
-// 	}
-// });
-
-
-
-// //#################################
-// //
-// //		OLD STEP 4
-// //
-// //#################################
-
-// //////////////////////
-// //  	STEP 9		//	WRITE A HEADING AND AN INTRODUCTION
-// //////////////////////
-
-// function step_9_template(){
-// 	jsonData.currentStep = 9;
-// 	osc.save('jsonData', jsonData);
-// 	// console.log("step_9_template - headAndIntroCount: " + ((typeof(headAndIntroCount) !== 'undefined')?headAndIntroCount:'undefined'));
-// 	console.log("step_9_template - jsonData 1: " + JSON.stringify(jsonData)); 
-// 	console.log("step_9_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount === null)) { 
-// 	// 	window.headAndIntroCount = 0;
-// 	// } else {
-// 	// 	++headAndIntroCount;
-// 	// }
-
-// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
-// 	var headAndIntro = ['', ''];
-// 	if (JST.hasOwnProperty("headAndIntro")){
-// 		// selcNo = getSelected('selcNo');
-// 		headAndIntro = JST.headAndIntro;
-// 	} else {
-// 		JST.headAndIntro = headAndIntro;
-// 	}
-// 	console.log("step_9_template - headAndIntro: " + headAndIntro);
-// 	// var headAndIntroArray = ["Overskrift", "Indledning"];
-// 	var stepNo = 9;
-
-// 	$('#processContainer').html(returnProgressBar(stepNo));
-// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-
-// 	var HTML = '';
-// 	HTML += '<div id="step_9" class="step">';
-// 	HTML +=     '<div class="row">';
-// 	HTML += 		'<div class="col-xs-12 col-md-12">';
-
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_9" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
-
-	
-// 			HTML +=					returnInputBoxes4(1, 'headerField', ((typeof(headAndIntro[0])!=='undefined') && (headAndIntro[0]!==''))?headAndIntro[0]:'', 'Skriv din overskrift her...');
-// 	// }
-// 	// if (headAndIntroCount == 1) {
-// 			HTML += 	'<textarea class="introField" val="" placeholder="Skriv din indledning her..." >';
-// 					if ((typeof(headAndIntro[1])!=='undefined') && (headAndIntro[1]!=='')) {
-// 						HTML += headAndIntro[1];
-// 					}			
-// 			HTML += 	'</textarea>';
-// 	// }
-
-// 	HTML += 		'</div>';
-// 	HTML += 	'</div>';
-// 	HTML += '</div>';
-// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-// 	errObj.updateErrorObj("STEP 9 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
-	
-// 	$('#DataInput').html(HTML);
-
-// 	setJsAudioEventLitsner2();
-// }
-
-
-
-// $( document ).on('focusout', ".headerField", function(event){
-// // $( document ).on('focusin', ".studentTheme", function(event){  
-// 	var headerField = htmlEntities($('.headerField').val());
-// 	console.log("focusout - headerField: _" + headerField + "_");
-// 	// if (headerField.length > 0) {
-// 		// var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-// 		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[0] = headerField;
-// 	// }
-// });
-
-// $( document ).on('focusout', ".introField", function(event){
-// // $( document ).on('focusin', ".studentTheme", function(event){  
-// 	var introField = htmlEntities($('.introField').val());
-// 	console.log("focusout - introField: _" + introField + "_");
-// 	// if (introField.length > 0) {
-// 		jsonData.studentSelectedProblems[jsonData.selectedIndexNum].headAndIntro[1] = introField;
-// 	// }
-// });
-
-
-// $( document ).on('click', "#step_9_goBack", function(event){
-// 	// if ((typeof(headAndIntroCount) === 'undefined') || (headAndIntroCount == 0)){
-// 		step_8_template();
-// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 		// $("#textInputConclusion").focus();  // Sets the focus in the textarea when the template loades.
-// 		// headAndIntroCount = null;
-// 		console.log("step_9_goBack - headAndIntroCount: " + headAndIntroCount);
-// 	// } else {
-// 	// 	--headAndIntroCount; // Once...
-// 	// 	--headAndIntroCount; // twice... because of the inscreasement inside step_XXX_template
-// 	// 	step_9_template();
-// 	// setJsAudioEventLitsner2();  
-// 	// }
-// });
-
-// $( document ).on('click', "#step_9_goOn", function(event){
-// 	console.log("step_9_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	
-// 	console.log("step_9_goOn - jsonData.studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
-// 	if (!hasNonEmptyStrElm( JST.headAndIntro )){
-// 		// JSN.subjectTexts_sentences[quoteCount] = sentence;
-// 		console.log("step_9_goOn - jsonData.studentSelectedProblems 4: " + JSON.stringify(jsonData.studentSelectedProblems));
-// 		// autoPlay = (typeof(TautoPlay) !== 'undefined')? TautoPlay : autoPlay;  // This sets the remembered state before step 4.
-// 		step_10_template();
-// 		// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 		// makeSortable();
-// 	} else {
-// 		UserMsgBox("body", '<h4>OBS</h4> Du skal en overskrift og indledning til din analyse - du mangler at skrive tekst til '+returnMissingElements('headAndIntro', ["overskriften", "indledningen"]));
-// 	}
-// });
-
-
-// //////////////////////
-// //  	STEP 10		//	DOWNLOAD YOUR WORD-FILE
-// //////////////////////
-
-// function step_10_template(){
-// 	jsonData.currentStep = 10;
-// 	osc.save('jsonData', jsonData);
-// 	console.log("step_10_template - jsonData 1: " + JSON.stringify(jsonData)); 
-// 	console.log("step_10_template - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-
-// 	// var JSN = jsonData.studentSelectedProblems[jsonData.selectedselcNo];
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];  // <-----  NEW!
-	
-// 	var stepNo = 10;
-
-// 	$('#processContainer').html(returnProgressBar(stepNo));
-// 	// ajustProcessBarContainerLength('#processBarContainer', '#processBar', '#processVal');
-// 	$('#stepNavContainer').html(changeNavAndAudioToStepNo(stepNo));
-
-// 	var HTML = '';
-// 	HTML += '<div id="step_10" class="step">';
-// 	HTML +=     '<div class="row">';
-// 	HTML += 		'<div class="col-xs-12 col-md-12">';
-
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_10" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
-// 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
-
-// 	HTML += 			'<div id="TextAndQuoteContainer">';
-			
-// 	// HTML +=				'<span class="Texts btn btn-info" >'+jsonData.keyProblems[JST.selcNo].author+': "'+jsonData.keyProblems[JST.selcNo].title+'", '+jsonData.keyProblems[JST.selcNo].year+'</span>';
-
-// 	HTML += 				'<div id="textOverviewContainer" >';
-// 				HTML += 		'<h3>'+JST.headAndIntro[0]+'</h3>';
-// 				HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
-// 				HTML += 		'<h4>Indledning</h4> ';
-// 				HTML += 		'<p>'+JST.headAndIntro[1]+'</p>';
-// 				HTML += 		'<div class="textOverview textOverview_TextTheme">'+
-// 									'<h4>Tema</h4>'+JST.studentTheme+'<br/><br/>'+
-// 									'<h4>Temaudlægning</h4>'+JST.TextTheme+'<br/>'+
-// 								'</div>';
-// 				for (var i = 0; i < jsonData.numOfChoosenWords; i++) {
-// 					HTML += 	'<div class="textOverview textOverview_QuotesAndNotes">'+
-// 									'<h4>Citat '+String(parseInt(i)+1)+'</h4>'+
-// 									'&quot;<i>'+JST.textQuotes[i]+'</i>&quot; <br/><br/>'+
-// 									'<h4>Udlægning til citat '+String(parseInt(i)+1)+'</h4>'+
-// 									JST.textQuoteNotes[i]+
-// 								'</div>';
-// 					// HTML += 	(typeof(JST.textPassages[i]!=='undefined'))?'<p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p>':'';
-// 					// HTML += 	'<span class="textOverviewSubHeading">Sætning '+String(parseInt(i)+1)+':</span> <br/>';
-// 					HTML += 	(i < jsonData.numOfChoosenWords-1)?'<div class="textOverview"><h4>Sætning '+String(parseInt(i)+1)+'</h4> <p id="textPassages_'+i+'">'+JST.textPassages[i]+'</p></div>':'';
-// 				}
-// 				HTML += 		'<h4>Afslutning</h4>';
-// 				HTML += 		'<p>'+JST.conclusion+'</p>';
-// 	HTML += 				'</div>';
-// 	HTML += 			'</div>';
-// 	HTML += 		'</div>';
-// 	HTML += 	'</div>';
-// 	HTML += '</div>';
-// 	HTML = replaceWildcard2(HTML, jsonData.numOfChoosenWords);
-// 	errObj.updateErrorObj("STEP 10 - jsonData.studentSelectedProblems", jsonData.studentSelectedProblems[jsonData.selectedIndexNum]);
-	
-// 	$('#DataInput').html(HTML);
-
-// 	setJsAudioEventLitsner2();
-// }
-
-
-// $( document ).on('click', "#step_10_goBack", function(event){
-// 	step_9_template();
-// 	// setJsAudioEventLitsner2();  // Commented out 11/4-2016
-// 	// $(".headerField").focus();  // Sets the focus in the textarea when the template loades.
-// });
-
-// $( document ).on('click', "#step_10_download", function(event){
-	
-// 	var HTML = wordTemplate();
-// 	// console.log("step_10_download - wordTemplate: " + HTML);
-// 	// UserMsgBox("body", HTML);
-
-// 	var converted = htmlDocx.asBlob(HTML);
-//     console.log("step_10_download - converted: " + JSON.stringify(converted));
-// 	saveAs(converted, 'Min analyse.docx');
-// });
-
-// // 1 nøgleproblem
-// // 3 emner
-// // 4 underspørgsmål
-// // 1 problemformulering
-// function wordTemplate_OLD() {
-// 	var JST = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-// 	var text = jsonData.keyProblems[JST.selcNo];
-// 	var HTML = '';
-// 	HTML += '<!DOCTYPE html>';
-// 	HTML += '<html>';
-// 	HTML += 	'<head>';
-// 	HTML += 	'<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';  // Fixes issue with danish characters on Internet Explore 
-// 	HTML += 		'<style type="text/css">';
-// 	HTML += 			'body {font-family: arial;}';
-// 	HTML += 			'h1 {}';
-// 	HTML += 			'h2 {}';
-// 	HTML += 			'h3 {font-style: italic; color: #717272;}';
-// 	HTML += 			'h4 {color: #56bfc5;}';
-// 	HTML += 			'h5 {}';
-// 	HTML += 			'h6 {}';
-// 	HTML += 			'.selected {color: #56bfc5; width: 25%;}';
-// 	HTML += 			'p {font-size: 14px; margin-bottom: 5px}';
-// 	HTML += 			'table {padding: 8px; width: 100%;}';
-// 	HTML += 			'td {width: 25%;}';
-// 	HTML += 			'ol {color: #717272;}';
-// 	HTML += 		'</style>';
-// 	HTML += 	'</head>';
-// 	HTML += 	'<body>';
-// 	HTML += 		'<h1>'+JST.headAndIntro[0]+'</h1>';
-// 	// HTML += 		'<hr/>';
-// 	HTML +=			'<p>En analyse af '+jsonData.keyProblems[JST.selcNo].author+"'s &quot;"+jsonData.keyProblems[JST.selcNo].title+'&quot; fra '+jsonData.keyProblems[JST.selcNo].year+'.<p>';
-// 	HTML += 		'<p><b>Indledning:</b> '+JST.headAndIntro[1]+'</p>';
-
-// 	// HTML += 			'<h3>Din valgte tekst: </h3>';
-// 	// HTML += 			'<h4>"'+text.title+'" af '+text.author+', '+text.year+'</h4>';
-
-// 	HTML += 		'<p><b>Temaudlægning:</b> '+JST.TextTheme+'</p>';
-// 	HTML += 		'<hr/>';
-// 	for (var n in JST.textQuotes){
-// 		HTML += 		'<p><b>Citat '+String(parseInt(n)+1)+':</b> &quot;<i>'+JST.textQuotes[n]+'</i>&quot;</p>';
-// 		HTML += 		'<p><b>Citatudlægning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p>';
-// 		HTML += 		'<hr/>';
-// 		HTML += 		(n < jsonData.numOfChoosenWords-1)?'<p><b>Sætning '+String(parseInt(n)+1)+':</b> '+JST.textQuoteNotes[n]+'</p><hr/>':'';
-// 		// HTML += 		'<hr/>';
-// 	}
-// 	HTML += 		'<p><b>Fortolkning:</b> ';
-// 	for (var n in JST.textPassages){
-// 		HTML += 		JST.textPassages[n]+' ';
-// 	}
-// 	HTML += 		'<hr/>';
-// 	HTML += 		'<p><b>Afslutning:</b> '+JST.conclusion+'</p>';
-// 	HTML += 		'<hr/>';
-// 	HTML += 		'<div class="instruktion">';
-// 	HTML += 			'<h3>Gennemlæs din tekst. Hænger den sammen i forhold til:</h3>';
-// 	HTML += 			'<ol>';
-// 	HTML += 				'<li>Tydelige overgange mellem afsnit.</li>';
-// 	HTML += 				'<li>Sammenhæng mellem sætningerne.</li>';
-// 	HTML += 				'<li>Godt og levende sprog.</li>';
-// 	HTML += 				'<li>Korrekt brug af punktum og komma.</li>';
-// 	HTML += 				'<li>Så få formuleringsmæssige uklarheder og stavefejl som muligt.</li>';
-// 	HTML += 			'</ol>';
-// 	HTML += 			'<h3>Når du har gennemgået disse trin, har du en rigtig god tekst!</h3>';
-// 	HTML += 			'<hr/>';
-// 	HTML += 		'</div>';
-// 	HTML += 	'</body>';
-// 	HTML += '</html>';
-// 	// document.write(HTML);
-// 	return HTML;
-// }
-
+function sortThemesAlphabetically(){  // This function sorts the themes alphabetically
+	console.log('sortThemesAlphabetically 1: ' + JSON.stringify(jsonData.keyProblems));
+	for (var n in jsonData.keyProblems){
+		jsonData.keyProblems[n].themes.sort();
+	}
+	console.log('sortThemesAlphabetically 2: ' + JSON.stringify(jsonData.keyProblems));
+}
 
 
 
@@ -3944,6 +3459,8 @@ $(window).on('resize', function() {
 });
 
 $(document).ready(function() {
+
+	sortThemesAlphabetically();  // This sorts the themes alphabetically.
 
 	window.hasBeenExecBool = false; // Step 3 an 4 onetime runs.
 
