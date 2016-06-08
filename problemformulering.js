@@ -986,6 +986,10 @@ function step_2_template(){
     	JS.totStudentThemes_selectOrder = [];  // Contains student supplied themes (text) written in the input field
     }
 
+    if (!JS.hasOwnProperty('taxonomyObj')){
+		JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};    // NEW STRUCTURE - IN USE!
+	}
+
     console.log("step_2_template - JS: " + JSON.stringify(JS)); 
 
     var keyProblem = jsonData.keyProblems[selcNo].name;
@@ -1745,61 +1749,65 @@ $( document ).on('click', ".sortable_text_container", function(event){
 });
 
 
-$( document ).on('focusout', ".taxonomyEdit", function(event){
+// $( document ).on('focusout', ".taxonomyEdit", function(event){
+$( document ).on('focusout', ".taxonomyEdit", function(event){   // Added 07-06-2016
 
 	console.log('TAXONOMYTEST -x- taxonomyEdit.focusout');
 
 	var thisObj = $(this);
 	contentDeleteController(thisObj);
-
+	
 });
 
 
 function contentDeleteController(thisObj){
 
-	if (!contentDelete){
+	// if (!thisObj.hasClass('newSubQuestion')) {  // UGLY SPECIAL CASE FOR STEP 5 !!! 
 
-		// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
-		// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
-		// By reactivating sortability on the "on focusout" event, then the sortability will be active if the user chooses to sort the divs.
-		if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
-			$( "#subjectSentenceSortableContainer" ).sortable({
-				disabled: false
-			});
-		}
+		if (!contentDelete){
 
-		var text = $('.taxonomyTextEdit').val();  
-		console.log('taxonomyEdit - focusout - text: _'+text+'_');
-		$('.input-group', thisObj).remove();
-		// $(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
-		// $(this).css('background-color','blue');
-		
-		if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
-			console.log('focusout - A1');
-			// taxonomyEdit(text, $(thisObj));   // <--- 2/5-2016 
-		}
-
-		if (text.length > 0) {
-			console.log('focusout - A2 - TAXONOMYTEST');
-			$(thisObj).closest('.sortable_text_container').addClass('taxonomy');
-			$(thisObj).text(text);
-			$(thisObj).removeClass('taxonomyEdit');
-			// taxonomyEdit(text, $(this));
-		} else {
-			// $(thisObj).remove();   // <-------  Commented out 07-06-2016: TLY does not want this delete-feature. 
-			$(thisObj).addClass('taxonomy').removeClass('taxonomyEdit');  //  Added 07-06-2016 to compensate for the delete-feature. 
-			console.log('focusout - A3 - TAXONOMYTEST');
+			// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
+			// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
+			// By reactivating sortability on the "on focusout" event, then the sortability will be active if the user chooses to sort the divs.
 			if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
-				console.log('focusout - A4 - TAXONOMYTEST');
-				// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
+				$( "#subjectSentenceSortableContainer" ).sortable({
+					disabled: false
+				});
 			}
-		}
-	
-		console.log('TAXONOMYTEST -x- TRASH FALSE');
-		$(thisObj).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
-	}
 
-	contentDelete = false;
+			var text = $('.taxonomyTextEdit').val();  
+			console.log('taxonomyEdit - focusout - text: _'+text+'_');
+			$('.input-group', thisObj).remove();
+			// $(this).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
+			// $(this).css('background-color','blue');
+			
+			if (jsonData.currentStep == 3){ // Prevent manipulation of the step 3 datastructure in step 4...
+				console.log('focusout - A1');
+				// taxonomyEdit(text, $(thisObj));   // <--- 2/5-2016 
+			}
+
+			if (text.length > 0) {
+				console.log('focusout - A2 - TAXONOMYTEST');
+				$(thisObj).closest('.sortable_text_container').addClass('taxonomy');
+				$(thisObj).text(text);
+				$(thisObj).removeClass('taxonomyEdit');
+				// taxonomyEdit(text, $(this));
+			} else {
+				// $(thisObj).remove();   // <-------  Commented out 07-06-2016: TLY does not want this delete-feature. 
+				$(thisObj).addClass('taxonomy').removeClass('taxonomyEdit');  //  Added 07-06-2016 to compensate for the delete-feature. 
+				console.log('focusout - A3 - TAXONOMYTEST');
+				if ((jsonData.currentStep == 4)) {  // UGLY SPECIAL CASE FOR STEP 4 !!! 
+					console.log('focusout - A4 - TAXONOMYTEST');
+					// colorSubQuestions();   // <----- COMMENTED OUT 23-05-2016
+				}
+			}
+		
+			console.log('TAXONOMYTEST -x- TRASH FALSE');
+			$(thisObj).append('<span class="contentEdit glyphicon glyphicon-pencil"></span>');
+		}
+
+		contentDelete = false;
+	// }
 
 }
 
@@ -2038,7 +2046,11 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 	}
 	if (jsonData.currentStep == 3) {
 		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
-		HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering efter at have brainstormet over underspørgsmål?</p>';
+		if (JS.taxonomyObj.describe.length + JS.taxonomyObj.analyse.length + JS.taxonomyObj.assess.length > 0) {  // If you have added some text as content to you subQuestions, then you get the following usrMSG
+			HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering efter at have brainstormet over underspørgsmål?</p>';
+		} else { // If you have NOT added some text as content to you subQuestions (this will be in the "naggingbox" as well), then you get the following usrMSG:
+			HTML += '<p>Når du vælger underemner får du automatisk hjælp til at afgrænse din problemformulering. Har du rettelser eller tilføjelser til din problemformulering?</p>';
+		}
 	}
 	if (jsonData.currentStep == 4) {
 		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
@@ -2897,7 +2909,8 @@ function updateSubQuestionArray(){
 
 
 $( document ).on('click', "#addSubQuestion", function(event){
-	$('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container"> (Klik for at skrive dit nye underspørgsmål) <span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+	window.subQuestionDefaultText  = "(Klik for at skrive dit nye underspørgsmål)";
+	$('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
 });
 
 
@@ -2905,16 +2918,44 @@ $( document ).on('click', ".newSubQuestion", function(event){
 	// console.log('newSubQuestion - tagName: ' + $(this).children().children().prop("tagName") + ', id: ' + $(this).children().children().prop("id") + ', class: ' + $(this).children().children().prop("class"));
 	// window.newSubQuestionDefaultText = $(this).text();
 	if ($(this).has( ".glyphicon-trash" ).length > 0){
-		$('input', this).attr('placeholder', '');
-		$('input', this).attr('value', '');
+		var text = $('.newSubQuestion .taxonomyTextEdit').val().trim();
+		if (text == subQuestionDefaultText){
+			$('input', this).attr('placeholder', '');
+			$('input', this).attr('value', '');
+		}
 		// $(this).has('input').css( "background-color", "red" );
 	}
 });
 
-// $( document ).on('focusout', ".newSubQuestion", function(event){
-// 	if ($(this).text().trim() === ''){
-//     	$(this).text(newSubQuestionDefaultText);
+// $( document ).on('focusout', ".newSubQuestion .taxonomyTextEdit", function(event){
+// 	var text = $(this).val();
+// 	console.log('focusout -x- newSubQuestion - text: _' + text + '_ typeof(text): ' + typeof(text));
+// 	if ((typeof(text) === 'undefined') || (text.length == 0)){ //  || (text.length == 0)
+// 		console.log('focusout -x- newSubQuestion - TRUE');
+//     	$(this).text(subQuestionDefaultText);
+//     	// $('.taxonomyTextEdit').unbind('focusout');
+
+//     	var obj = $(this).closest('.newSubQuestion');
+//     	console.log('focusout -x- newSubQuestion - tagName: ' + obj.prop("tagName") + ', id: ' + obj.prop("id") + ', class: ' + obj.prop("class"));
+//     	// $('.newSubQuestion').text(subQuestionDefaultText);  // <------  GIVER FEJL!!!
+//     	obj.html('');
+//     	obj.html(subQuestionDefaultText+'XXX <span class="contentEdit glyphicon glyphicon-pencil"></span>');
+//     	obj.removeClass('taxonomyEdit').addClass('taxonomy');
 //     }
+// });
+
+// // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
+// // first empty input-field is found and focus is given to that field.
+// $( document ).on('keypress', ".newSubQuestion .taxonomyTextEdit", function(event){
+// 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
+// 		// event.preventDefault(); // ...prevents the normal action of the return-key.
+// 		var text = $(this).val();
+// 		console.log('keypress - newSubQuestion - text: _' + text + '_ typeof(text): ' + typeof(text));
+// 		if ((typeof(text) === 'undefined') || (text.length == 0)){ //  || (text.length == 0)
+// 			console.log('keypress - newSubQuestion - TRUE');
+// 	    	$('.newSubQuestion').text(subQuestionDefaultText);
+// 	    }
+// 	}
 // });
 
 
@@ -2935,7 +2976,7 @@ $( document ).on('click', "#step_5_goOn", function(event){
 
 		saveProblemFormulation();
 		updateSubQuestionArray();
-		
+
 		if (JS.subQuestionArray.length >= 3){
 			// saveProblemFormulation();
 			// updateSubQuestionArray();
@@ -3801,8 +3842,8 @@ var dynamicTextClass = {
         this.tagetSelector = arguments[0];
         if (typeof(arguments[1]) !== 'undefined') this.cmdObj = arguments[1];
 
-        this.findCmd();             // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
-        this.startCursorBlink();    // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
+        // this.findCmd();             // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
+        // this.startCursorBlink();    // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
     },
     add : function(text){   // This method types the text given as argument. The typing speed is given by "typeSpeed".
         console.log('add - CALLED');
