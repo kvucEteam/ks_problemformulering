@@ -705,6 +705,8 @@ $( document ).on( "dynamicTextEvent", function (event, data) {
 		window.thisStepNoMem = null;
 	}
 	
+	console.log("dynamicTextEvent - thisStepNoMem: " + thisStepNoMem + ", jsonData.currentStep: " + jsonData.currentStep);
+
 	// if (thisStepNoMem != data.currentStep){
 	if (thisStepNoMem != jsonData.currentStep){
 	   	console.log("dynamicTextEvent: " + data.testdata); 
@@ -712,10 +714,14 @@ $( document ).on( "dynamicTextEvent", function (event, data) {
 		var stepNo = jsonData.currentStep;
 		console.log("dynamicTextEvent - stepNo: " + stepNo);
 
-		replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+		console.log("dynamicTextEvent - typeof(jsonData.steps["+stepNo+"].instruction): " + typeof(jsonData.steps[stepNo].instruction));
 
-		window.DTO = Object.create(dynamicTextClass); 
-		DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+		if (typeof(jsonData.steps[stepNo].instruction) === 'object'){ // Only if the JSON instruction is an object, otherwise dynamicTextClass fails...
+			replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+
+			window.DTO = Object.create(dynamicTextClass); 
+			DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+		}
 
 		thisStepNoMem = jsonData.currentStep;
 	}
@@ -1138,6 +1144,9 @@ $( document ).on('click', ".masterStudentBtn", function(event){
 
 	UserMsgBox("body", HTML);
 
+	$(".MsgBox_bgr").fadeOut(0);
+	$(".MsgBox_bgr").delay(200).fadeIn(200);
+
 	$('#UserMsgBox').unbind('click');
 	$('.MsgBox_bgr').unbind('click');
 
@@ -1380,13 +1389,17 @@ function step_3_template(){
 
 	console.log("step_3_template - JS 1: " + JSON.stringify(JS)); 
 
-	if (!JS.hasOwnProperty('taxonomyObjArray')){
-		JS.taxonomyObjArray = [];
-		JS.taxonomyObj = {};
+	// if (!JS.hasOwnProperty('taxonomyObjArray')){
+	// 	JS.taxonomyObjArray = [];
+	// 	JS.taxonomyObj = {};
 
-		for (var n in JSS) {
-			JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});  // OLD STRUCTURE - NOT IN USE!
-		}
+	// 	for (var n in JSS) {
+	// 		JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});  // OLD STRUCTURE - NOT IN USE!
+	// 	}
+	// 	JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};    // NEW STRUCTURE - IN USE!
+	// }
+
+	if (!JS.hasOwnProperty('taxonomyObj')){
 		JS.taxonomyObj = {"describe": [], "analyse": [], "assess": []};    // NEW STRUCTURE - IN USE!
 	}
 
@@ -1554,8 +1567,8 @@ function tabInput(thisObj){  // taxonomytabHeadings
 	// var tabHeading_index = tabHeading_index || 0;
 	console.log('focusout - tabHeading_index: _'+tabHeading_index+'_');
 
-	var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabHeading_index]);
-	console.log('focusout - taxonomyObjArray: _'+taxonomyObjArray+'_');
+	// var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabHeading_index]);
+	// console.log('focusout - taxonomyObjArray: _'+taxonomyObjArray+'_');
 
 	// var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];  	  // <-------- OLD !
 	var taxonomyObjKey = tabObjLookup[tabHeading_index];							  // <-------- NEW !
@@ -1574,8 +1587,8 @@ function tabInput(thisObj){  // taxonomytabHeadings
 		console.log('focusout - text: _'+text+'_');
 
 		// JS.taxonomyObjArray[tabHeading_index][taxonomyObjKey].push(text);	// <-------- OLD !
-		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].push(text);	// <-------- NEW !
-		console.log('focusout - taxonomyObjArray: ' + JSON.stringify(JS.taxonomyObjArray));
+		// JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].push(text);	// <-------- NEW !
+		// console.log('focusout - taxonomyObjArray: ' + JSON.stringify(JS.taxonomyObjArray));
 
 		JS.taxonomyObj[taxonomyObjKey].push(text);
 		console.log('focusout - taxonomyObj: ' + JSON.stringify(JS.taxonomyObj));
@@ -1846,67 +1859,67 @@ $( document ).on('keypress', ".taxonomyEdit", function(event){
 	}
 });
 
-// This function edits the datastructure in step 3 - it adds data to the structure. It is important that it does not run in other steps than step 3, since this will make inconsistent data for step 3 (if the student chooses to go back to step 3).
-function taxonomyEdit(text, thisObj){
-	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	console.log('taxonomyEdit - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
+// // This function edits the datastructure in step 3 - it adds data to the structure. It is important that it does not run in other steps than step 3, since this will make inconsistent data for step 3 (if the student chooses to go back to step 3).
+// function taxonomyEdit(text, thisObj){
+// 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	console.log('taxonomyEdit - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
 
-	var index = $(thisObj).closest('.sortable_text_container').index() - 2;  // "-2" becauce .index() counts the textarea an dropdown...
-	var tabBodyDropdown_index = $(thisObj).closest('.tabBodyDropdownContainer').index();  
-	var tabBody_index = parseInt($(thisObj).closest('.tabBody').prop('id').replace('tabBody_',''));
-	console.log('taxonomyEdit - index: ' + index + ', tabBodyDropdown_index: ' + tabBodyDropdown_index + ', tabBody_index: ' + tabBody_index);
+// 	var index = $(thisObj).closest('.sortable_text_container').index() - 2;  // "-2" becauce .index() counts the textarea an dropdown...
+// 	var tabBodyDropdown_index = $(thisObj).closest('.tabBodyDropdownContainer').index();  
+// 	var tabBody_index = parseInt($(thisObj).closest('.tabBody').prop('id').replace('tabBody_',''));
+// 	console.log('taxonomyEdit - index: ' + index + ', tabBodyDropdown_index: ' + tabBodyDropdown_index + ', tabBody_index: ' + tabBody_index);
 	
-	var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabBody_index]);
-	// var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];
-	var tabObjLookup = ["describe", "analyse", "assess"];  // <----- ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål']
-	var taxonomyObjKey = tabObjLookup[tabHeading_index];
-	console.log('taxonomyEdit - taxonomyObjArray: ' + taxonomyObjArray + ', taxonomyObjKey: ' + taxonomyObjKey);
+// 	var taxonomyObjArray = Object.keys(JS.taxonomyObjArray[tabBody_index]);
+// 	// var taxonomyObjKey = taxonomyObjArray[parseInt(tabBodyDropdown_index+1)];
+// 	var tabObjLookup = ["describe", "analyse", "assess"];  // <----- ['Faktuelle spørgsmål', 'Undersøgende spørgsmål', 'Diskuterende/vurderende spørgsmål']
+// 	var taxonomyObjKey = tabObjLookup[tabHeading_index];
+// 	console.log('taxonomyEdit - taxonomyObjArray: ' + taxonomyObjArray + ', taxonomyObjKey: ' + taxonomyObjKey);
 
-	console.log('taxonomyEdit - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray[tabBody_index]));
+// 	console.log('taxonomyEdit - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray[tabBody_index]));
 	
-	var len = JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].length;
-	console.log('taxonomyEdit - len: ' + len + ', index: ' + index + ', res: ' + String(len - 1 - index));
+// 	var len = JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].length;
+// 	console.log('taxonomyEdit - len: ' + len + ', index: ' + index + ', res: ' + String(len - 1 - index));
 
-	if (text.length > 0) {
-		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][index] = text;
-		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][len - 1 - index] = text;  // <---- OLD !!!
-		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey][len - 1 - index] = text;  // <---- NEW !!!
-	} else {
-		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(index, 1);  // Dette virker, men arrayet skal reverses, så der slettes fra den rigtige ende!
-		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(len - 1 - index, 1);  // <---- OLD !!!
-		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].splice(len - 1 - index, 1);
-	}
-	console.log('taxonomyEdit - taxonomyObjArray 3: ' + JSON.stringify(JS.taxonomyObjArray));
-}
+// 	if (text.length > 0) {
+// 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][index] = text;
+// 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey][len - 1 - index] = text;  // <---- OLD !!!
+// 		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey][len - 1 - index] = text;  // <---- NEW !!!
+// 	} else {
+// 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(index, 1);  // Dette virker, men arrayet skal reverses, så der slettes fra den rigtige ende!
+// 		// JS.taxonomyObjArray[tabBody_index][taxonomyObjKey].splice(len - 1 - index, 1);  // <---- OLD !!!
+// 		JS.taxonomyObjArray[tabBodyDropdown_index][taxonomyObjKey].splice(len - 1 - index, 1);
+// 	}
+// 	console.log('taxonomyEdit - taxonomyObjArray 3: ' + JSON.stringify(JS.taxonomyObjArray));
+// }
 
 
-function taxonomyEdit_2(){
-	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
+// function taxonomyEdit_2(){
+// 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
+// 	console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
 
-	// JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
+// 	// JS.taxonomyObjArray.push({"studentSelectedTheme": JSS[n], "describe": [], "analyse": [], "assess": [], selected: true});
 
-	$( ".tabBody" ).each(function( index1, element1 ) {   // describe / analyse / assess...
+// 	$( ".tabBody" ).each(function( index1, element1 ) {   // describe / analyse / assess...
 		
-		$( ".tabBodyDropdownContainer", element1 ).each(function( index2, element2 ) {  //  each of the themes...
-			var elemArr = [];
-			$( ".sortable_text_container", element2 ).each(function( index3, element3 ) {  // each of the subquestions...
-				elemArr.push($(element3).text());
-			});
+// 		$( ".tabBodyDropdownContainer", element1 ).each(function( index2, element2 ) {  //  each of the themes...
+// 			var elemArr = [];
+// 			$( ".sortable_text_container", element2 ).each(function( index3, element3 ) {  // each of the subquestions...
+// 				elemArr.push($(element3).text());
+// 			});
 
-			var objKeys = Object.keys(JS.taxonomyObjArray[index2]);
-			console.log('taxonomyEdit_2 - index2 : ' + index2 + ', objKeys: '+JSON.stringify(objKeys)+', index1+1: ' + String(index1+1) + ', elemArr: ' + JSON.stringify(elemArr));
-			JS.taxonomyObjArray[index2][objKeys[index1+1]] = elemArr;
-		});
-	});	
+// 			var objKeys = Object.keys(JS.taxonomyObjArray[index2]);
+// 			console.log('taxonomyEdit_2 - index2 : ' + index2 + ', objKeys: '+JSON.stringify(objKeys)+', index1+1: ' + String(index1+1) + ', elemArr: ' + JSON.stringify(elemArr));
+// 			JS.taxonomyObjArray[index2][objKeys[index1+1]] = elemArr;
+// 		});
+// 	});	
 
-	console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
-}
+// 	console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
+// }
 
 
 function taxonomyEdit_3(){
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
+	// console.log('taxonomyEdit_2 - taxonomyObjArray 1: ' + JSON.stringify(JS.taxonomyObjArray));
 
 	var objKeys = Object.keys(JS.taxonomyObj);
 	$( ".tabBody" ).each(function( index1, element1 ) {   // describe / analyse / assess...
@@ -1919,7 +1932,7 @@ function taxonomyEdit_3(){
 		JS.taxonomyObj[objKeys[index1]] = elemArr;
 	});	
 
-	console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
+	// console.log('taxonomyEdit_2 - taxonomyObjArray 2: ' + JSON.stringify(JS.taxonomyObjArray));
 	console.log('taxonomyEdit_2 - taxonomyObj: ' + JSON.stringify(JS.taxonomyObj));
 }
 
@@ -2068,7 +2081,18 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 	// HTML += '<span class="problemFormulation_goBack btn btn-info"><span class="glyphicon glyphicon-chevron-left"></span>Se din forrige</span><span class="problemFormulation_goOn btn btn-info">Se din nye<span class="glyphicon glyphicon-chevron-right"></span></span><span class="problemFormulation_saveHide btn btn-info">Gem og luk</span>';  // <-----   NOT NEEDED AS OF 06-04-2016 
 	HTML += '<span class="problemFormulation_saveHide btn btn-info">Gem</span>';
 	HTML += '<div class="Clear"></div>';
+	
+
+
 	UserMsgBox("body", HTML);
+	console.log('problemFormulationBtn - hasBeenExecBool: ' + hasBeenExecBool);
+	if (hasBeenExecBool) {  // If the nagging box is activated...
+		$(".MsgBox_bgr").fadeOut(0);
+		$(".MsgBox_bgr").delay(750).fadeIn(200);
+	} else {   // If the student presses the problemFormulationBtn...
+		$(".MsgBox_bgr").fadeOut(0);
+		$(".MsgBox_bgr").delay(200).fadeIn(200);
+	}
 
 	$('#UserMsgBox').unbind('click');
 	$('.MsgBox_bgr').unbind('click');
@@ -2183,8 +2207,11 @@ $( document ).on('click', ".problemFormulation_saveHide", function(event){
 
 	saveProblemFormulation();
 
-	if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
- 		$('.problemFormulationBtn').hide();
+	// if (hasBeenExecBool){  // hasBeenExecBool is set to true ine step 3 and 4.
+	if ((hasBeenExecBool) && (problemFormulationBtn_pressed)) {  // hasBeenExecBool is set to true ine step 3 and 4.
+		if (!$(".problemFormulationBtn").hasClass('keyProblems')){
+ 			$('.problemFormulationBtn').hide();
+ 		}
 	}
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
@@ -2222,7 +2249,9 @@ $( document ).on('click', ".CloseClass", function(event){
 	console.log("CloseClass - insertMasterExampleActive 2: " + insertMasterExampleActive);
 
 	if ((hasBeenExecBool) && (problemFormulationBtn_pressed)) {  // hasBeenExecBool is set to true ine step 3 and 4.
- 		$('.problemFormulationBtn').hide();
+		if (!$(".problemFormulationBtn").hasClass('keyProblems')){
+ 			$('.problemFormulationBtn').hide();
+ 		}
 	}
 
 	$(".MsgBox_bgr").fadeOut(200, function() {
@@ -2419,7 +2448,7 @@ function step_4_template(){
 	// console.log("step_4_template - colorObj: " + JSON.stringify(colorObj));
 
 	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	console.log("step_4_template - JS.taxonomyObjArray: " + JSON.stringify(JS.taxonomyObjArray));
+	// console.log("step_4_template - JS.taxonomyObjArray: " + JSON.stringify(JS.taxonomyObjArray));
 
 	var TSortableOrderArray = [];
 	var SortableOrderArray_is_new = false;
@@ -2499,9 +2528,10 @@ function step_4_template(){
 		}
 	}
 
-	JS.SortableOrderArray = TSortableOrderArray;
+	// JS.SortableOrderArray = TSortableOrderArray;					   // Commented out 09-06-2016.
+	JS.SortableOrderArray = removeEmptyElements(TSortableOrderArray);  // Added 09-06-2016. This has been added to remove empty elements (seen as null with command=printAll when errorLogClass is used)
 
-	console.log("step_4_template - ARRAY - SortableOrderArray 2: " + JSON.stringify(JS.SortableOrderArray + ", SortableOrderArray.length: " + JS.SortableOrderArray.length));
+	console.log("step_4_template - ARRAY - SortableOrderArray 2: " + JSON.stringify(JS.SortableOrderArray + ", SortableOrderArray.length: " + JS.SortableOrderArray.length)); 
 
 			// for (var n in JS.taxonomyObjArray[tabBody_index][taxonomyObjKey]) {
 			// 	HTML += 	'<div id="Sort_"'+n+' class="Sortable sortable_text_container">'+JSNS[n]+'</div>';
@@ -2920,7 +2950,6 @@ $( document ).on('click', ".newSubQuestion", function(event){
 	if ($(this).has( ".glyphicon-trash" ).length > 0){
 		var text = $('.newSubQuestion .taxonomyTextEdit').val().trim();
 		if (text == subQuestionDefaultText){
-			$('input', this).attr('placeholder', '');
 			$('input', this).attr('value', '');
 		}
 		// $(this).has('input').css( "background-color", "red" );
@@ -3076,10 +3105,10 @@ function step_6_template(){
 
 	// setJsAudioEventLitsner2();
 
-	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
+	// replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
 
-	window.DTO = Object.create(dynamicTextClass); 
-	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
+	// window.DTO = Object.create(dynamicTextClass); 
+	// DTO.init('#dynamicText', jsonData.steps[stepNo].instruction);
 
 	window.scrollTo(0, 0);
 }
@@ -3814,7 +3843,7 @@ errorLogClass = {
 //
 var dynamicTextClass = {
     delimiter: {begin: "#", end: "#"},  // Not in use yet...
-    typeSpeed: 100,     // Time in milliseconds between each keystroke.
+    typeSpeed: 75,     // Time in milliseconds between each keystroke.
     timeout: 0,         // Default time in milliseconds between each command.
     cursorBlink: 300,   // Cursor blink speed.
     cmdObj: [ // This is a small default demo of how to use the dynamicTextClass program.
@@ -3834,16 +3863,15 @@ var dynamicTextClass = {
         {"wait": 3000},
         {"add": " Dette er enden på denne lille præsentation :-)"},
         {"wait": 3000},
-        {"removeCursor": 300},
-        {"stopExec": 0}
+        {"removeCursor": 300}
     ],
     interval : null,
     init : function(){ // ARGUMENTS: 1: tagetSelector, 2: cmdObj (which is optional. If cmdObj is omitted, the default cmdObj above is loaded).
         this.tagetSelector = arguments[0];
         if (typeof(arguments[1]) !== 'undefined') this.cmdObj = arguments[1];
 
-        // this.findCmd();             // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
-        // this.startCursorBlink();    // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
+        this.findCmd();             // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
+        this.startCursorBlink();    // <-------- IMPORTANT: UNCOMMENT TO ACTIVATE!!!  02-06-2016
     },
     add : function(text){   // This method types the text given as argument. The typing speed is given by "typeSpeed".
         console.log('add - CALLED');

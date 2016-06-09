@@ -212,14 +212,26 @@ textarea {
     clear: both;
 }
 
+
+
+
 .glyphicons {
 
     margin-right: 14px;
     margin-top: 1px;
 }
 
-.glyphicon-pencil, .glyphicon-star-empty, .glyphicon-star{
+.glyphicon-pencil{
     margin-right: 10px;
+}
+
+.sortable_text_container .glyphicon-pencil, 
+.sortable_text_container .glyphicon-trash, 
+.sortable_text_container .glyphicon-star-empty, 
+.sortable_text_container .glyphicon-star{
+    margin-right: 10px;
+    font-size: 1.4em;  /* STYLE FROM ATO - 08-06-2016 */
+    opacity: 0.75;      /* STYLE FROM ATO - 08-06-2016 */
 }
 
 .problemFormulation_goBack .glyphicon {
@@ -254,6 +266,11 @@ textarea {
 
 #step_2 .form-control{
     width: 200px;
+}
+
+
+.taxonomyTextEdit{
+    height: 30px;
 }
 
 
@@ -295,7 +312,7 @@ textarea {
     cursor: pointer;
     font-size: 14px;
     line-height: 1.7;
-    margin-bottom: 10px;
+    margin-top: 10px;
     /*overflow: auto;*/
     overflow: unset;
     padding: 10px 1% 10px 20px;
@@ -458,7 +475,7 @@ textarea {
     cursor: pointer;
     padding: 0 20px;
     position: absolute;
-    right: -15px;
+    right: -12px;
     top: -43px;
     z-index: 100;
 }
@@ -467,7 +484,7 @@ textarea {
     color: #56bfc5;
     font-size: 2em;
     position: absolute;
-    right: 14px;
+    right: 17px;
     top: -19px;
     z-index: 99;
 }
