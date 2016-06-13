@@ -488,3 +488,25 @@ textarea {
     top: -19px;
     z-index: 99;
 }
+
+
+/*****************************************/
+
+#XdynamicTextContainer{
+    padding: 10px;
+
+    /*** NO OVERLAY: ALL BELOW NEEDS TO BE COMMENTED OUT! ***/
+
+    background-color: rgba(255, 0, 0, 0);
+    height: 140px;
+    position: absolute;
+    width: 92%;
+    z-index: 10;
+}
+
+.XdynamicTextContainerClass {
+    border: 1px solid #ccc;
+    height: 120px;
+    padding: 6px 12px;
+    width: 100%;
+}

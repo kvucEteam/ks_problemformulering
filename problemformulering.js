@@ -3254,6 +3254,69 @@ function sortThemesAlphabetically(){  // This function sorts the themes alphabet
 }
 
 
+//============================================================================================================ 
+//      					THE CODE BELOW NEED ONLY TO BE ACTIVE DURING SCREENCAST
+//============================================================================================================
+
+
+// IMPORTANT NOTES:
+// ================
+// This is code used at screencasts - it neesd to be commented out under normal circumstances!!! 
+$(document).on('change', 'textarea', function(){
+
+	if (screenCastMode) {
+
+		window.autoTextActive = true;
+
+		var inputText =  $(this).val().split('(#)');
+		console.log('textarea - change - inputText: ' + inputText);
+
+		$(this).val('');
+		$(this).attr('placeholder', '');
+
+		$('.cursor').addClass('OLD_cursor').removeClass('cursor'); // "removes" the cursor of old dynamic template texts...
+
+		var HTML = '';
+		HTML += '<div id="XdynamicTextContainer">';   										   // <-----------------------  No overlay: Comment out!!!
+		// HTML += '<div id="XdynamicTextContainer" class="XdynamicTextContainerClass" contenteditable="true">'; // <-----  No overlay: Unomment!!!
+	    HTML += 	'<span id="XdynamicText"></span>';
+	    HTML += 	'<span class="cursor">|</span>';
+	    HTML += '</div>';
+	    $(this).before(HTML);
+	    // $(this).remove();                                                                   // <-----------------------  No overlay: Unomment!!!
+
+	    $('#XdynamicTextContainer').css({height: $(this).height()+20, width: $(this).width()+20});   // <-----------------------  No overlay: Comment out!!!
+
+	    if (inputText.length == 1){
+	    	var cmdObj = [{"wait": 1000},{"add": inputText[0]}];    // TEST:   Hænger problemformulering og underspørgsmål sammen?
+	    } else {
+	    	var cmdObj = [{"insert": inputText[0]},{"wait": 1000},{"add": inputText[1]}];  // TEST:   Hænger problemformulering og underspørgsmål sammen? <br><br>(#) Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene?
+	    }
+
+		window.XDTO = Object.create(dynamicTextClass); 
+		XDTO.init('#XdynamicText', cmdObj);
+
+	}
+});
+
+
+// IMPORTANT NOTES:
+// ================
+// This is code used at screencasts - it neesd to be commented out under normal circumstances!!! 
+$(document).on('click', '#XdynamicTextContainer', function(){
+
+	if (screenCastMode) {
+	
+		var HTML = $('#XdynamicText').html();
+		console.log('XdynamicTextContainer - HTML: ' + HTML);
+
+		$(this).next().val(HTML);
+
+		$(this).remove();
+
+	}
+});
+
 
 
 //====================================================== 
@@ -3531,6 +3594,8 @@ $(window).on('resize', function() {
 $(document).ready(function() {
 
 	sortThemesAlphabetically();  // This sorts the themes alphabetically.
+
+	window.screenCastMode = false;  // If set to true, all textareas will be in screencast mode: e.g. text copied or written will be overlayed in typemode once you focus out of the textarea. 
 
 	window.hasBeenExecBool = false; // Step 3 an 4 onetime runs.
 
