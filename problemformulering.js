@@ -3595,7 +3595,7 @@ $(document).ready(function() {
 
 	sortThemesAlphabetically();  // This sorts the themes alphabetically.
 
-	window.screenCastMode = true;  // If set to true, all textareas will be in screencast mode: e.g. text copied or written will be overlayed in typemode once you focus out of the textarea. 
+	window.screenCastMode = false;  // If set to true, all textareas will be in screencast mode: e.g. text copied or written will be overlayed in typemode once you focus out of the textarea. 
 
 	window.hasBeenExecBool = false; // Step 3 an 4 onetime runs.
 
