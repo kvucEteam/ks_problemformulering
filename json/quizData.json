@@ -104,7 +104,7 @@
             ]
         },
     "sentenceStarters_end" : 
-		{"id":"Dropdown4", "class":"Dropdown", "selected": "0", 
+		{"id":"Dropdown4", "class":"Dropdown", "selected": "0",  
             "options":[
             	{"value":"Sætningsstartere:"},
                 {"value":"Afslutningsvis kan man sige at ..."},
