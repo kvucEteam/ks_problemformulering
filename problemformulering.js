@@ -553,7 +553,8 @@ function returnLastStudentSession() {
 
 		window.safariUserHasAgreed = false;
 
-		UserMsgBox("body", '<h4>OBS</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade wordfilen til sidst i øvelsen.</p><br> <p>Brug i stedet <b>Chrome</b> (<a href="https://www.google.dk/chrome/browser/desktop/">Hent den her</a>) eller <b>Firefox</b>  (<a href="https://www.mozilla.org/da/firefox/new/">Hent den her</a>).</p><br> <p>Mvh <a href="https://www.vucdigital.dk">vucdigital.dk</a> </p>');
+		// Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade de udfyldte felter som wordfil til sidst i øvelsen.
+		UserMsgBox("body", '<h4>OBS</h4> <p>Du arbejder på en Mac og bruger browseren Safari. <br> Denne øvelse virker desværre ikke optimalt på Safari-platformen. Du vil ikke kunne downloade de udfyldte felter som wordfil til sidst i øvelsen.</p><br> <p>Brug i stedet <b>Chrome</b> (<a href="https://www.google.dk/chrome/browser/desktop/">Hent den her</a>) eller <b>Firefox</b>  (<a href="https://www.mozilla.org/da/firefox/new/">Hent den her</a>).</p><br> <p>Mvh <a href="https://www.vucdigital.dk">vucdigital.dk</a> </p>');
 		
 		$('#UserMsgBox').addClass('UserMsgBox_safari');
 		$('.MsgBox_bgr').addClass('MsgBox_bgr_safari');
@@ -2060,14 +2061,17 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 	if (jsonData.currentStep == 3) {
 		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
 		if (JS.taxonomyObj.describe.length + JS.taxonomyObj.analyse.length + JS.taxonomyObj.assess.length > 0) {  // If you have added some text as content to you subQuestions, then you get the following usrMSG
-			HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering efter at have brainstormet over underspørgsmål?</p>';
+			// HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering efter at have brainstormet over underspørgsmål?</p>';
+			HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Du har nu brainstormet over underspørgsmål. Har du nye rettelser eller tilføjelser til din problemformulering?</p>';
 		} else { // If you have NOT added some text as content to you subQuestions (this will be in the "naggingbox" as well), then you get the following usrMSG:
-			HTML += '<p>Når du vælger underemner får du automatisk hjælp til at afgrænse din problemformulering. Har du rettelser eller tilføjelser til din problemformulering?</p>';
+			// HTML += '<p>Når du vælger underemner får du automatisk hjælp til at afgrænse din problemformulering. Har du rettelser eller tilføjelser til din problemformulering?</p>';
+			HTML += '<p>Underspørgsmålene er en slags plan for, hvordan du vil besvare din problemformulering. Har du rettelser eller tilføjelser til din problemformulering?</p>';
 		}
 	}
 	if (jsonData.currentStep == 4) {
 		HTML += insertKeyProblem('<h4>Ret din problemformulering</h4>');
-		HTML += '<p>Underspørgsmålene hjælper dig med at besvare din problemformulering. Er du nødt til at gøre dit hovedspørgsmål skarpere? Bringer problemformuleringen alle tre fag i spil? Husk at “limen” for din problemformulering er det overordnede emne<span class="e1 label label-default">'+keyProblem+'</span> </p>';
+		// HTML += '<p>Underspørgsmålene hjælper dig med at besvare din problemformulering. Er du nødt til at gøre dit hovedspørgsmål skarpere? Bringer problemformuleringen alle tre fag i spil? Husk at “limen” for din problemformulering er det overordnede emne<span class="e1 label label-default">'+keyProblem+'</span> </p>';
+		HTML += '<p>Underspørgsmålene hjælper dig med at besvare din problemformulering. Bringer problemformuleringen alle tre fag i spil? Har du brug for at gøre den skarpere? Husk at din problemformulering skal relatere sig til det overordnede emne<span class="e1 label label-default">'+keyProblem+'</span> </p>';
 	}
 
 	// HTML += '<div class="DropdownWrap">';  // <-----   NOT NEEDED AS OF 06-04-2016
@@ -2105,9 +2109,9 @@ $( document ).on('click', ".problemFormulationBtn", function(event){
 		HTML += '<div style="margin-bottom: 0px;">';
 		HTML += 	'<span class="btn btn-sm btn-primary"> <span class="glyphicon glyphicon-pencil"></span> RET DIN PROBLEMFORMULERING </span>';
 		HTML += '</div>';
-		HTML += 'Nu skal du i gang med at skrive din første idé til en problemformulering:';
+		HTML += 'Nu skal du skrive din første idé til en problemformulering:';
 		$('#textInputProblemFormulation').before(HTML);
-		$('#textInputProblemFormulation').prop('placeholder','Skriv dit første udkast til din problemformulering her.');
+		$('#textInputProblemFormulation').prop('placeholder','Skriv dit første udkast til din problemformulering her');
 	}
 
 	if (jsonData.currentStep == 3) {
@@ -2468,7 +2472,7 @@ function step_4_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_4" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Nu skal du sortere i alle dine spørgsmål. Træk sætningerne op eller ned og leg med deres rækkefølge og sammenhæng. Vælg de bedste spørgsmål ud ved at klikke på stjerneikonet. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('Nu skal du sortere i alle dine spørgsmål. Træk sætningerne op eller ned og afprøv forskellige sammenhænge og rækkefølger. Vælg de bedste spørgsmål ud ved at klikke på stjerneikonet. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 	
 	HTML += 			'<div class="problemFormulationBtnWrap">';
@@ -3228,13 +3232,13 @@ function wordTemplate() {
 	HTML += 		'<table class="checkQuestion">';
 	HTML += 			'<tr><td><p><b>Rød tråd:</b> Hænger problemformulering og underspørgsmål sammen? Dvs. kan problemformuleringen besvares ved hjælp af underspørgsmålene? Og er der en sammenhæng mellem underspørgsmålene?</p>';
 	HTML += 			'<p><b>Taksonomi:</b> Lægger problemformuleringen op til undersøgelse, diskussion og vurdering - dvs. ikke kun til redegørelse?</p>';
-	HTML += 			'<p><b>Tværfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformulering og underspørgsmål?</p></td></tr>';
+	HTML += 			'<p><b>Fællesfaglighed:</b> Kan viden fra historie, religion og samfundsfag inddrages i den samlede besvarelse af problemformuleringen?</p></td></tr>';
 	HTML += 		'</table>';
 
 	HTML += 		'<div class="spacer">&nbsp;</div>'
 
 	HTML += 		'<table class="useMaterial">';
-	HTML += 			'<p><b>Anvendelse af materiale:</b> Til KS-eksamen er det vigtigt, at spørgsmålene også lægger op til at inddrage det udleverede materiale i besvarelsen!</p>';
+	HTML += 			'<p><b>Anvendelse af materiale:</b> Lægger spørgsmålene op til at inddrage det udleverede bilagsmateriale i besvarelsen?</p>';
 	HTML += 		'</table>';
 
 	HTML += 	'</body>';
@@ -3595,7 +3599,7 @@ $(document).ready(function() {
 
 	sortThemesAlphabetically();  // This sorts the themes alphabetically.
 
-	window.screenCastMode = true;  // If set to true, all textareas will be in screencast mode: e.g. text copied or written will be overlayed in typemode once you focus out of the textarea. 
+	window.screenCastMode = false;  // If set to true, all textareas will be in screencast mode: e.g. text copied or written will be overlayed in typemode once you focus out of the textarea. 
 
 	window.hasBeenExecBool = false; // Step 3 an 4 onetime runs.
 

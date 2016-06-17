@@ -115,13 +115,13 @@
 	"steps" : [
 		{
 			"step" : 0,
-			"header" : "STEP 0 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"img" : {"src" : "img/start_img1140.jpg", "alt" : "Guidet skriveproces"},
 			"audioFiles" : [{"name": "audio/step_0.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_0_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 1,
-			"header" : "STEP 1 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"instruction" : [
                 {"insert": "Vælg et overordnet emne."},
                 {"wait": 1000},
@@ -134,7 +134,7 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 2,
-			"header" : "STEP 2 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
             "instruction" : [
                 {"insert": "Hvilke ??? underemner vil du bruge til at belyse eller udfolde dit emne?"},
@@ -148,7 +148,7 @@
 			"masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 3,
-			"header" : "STEP 3 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Lav de tre valgte underemner om til underspørgsmål. Find på så mange spørgsmål som du kan.",
             "instruction" : [
                 {"wait": 1000},
@@ -161,7 +161,7 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 4,
-			"header" : "STEP 4 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
             "instruction" : [
                 {"wait": 1000},
@@ -174,12 +174,12 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 5,
-			"header" : "STEP 5 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
             "instruction" : [
-                {"insert": "Her er din problemformulering og dine bedste underspørgsmål. Du kan nu justere dine formuleringer. Husk at sammenhængen mellem dine underspørgsmål skal være fuldstændig tydelig, "},
+                {"insert": "Her er din problemformulering og dine bedste underspørgsmål. Du kan nu finpudse dine formuleringer. Er der tydelig sammenhæng mellem problemformulering og underspørgsmål?"},
                 {"wait": 1000},
-                {"add": " og at de tilsammen skal lede til en præcis besvarelse af din problemformulering ved hjælp af alle tre fag."},
+                {"add": " Kommer alle tre fag i spil? Når du op over det redegørende niveau?"},
                 {"wait": 1000},
                 {"removeCursor": 600}
             ],
@@ -188,9 +188,9 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c" 
 		},{
 			"step" : 6,
-			"header" : "STEP 6 - Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
-            "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil, et Google drev-dokument eller en Open office-fil. Du kan arbejde videre med at lave en afgrænset problemformulering og nogle relevante underspørgsmål.",
+            "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil, et Google dokument eller en Open office-fil. I dokumentet kan du arbejde videre med din problemformulering og underspørgsmål",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}]
 		}
