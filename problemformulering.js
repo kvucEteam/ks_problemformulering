@@ -1153,6 +1153,8 @@ $( document ).on('click', ".masterStudentBtn", function(event){
 
 	$('#UserMsgBox').addClass('masterExampleClass');
 
+	$('#UserMsgBox').css({'max-width': '900px'});  // <------ 21-06-2016: TLY wants the masterExample window to be wider than the normal UserMsgBox, which is 720px.
+
 });
 
 

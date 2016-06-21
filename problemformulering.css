@@ -439,6 +439,11 @@ textarea {
     height: 50px;
 }
 
+
+.masterExampleClass{
+    max-width: 900px;
+}
+
 .masterStudentBtnWrap{
     padding-top: 15px;
 }

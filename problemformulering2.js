@@ -942,15 +942,27 @@ if (false) {
 	// ################################################################################  // <----  NEW CODE 21-06-2016 - VERSION 2
 
 
-	var XXX_keyThemesByStudent = $('.XXX_keyThemesByStudent').val().trim();
+	var XXX_keyThemesByStudent = htmlEntities($('.XXX_keyThemesByStudent').val().trim());
 	if ($('.XXX_keyThemesByStudent').val().trim().length > 0) { // Only inset entered values > 0
 
 		if (!jsonData.hasOwnProperty("studentSelectedProblems")) { 
 	    	jsonData.studentSelectedProblems = [];
 	    }
 
+	    var XXX_keyThemesByStudent_exist = false;
 	    for (var n in jsonData.studentSelectedProblems) {
-	    	jsonData.studentSelectedProblems[n].name;
+	    	if (XXX_keyThemesByStudent == jsonData.studentSelectedProblems[n].name){
+	    		XXX_keyThemesByStudent_exist = true;
+	    	}
+	    }
+
+	    if (!XXX_keyThemesByStudent_exist) {
+	    	jsonData.keyProblems.push({"name" : XXX_keyThemesByStudent, "themes": []});
+
+	    	$('.keyProblems').removeClass('btn-primary').addClass('btn-info');
+	    	$('.XXX_keyThemesByStudent').val('');
+	    	$('#TextContainer').append('<span class="keyProblems btn btn-primary">'+XXX_keyThemesByStudent+'</span>');
+			$('#TextContainer .keyProblems').last().hide().fadeIn('slow');
 	    }
 	}
 
