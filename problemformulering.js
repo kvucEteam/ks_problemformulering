@@ -3322,6 +3322,54 @@ $(document).on('click', '#XdynamicTextContainer', function(){
 });
 
 
+// // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
+// // first empty input-field is found and focus is given to that field.
+// $( document ).on('keypress', "textarea", function(event){
+// 	console.log("keypress - textarea - PRESSED");
+// 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
+// 		event.preventDefault(); // ...prevents the normal action of the return-key.
+// 		if (screenCastMode) {
+// 			console.log("keypress - textarea - PRESSED RETURN");
+// 			if ($(this).val().length > 0){
+// 				$( "textarea" ).trigger( "change" );
+// 			} else { // If the input-field is empty...
+// 				console.log("keypress - textarea - PRESSED");
+// 				$(this).focus(); // ...give the input-field focus...
+// 			} 
+// 		}
+// 	}
+// });
+
+
+// // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
+// // first empty input-field is found and focus is given to that field.
+// $( document ).on('keypress', "body", function(event){
+// 	console.log("keypress - body - PRESSED");
+// 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
+// 		event.preventDefault(); // ...prevents the normal action of the return-key.
+// 		// console.log("keypress - keyThemesByStudent - PRESSED RETURN");
+// 		// if ($(this).val().length > 0){
+// 		// 	$( "#addSubject" ).trigger( "click" );
+// 		// } else { // If the input-field is empty...
+// 		// 	console.log("keypress - keyThemesByStudent - PRESSED");
+// 		// 	$(this).focus(); // ...give the input-field focus...
+// 		// } 
+
+// 		if (screenCastMode) {
+	
+// 			var HTML = $('#XdynamicText').html();
+// 			console.log('XdynamicTextContainer - HTML: ' + HTML);
+
+// 			$('#XdynamicTextContainer').next().val(HTML);
+
+// 			$('#XdynamicTextContainer').remove();
+
+// 		}
+// 	}
+// });
+
+
+
 
 //====================================================== 
 //      local storage test
