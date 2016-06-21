@@ -1,0 +1,523 @@
+
+
+/*************************************
+        Objekt styling
+*************************************/
+
+.MsgBox_bgr{
+    z-index: 110;
+}
+
+.Dropdown {
+    width: 100%;
+    margin: 0px 15px 15px 0px;
+    /*height: 35px;*/
+}
+
+.TextHolder {
+    /*background-color: #f8f8f6;*/
+}
+
+.container-fluid {
+    /*background-color: #FFF;*/ 
+}
+
+.row .btn-info, .row .btn-primary{
+	margin: 0px 15px 15px 0px;
+}
+
+.textOverview{
+    margin-bottom: 20px; 
+}
+
+.textOverviewSubHeading{
+    font-weight: 600;
+}
+
+.QuoteHolder{
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+
+.btnActions .btn-primary:hover{
+    background-color: #969696;
+    border: 1px solid #969696;
+    color: #FFF;
+}
+
+.btnActions .btn-primary{
+    background-color: #666666;
+    border: 1px solid #666666;
+    color: #fff;
+}
+
+#TextContainer .btn-primary:hover, 
+#ThemeContainer .btn-primary:hover,
+#analyticalFocusContainer .btn-primary:hover,
+#subjectWordContainer .btn-primary:hover,
+#subjectWordContainer_btn .btn-primary:hover,
+#subjectWordField_btn_Container .btn-primary:hover,
+#subjectWordSentenceContainer .btn-primary:hover{
+    background-color: #969696;
+    border: 1px solid #969696;
+    color: #FFF;
+}
+
+#TextContainer .btn-primary, 
+#ThemeContainer .btn-primary, 
+#analyticalFocusContainer .btn-primary,
+#subjectWordContainer .btn-primary, 
+#subjectWordContainer_btn .btn-primary, 
+#subjectWordField_btn_Container .btn-primary,
+#subjectWordSentenceContainer .btn-primary{
+    background-color: #666666;
+    border: 1px solid #666666;
+    color: #fff;
+}
+
+audio {
+    width: 280px;  /* Ellers er audio for lang */
+}
+
+#testAudio{ 
+}
+
+textarea {
+    height: 120px;
+    width: 100%;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+}
+
+#step_3 textarea {
+    height: 46px;
+}
+
+
+#addSubQuestion{
+    margin-left: 15px; 
+    margin-right: 15px;
+    margin-bottom: 0px;
+}
+
+#addSubQuestion .glyphicon-plus{
+    margin-right: 5px;
+}
+
+
+/**************************************************************************************************    
+        Sætter grålig farve på placeholder tekst og sort tekst på bruger-indsat-tekst
+**************************************************************************************************/
+
+.input-group input{
+    color: inherit;  
+}
+
+/*************************************************************************************************/ 
+
+
+.sortable_text_container .input-group {
+    width: 100%;
+}
+
+.stepNav {
+    margin: 30px 0px 10px 0px;
+}
+
+.stepNav audio{
+    float: right;
+    position: relative;
+    top: 10px;
+}
+
+#stepNavContainer{
+    float: left;
+}
+
+#processVal{
+    /*width: 8%;*/
+    float: right;
+    color: #999;
+    width: 45px;
+    text-align: right;
+}
+
+#processBarContainer{
+
+    /****************************************************************************************************
+     * IMPORTANT NOTE:
+     * ===============
+     * Below are implementations of "CSS-trickery" in diffrent browsers 
+     * that makes it possible to make somthing a certain width in percent, 
+     * subsequently add or subtract a definite lenth in px! This implementation 
+     * can potentially makes furture width- and height JS-hacks obsolete!!!
+     *
+     * SEE:   
+     * http://stackoverflow.com/questions/2434602/css-setting-width-height-as-percentage-minus-pixels;
+     *
+     * See where this "calc()" functionality is supported (supported in IE11 and IE9):
+     * http://caniuse.com/#feat=calc
+     *
+     *
+     * ON A RELATED NOTE...
+     * ====================
+     * CSS 3 defines variables through the "var()" functionality:
+     * https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_variables
+     *
+     * - but it is currently (April 2016) not supported in many browsers (contemplate using SASS and LESS instead):
+     * http://caniuse.com/#feat=css-variables
+     *
+     * CSS Preprocessors – Sass vs LESS:
+     * https://www.keycdn.com/blog/sass-vs-less/
+     *
+     ****************************************************************************************************/
+
+    /* Firefox */
+    width: -moz-calc(100% - 45px);
+    /* WebKit */
+    width: -webkit-calc(100% - 45px);
+    /* Opera */
+    width: -o-calc(100% - 45px);
+    /* Standard CSS3-compliant browsers */
+    width: calc(100% - 45px);
+
+    /*width: 92%;*/
+    /*height: 12px;*/
+    height: 10px;
+    float: left;
+    border: 1px solid #cececc;
+    margin-top: 6px;
+    /*border-radius: 2px;*/
+    border-radius: 1px;
+}
+
+
+
+
+#processBar{
+    /*height: 10px;*/
+    height: 8px;
+    background-color: #e7e6e2;
+    /*border-top-left-radius: 2px;*/
+    /*border-bottom-left-radius: 2px;*/
+    border-top-left-radius: 1px;
+    border-bottom-left-radius: 1px;
+}
+
+#masterStudentTextContainer{
+    padding-bottom: 10px;
+}
+
+.Clear{
+    clear: both;
+}
+
+
+
+
+.glyphicons {
+
+    margin-right: 14px;
+    margin-top: 1px;
+}
+
+.glyphicon-pencil{
+    margin-right: 10px;
+}
+
+.sortable_text_container .glyphicon-pencil, 
+.sortable_text_container .glyphicon-trash, 
+.sortable_text_container .glyphicon-star-empty, 
+.sortable_text_container .glyphicon-star{
+    margin-right: 10px;
+    font-size: 1.4em;  /* STYLE FROM ATO - 08-06-2016 */
+    opacity: 0.75;      /* STYLE FROM ATO - 08-06-2016 */
+}
+
+.problemFormulation_goBack .glyphicon {
+    margin-right: 10px;
+}
+
+.problemFormulation_goOn .glyphicon {
+    margin-left: 10px;
+}
+
+.problemFormulation_saveHide{
+    float: right;
+    margin-right: 0px;
+}
+
+#stepImg_0{
+    margin-left: 15px;
+    padding-right: 30px;
+}
+
+#step_6b .input-group, #step_9 .input-group {
+    width: 100%;
+}
+
+#step_6b input, #step_9 input {
+    height: 60px;  /* Dette svare ca til padding paa 20 px */
+}
+/*
+#step_1 .input-group{
+    margin-bottom: 10px;
+}
+*/
+#step_2 .form-control{
+    width: 200px;
+}
+
+
+.taxonomyTextEdit{
+    height: 30px;
+}
+
+
+.instruktion{
+    margin-left: -15px;
+}
+
+
+.helperTextInput{
+    margin-bottom: 20px;
+}
+
+
+.stepInput .input-group {
+    margin-left: 20px;
+}
+
+.step .input-group {
+	display: inline-flex;
+}
+
+.introField {
+    margin-top: 20px;
+}
+
+
+/*
+.Sortable{
+    background-color: #f8f8f6;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+*/
+
+.sortable_text_container {
+    -moz-user-select: none;
+    background-color: #fff;
+    box-shadow: 1px 1px 1px #ddd;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.7;
+    margin-top: 10px;
+    /*overflow: auto;*/
+    overflow: unset;
+    padding: 10px 1% 10px 20px;
+    min-height: 44px;   /* Added 07-06-2016 to compensate for missing text */
+}
+
+
+#step_7_download {
+    text-transform: none;
+}
+
+
+.tabHeading_selected{
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #f8f8f6;
+}
+
+.tabHeading{
+/*
+    border-top: 1px solid #000;
+    border-right: 1px solid #000;
+    border-left: 1px solid #000;
+    border-bottom: 1px solid #f8f8f6;
+*/    
+/*
+    position: relative;
+    top: 1px;
+    padding-left: 10px;
+    padding-top: 10px;
+    display: inline-block;
+*/
+}
+
+.tabBody{
+    /*border: 1px solid #cececc;*/
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-right: 1px solid #cececc;
+    border-left: 1px solid #cececc;
+    border-bottom: 1px solid #cececc;
+}
+
+.tabBodyDropdownContainer{
+    margin-bottom: 10px;
+}
+
+.tabHeading a {
+    color: #717272;
+}
+
+.nav-tabs > li > a, 
+.nav-tabs > li > a:focus, 
+.nav-tabs > li > a:hover{
+    color: #000;
+}
+
+.nav-tabs > li.active > a, 
+.nav-tabs > li.active > a:focus, 
+.nav-tabs > li.active > a:hover{
+    /*color: #05a0a8;*/
+    color: #000;
+    font-weight: 700;
+}
+
+.cssGreen{
+    background-color: #dff8f8;
+}
+
+.masterStudentBtn{
+    margin-right: 0px;
+    margin-bottom: 0px;
+}
+
+.contentEdit, .contentMark{
+    float: right;
+}
+
+.contentDelete{
+    float: right;
+    position: relative;
+    z-index: 10000;
+    /*cursor: crosshair;*/
+}
+
+.deleteCallOut {
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: 1px;
+    top: -43px;
+    z-index: 100;
+}
+
+.glyphicon-arrow-down {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 30px;
+    top: -19px;
+    z-index: 99;
+}
+
+#addSubject{
+    margin-left: 10px;
+    margin-bottom: 2px;
+}
+
+#step_2 .input-group{
+    margin-left: 0px; margin-right: 0px;
+}
+
+.tabBodyDropdownContainer .label{
+    margin-right: 10px;
+}
+
+.tabBodyDropdownContainer .Dropdown{
+    margin-top: 10px;
+}
+
+.problemFormulationBtnWrap{
+    padding-top: 0px;
+    height: 50px;
+}
+
+.masterStudentBtnWrap{
+    padding-top: 15px;
+}
+
+#textInputProblemFormulation{
+    margin-top: 5px;
+}
+
+/*****************************************/
+
+.markStar{
+    position: relative;
+}
+
+.dragCallOut{
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: 50%;
+    top: -43px;
+    z-index: 100;
+}
+
+.dragCallOutArrow {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 55%;
+    top: -19px;
+    z-index: 99;
+}
+
+.markCallOut{
+    cursor: pointer;
+    padding: 0 20px;
+    position: absolute;
+    right: -12px;
+    top: -43px;
+    z-index: 100;
+}
+
+.markCallOutArrow {
+    color: #56bfc5;
+    font-size: 2em;
+    position: absolute;
+    right: 17px;
+    top: -19px;
+    z-index: 99;
+}
+
+
+/*****************************************/
+
+#XdynamicTextContainer{
+    padding: 10px;
+
+    /*** NO OVERLAY: ALL BELOW NEEDS TO BE COMMENTED OUT! ***/
+
+    background-color: rgba(255, 0, 0, 0);
+    height: 140px;
+    position: absolute;
+    width: 92%;
+    z-index: 10;
+}
+
+.XdynamicTextContainerClass {
+    border: 1px solid #ccc;
+    height: 120px;
+    padding: 6px 12px;
+    width: 100%;
+}
+
+/***************************************/
+
+#step_1 .input-group{
+    margin-left: 0px;
+}
+
+#XXX_addSubject {
+    margin-bottom: 2px;
+    margin-left: 10px;
+}
