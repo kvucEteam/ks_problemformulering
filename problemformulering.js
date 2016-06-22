@@ -3312,6 +3312,7 @@ $(document).on('change', 'textarea', function(){
 $(document).on('click', '#XdynamicTextContainer', function(){
 
 	if (screenCastMode) {
+		console.log("Enter!");
 	
 		var HTML = $('#XdynamicText').html();
 		console.log('XdynamicTextContainer - HTML: ' + HTML);
