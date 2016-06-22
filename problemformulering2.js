@@ -854,8 +854,8 @@ function step_1_template(){
 	HTML += 			'</div>';
 
 	HTML += 			'<div class="stepInput">';
-	HTML += 					returnInputBoxes4(1, 'XXX_keyThemesByStudent', '', 'Skriv overordnet emne');
-	HTML +=						'<span id="XXX_addSubject" class="vuc-primary btn btn-primary">Tilføj overordnet emne</span>';
+	HTML += 					returnInputBoxes4(1, 'keyproblemByStudent', '', 'Skriv overordnet emne');
+	HTML +=						'<span id="addKeyproblem" class="vuc-primary btn btn-primary">Tilføj overordnet emne</span>';
 	HTML += 			'</div>';
 
 	HTML += 		'</div>';
@@ -882,13 +882,13 @@ function step_1_template(){
 
 // This keypress eventhandler listens for the press of the return-key. If a return-key event is encountered the 
 // first empty input-field is found and focus is given to that field.
-$( document ).on('keypress', ".XXX_keyThemesByStudent", function(event){
+$( document ).on('keypress', ".keyproblemByStudent", function(event){
 	console.log("keypress - keyThemesByStudent - PRESSED");
 	if ( event.which == 13 ) {  // If a press on the return-key is encountered... (NOTE: "13" equals the "return" key)
 		event.preventDefault(); // ...prevents the normal action of the return-key.
 		console.log("keypress - keyThemesByStudent - PRESSED RETURN");
 		if ($(this).val().length > 0){
-			$( "#XXX_addSubject" ).trigger( "click" );
+			$( "#addKeyproblem" ).trigger( "click" );
 		} else { // If the input-field is empty...
 			console.log("keypress - keyThemesByStudent - PRESSED");
 			$(this).focus(); // ...give the input-field focus...
@@ -897,128 +897,38 @@ $( document ).on('keypress', ".XXX_keyThemesByStudent", function(event){
 });
 
 
-$( document ).on('click', "#XXX_addSubject", function(event){
+$( document ).on('click', "#addKeyproblem", function(event){   // addKeyproblem
 
-	// ################################################################################  // <----  OLD CODE 21-06-2016 - VERSION 1
-if (false) {
-
-	var JS = jsonData.studentSelectedProblems[jsonData.selectedIndexNum];
-	var totStudentThemesMem = [];
-	if (typeof(totStudentThemesMem)==='undefined'){
-		window.totStudentThemesMem = [];
-	}
-	
-	console.log('addSubject -  $(this).val(): _' + $('.keyThemesByStudent').val() + '_');
-	if ($('.keyThemesByStudent').val().trim().length > 0) { // Only inset entered values > 0
-		console.log('addSubject - TEST 1');
-		if ((!elementInArray(jsonData.keyProblems[JS.selcNo].themes, $('.keyThemesByStudent').val().trim())) && 
-			(!elementInArray(totStudentThemesMem, $('.keyThemesByStudent').val().trim()))){
-			console.log('addSubject - TEST 2');
-
-			$('#subjectWordContainer').append('<span class="keyThemes btn btn-primary">'+htmlEntities($('.keyThemesByStudent').val().trim())+'</span>');
-			$('#subjectWordContainer .keyThemes').last().hide().fadeIn('slow');
-
-			if (htmlEntities($('.keyThemesByStudent').val().trim()).length > 0){
-				JS.studentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
-				JS.totStudentThemes.push(htmlEntities($('.keyThemesByStudent').val().trim()));
-				var selcNo = jsonData.studentSelectedProblems[jsonData.selectedIndexNum].selcNo;
-				jsonData.keyProblems[selcNo].themes.push(htmlEntities($('.keyThemesByStudent').val().trim())); // <------- NEW 02-06-2016
-			}
-			$('.keyThemesByStudent').val('');
-
-			// removeEmptyElements(JS.studentThemes); // When addSubject is triggered by keyThemesByStudent, then empty elements are added
-
-			JS.totStudentThemes_selectOrder.push( $('.keyThemes').length-1);
-
-		}
-	}
-	
-	console.log("addSubject - totStudentThemesMem: " + JSON.stringify(totStudentThemesMem));
-	console.log("addSubject - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum); 
-	console.log("addSubject - jsonData.studentSelectedProblems: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-
-}
 
 	// ################################################################################  // <----  NEW CODE 21-06-2016 - VERSION 2
 
 
-	var XXX_keyThemesByStudent = htmlEntities($('.XXX_keyThemesByStudent').val().trim());
-	if ($('.XXX_keyThemesByStudent').val().trim().length > 0) { // Only inset entered values > 0
+	var keyproblemByStudent = htmlEntities($('.keyproblemByStudent').val().trim());  // keyproblemsByStudent
+	if ($('.keyproblemByStudent').val().trim().length > 0) { // Only inset entered values > 0
 
 		if (!jsonData.hasOwnProperty("studentSelectedProblems")) { 
 	    	jsonData.studentSelectedProblems = [];
 	    }
 
-	    var XXX_keyThemesByStudent_exist = false;
+	    var keyproblemByStudent_exist = false;
 	    for (var n in jsonData.studentSelectedProblems) {
-	    	if (XXX_keyThemesByStudent == jsonData.studentSelectedProblems[n].name){
-	    		XXX_keyThemesByStudent_exist = true;
+	    	if (keyproblemByStudent == jsonData.studentSelectedProblems[n].name){
+	    		keyproblemByStudent_exist = true;
 	    	}
 	    }
 
-	    if (!XXX_keyThemesByStudent_exist) {
-	    	jsonData.keyProblems.push({"name" : XXX_keyThemesByStudent, "themes": []});
+	    if (!keyproblemByStudent_exist) {
+	    	jsonData.keyProblems.push({"name" : keyproblemByStudent, "themes": []});
 
 	    	$('.keyProblems').removeClass('btn-primary').addClass('btn-info');
-	    	$('.XXX_keyThemesByStudent').val('');
-	    	$('#TextContainer').append('<span class="keyProblems btn btn-primary">'+XXX_keyThemesByStudent+'</span>');
-			$('#TextContainer .keyProblems').last().hide().fadeIn('slow');
+	    	$('.keyproblemByStudent').val('');
+	    	$('#TextContainer').append('<span class="keyProblems problemFormulationBtn btn btn-primary">'+keyproblemByStudent+'</span>');
+			$('#TextContainer .keyProblems').last().hide().fadeIn('slow', function() {
+				$(this).trigger( "click" );  // <------  This will trigger click on 'keyProblems' and on 'problemFormulationBtn'.
+				console.log('#TextContainer .keyProblems');
+			});
 	    }
 	}
-
-
-	// ################################################################################  // <----  OLD CODE 31-03-2016
-if (false) {
-
-	var Problem_name = htmlEntities($('.Problem_name').val());
-	
-	var studentHasEnteredData = (Problem_name.length>0)?true:false; // Check if field are entered...
-
-	if (studentHasEnteredData) {  // If the student enters a keyProblem...
-
-		var themes = [];
-
-		if (!jsonData.hasOwnProperty("studentSelectedProblems")){ 
-	    	jsonData.studentSelectedProblems = [];
-	    }
-
-	    selcNo = jsonData.keyProblems.length;
-	    console.log('step_1_goOn - selcNo 2: ' + selcNo);
-
-	    jsonData.keyProblems.push({"name" : Problem_name, "themes": themes});
-
-		if (!elementInArray(returnStudentTextArray(), selcNo)) {  
-		   	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
-		}
-
-		for (var n in jsonData.studentSelectedProblems){
-	    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
-	    		jsonData.studentSelectedProblems[n].selected = true;
-	    	} else {
-	    		jsonData.studentSelectedProblems[n].selected = false;
-	    	}
-	    }
-
-	    jsonData.selectedIndexNum = getSelectedIndexNum();
-	}
-
-	console.log("step_1_goOn - jsonData: " + JSON.stringify(jsonData));
-	console.log("step_1_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-
-	var error_notEnoughstudentData = false;
-
-	if (!jsonData.hasOwnProperty("selectedIndexNum") && !studentHasEnteredData) {
-		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge en tekst, eller skrive titlen på en tekst, før du kan gå videre!");
-		error_notEnoughstudentData = true;
-	}
-
-	
-	if ((jsonData.hasOwnProperty("studentSelectedProblems")) && !error_notEnoughstudentData) {
-	 	$('#DataInput').html(step_2_template());
-	} 
-
-}
-	
 });
 
 
