@@ -5,8 +5,37 @@
 		{"name" : "Frihed og Lighed", "themes": ["Demokrati", "Ytringsfrihed", "USA", "Menneskerettigheder", "Sekularisering", "Religionsfrihed", "Det gode samfund", "Diktatur", "Liberalisme", "Ideologi", "Muligheder", "Økonomi"]},
 		{"name" : "Identitetsdannelse", "themes": ["Opdragelse", "Individualisering", "Fællesskab", "Medier", "Ungdom", "Buddhisme", "Valgmuligheder", "Ansvar", "Socialisering", "Sundhed", "Tro", "Nationalisme"]}
 	],
+	"themes" : ["Tema 1", "Tema 2", "Tema 3", "Tema 4", "Tema 5", "Tema 6", "Tema 7", "Tema 8", "Tema 9", "Tema 10"],
+	"sentenceStarters_theme" : 
+		{"id":"Dropdown0", "class":"Dropdown", "selected": "0",
+            "options":[
+            	{"value":"Sætningsstartere:"},
+                {"value":"Teksten giver flere vinkler på temaet &quot;???&quot;, fordi..."},
+                {"value":"Teksten forholder sig til kritisk til temaet &quot;???&quot;, ved at..."},
+                {"value":"Teksten kaster et tvetydigt blik på temaet &quot;???&quot;, fordi..."}
+            ]
+        }, 
+    "analyticalFocus" : [
+    	{"name" : "Fortælleforhold", "description" : "<h4>Fortælleforhold</h4> <p>Hvem fortæller,  hvordan fortælles der, og hvorfor fortælles der på den måde?</p>"}, 
+    	{"name" : "Personkarakteristik", "description" : "<h4>Personkarakteristik</h4> <p>Hvem optræder, hvad får vi at vide om dem og deres handlinger, tanker og om deres forhold til omverdenen? </p>"},
+    	{"name" : "Komposition", "description" : "<h4>Komposition</h4> <p>Hvordan er teksten bygget op? Er den kronologisk eller ej? Falder den i nogle særlige afsnit, og er der en udvikling?</p>"},
+    	{"name" : "Sprog", "description" : "<h4>Sprog</h4> <p>Er der nogle særlige træk ved sproget, som virker vigtige i forhold til temaet? Er der et særligt billedsprog? Gentagelser? Fagsprog, slang og/eller dialekt?</p>"}    
+    ],
 	"numOfChoosenWords" : 3,
     "numOfSubQuestions" : 4, 
+	"sentenceStarters_problemFormulation" : 
+		{"id":"Dropdown1", "class":"Dropdown", "selected": "0",
+            "options":[
+            	{"value":"Bliv inspireret til at komme igang her"},
+                {"value":"Citatet illustrerer det tvetydige ved..."},
+                {"value":"I citatet kommer fortællerens holdning til syne..."},
+                {"value":"Dette citat er interessant, fordi det viser, hvordan..."},
+                {"value":"Ordet..., i det ovenstående citat, viser hvorledes/peger i retning af..."},
+                {"value":"Det følgende citat gør læseren opmærksom på, at..."},
+                {"value":"Formuleringen illustrerer det vilkår i det moderne liv, at..."},
+                {"value":"Brugen af ordene..., giver læseren billeder af..."}
+            ]
+        },
     "sentenceStarters_taxonomy_describing" : 
 		{"id":"Dropdown_describing", "class":"Dropdown taxonomyDropdown", "selected": "0",
             "options":[
@@ -41,6 +70,46 @@
                 {"value":"Er...en løsning på...?"},
                 {"value":"Er...udtryk for...?"},
                 {"value":"Kan man...i dag/i fremtiden...?"}
+            ]
+        },
+    "sentenceStarters_interpretation" : 
+		{"id":"Dropdown1b", "class":"Dropdown", "selected": "0", 
+            "options":[
+            	{"value":"Sætningsstartere:"},
+                {"value":"I alle tre citater kan man se, at..."},
+                {"value":"Fælles for citaterne er, at..."},
+                {"value":"Det overordnede emne kommer tydeligt til udtryk, når vi kigger på citaterne, fordi..."},
+                {"value":"Analysen har vist..."}
+            ]
+        },
+    "sentenceStarters_conclusion" : 
+		{"id":"Dropdown2", "class":"Dropdown", "selected": "0", 
+            "options":[
+            	{"value":"Sætningsstartere:"},
+                {"value":"Det teksten siger, er..."},
+                {"value":"Selv om teksten er skrevet i..., kan den fortsat ..."},
+                {"value":"Teksten er fortsat aktuel, fordi den behandler nogle almengyldige emner, som det kommer til udtryk i..."},
+                {"value":"Forfatteren rejser debatten om..."},
+                {"value":"Budskabet i teksten er interessant, fordi..."},
+                {"value":"Selv om der ikke er noget tydeligt budskab i teksten, er den interessant, fordi..."}
+            ]
+        },
+    "sentenceStarters_begin" : 
+		{"id":"Dropdown3", "class":"Dropdown", "selected": "0", 
+            "options":[
+            	{"value":"Sætningsstartere:"},
+                {"value":"Alle kan blive enige om at det er et problem, at ... (generel vinkel)"},
+                {"value":"Det er et velkendt standpunkt i debatten om ..., at .... (generel vinkel)"},
+                {"value":"Sidst jeg var i supermarkedet overhørte jeg en samtale omkring ..., hvilket fik mig til at tænke på, at det er et stort problem at vi .... (konkret vinkel)"}
+            ]
+        },
+    "sentenceStarters_end" : 
+		{"id":"Dropdown4", "class":"Dropdown", "selected": "0",  
+            "options":[
+            	{"value":"Sætningsstartere:"},
+                {"value":"Afslutningsvis kan man sige at ..."},
+                {"value":"Når alt kommer til alt er der meget som taler for, at ..."},
+                {"value":"Til sidst vil jeg bare sige at jeg synes, at det er totalt for dårligt, at ..."}
             ]
         },
 	"steps" : [
@@ -89,7 +158,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_3.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/FLuwhYNyuGk"
+            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 4,
 			"header" : "Skriv en problemformulering med underspørgsmål",
