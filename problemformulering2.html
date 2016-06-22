@@ -1,0 +1,66 @@
+<!doctype html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Problemformulering med underspørgsmål</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link rel="stylesheet" href="../library/css/styles.css" type="text/css" />
+
+        <!-- <link rel="stylesheet" href="vid_skriv.css" type="text/css" /> --> 
+
+        <link rel="stylesheet" href="problemformulering2.css" type="text/css" />
+
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <div class="col-xs-12">
+
+                <div id="DataInput"></div> 
+
+                <div class="stepNav">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-12">
+                            <div id="stepNavContainer">
+                                <span id="step_0_goOn" class="btn btn-lg btn-primary">Gå videre</span>
+                            </div>
+                            <!-- <audio id="audioPlayer" controls="controls"> -->
+                            <span id="audioPlayerContainer">
+                            <!-- 
+                                <audio id="audioPlayer" controls="controls" autoplay="autoplay">
+                                    <source src="" type="mpeg"/>
+                                    Your browser does not support the audio element
+                                </audio> 
+                            -->
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="processContainer"></div>
+
+            </div>
+        </div>
+        <script src="../library/vendor_scripts.js"></script>
+        <script src="../library/custom_scripts.js"></script>
+        <script src="html-docx.js">
+        </script>
+        <script src="filesaver.js"></script>
+        <script src="problemformulering2.js"></script>
+        <script>
+        // loadData("guidet_skriv_1.json");
+        </script>
+        <script type="text/javascript">
+            // ReturnAjaxData("GET", "json/quizData.json", false, "json"); 
+            getAjaxData("GET", "json/quizData2.json", false, "json");  
+        </script>
+        <script type="text/javascript">
+        $(document).ready(function() {
+            one_line_footer();
+        });
+        </script>
+    </body>
+
+</html>
+

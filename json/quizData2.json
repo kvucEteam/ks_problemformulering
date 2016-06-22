@@ -131,7 +131,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/kC7qIUtnwPI"
+            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 2,
 			"header" : "Skriv en problemformulering med underspørgsmål",
