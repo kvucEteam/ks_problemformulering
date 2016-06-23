@@ -3067,7 +3067,7 @@ function step_6_template(){
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';

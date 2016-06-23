@@ -62,7 +62,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/kC7qIUtnwPI"
+            "masterExVideo" : "https://www.youtube.com/embed/Z9ED4Gqc6qQ"
 		},{
 			"step" : 2,
 			"header" : "Skriv en problemformulering med underspørgsmål",
@@ -76,7 +76,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
-			"masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
+			"masterExVideo" : "https://www.youtube.com/embed/_Q8qlY-WBaM"
 		},{
 			"step" : 3,
 			"header" : "Skriv en problemformulering med underspørgsmål",
@@ -102,7 +102,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
+            "masterExVideo" : "https://www.youtube.com/embed/c-bd4b2tta0"
 		},{
 			"step" : 5,
 			"header" : "Skriv en problemformulering med underspørgsmål",
@@ -116,14 +116,15 @@
             ],
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c" 
+            "masterExVideo" : "https://www.youtube.com/embed/3958crKcF6E" 
 		},{
 			"step" : 6,
 			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
             "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil, et Google dokument eller en Open office-fil. I dokumentet kan du arbejde videre med din problemformulering og underspørgsmål",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}]
+			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}],
+            "masterExVideo" : "https://www.youtube.com/embed/2a5TseUm9NU" 
 		}
 	]
 }
