@@ -391,6 +391,20 @@ function hasNonEmptyStrElm(Tarray) {
 	return false;
 }
 
+
+function returnNumOfNonEmptyElements(Tarray){
+	console.log("returnNumOfNonEmptyElements - Tarray: " + Tarray);
+	var count = 0;
+	for (var n in Tarray){
+		if ((Tarray[n] !== null) && (Tarray[n] != '')) {
+			++count;
+		}
+	}
+	return count;
+}
+console.log("returnNumOfNonEmptyElements: " + returnNumOfNonEmptyElements([1,, ,2,'1', '', ' '])); // Result = 4
+
+
 // This function replaces all "???" wildcards in strToReplace with the corrosponding "num" value translated into a string-word (between zero and twenty)
 function replaceWildcard(strToReplace, num){
 	var numArray = ['nul','en','to','tre','fire','fem','seks','syv','otte','ni','ti','elleve','tolv','tretten','fjorten','femten','seksten','sytten','atten','nitten','tyve'];
@@ -1328,11 +1342,13 @@ $( document ).on('click', "#step_2_goOn", function(event){
 		}
 	}
 
-	if (JS.studentSelectedThemes.length + JS.studentThemes.length >= jsonData.numOfChoosenWords){
+	// if (JS.studentSelectedThemes.length + JS.studentThemes.length >= jsonData.numOfChoosenWords){  // 23-06-2016: Not the right way - creates a bug due to studentThemes.
+	if (JS.totStudentThemes_selectOrder.length >= jsonData.numOfChoosenWords){  // 23-06-2016: Count the number in the selection order instead.
 		step_3_template();
 		console.log("step_2_goOn - studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	} else {
-		UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.studentSelectedThemes.length+JS.studentThemes.length)+' ord.');
+		// UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.studentSelectedThemes.length+JS.studentThemes.length)+' ord.');  // <--- Commented out 23/6-2016
+		UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.totStudentThemes_selectOrder.length)+' ord.');   // <--- Added 23/6-2016
 	}
 
 });
