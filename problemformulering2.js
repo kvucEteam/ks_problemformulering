@@ -1404,7 +1404,7 @@ $( document ).on('click', "#step_2_goOn", function(event){
 		console.log("step_2_goOn - studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	} else {
 		// UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.studentSelectedThemes.length+JS.studentThemes.length)+' ord.');  // <--- Commented out 23/6-2016
-		UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.totStudentThemes_selectOrder.length)+' ord.');   // <--- Added 23/6-2016
+		UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.totStudentThemes_selectOrder.length)+' ord.');   // <--- Added 23/6-2016 
 	}
 
 });
