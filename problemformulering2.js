@@ -936,9 +936,10 @@ $( document ).on('click', "#addKeyproblem", function(event){   // addKeyproblem
 
 	    	$('.keyProblems').removeClass('btn-primary').addClass('btn-info');
 	    	$('.keyproblemByStudent').val('');
-	    	$('#TextContainer').append('<span class="keyProblems problemFormulationBtn btn btn-primary">'+keyproblemByStudent+'</span>');
+	    	// $('#TextContainer').append('<span class="keyProblems problemFormulationBtn btn btn-primary">'+keyproblemByStudent+'</span>');  // <------ Commented out 24/6-2016
+	    	$('#TextContainer').append('<span class="keyProblems problemFormulationBtn btn btn-info">'+keyproblemByStudent+'</span>'); // <------ Added 24/6-2016
 			$('#TextContainer .keyProblems').last().hide().fadeIn('slow', function() {
-				$(this).trigger( "click" );  // <------  This will trigger click on 'keyProblems' and on 'problemFormulationBtn'.
+				// $(this).trigger( "click" );  // <------  This will trigger click on 'keyProblems' and on 'problemFormulationBtn'.  // <------ Commented out 24/6-2016
 				console.log('#TextContainer .keyProblems');
 			});
 	    }
