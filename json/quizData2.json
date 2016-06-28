@@ -64,9 +64,8 @@
 			"header" : "Skriv en problemformulering med underspørgsmål",
 			"OLD_instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
             "instruction" : [
-                {"insert": "Hvilke ??? underemner vil du bruge til at belyse eller udfolde dit emne?"},
                 {"wait": 1000},
-                {"add": " Kan du se en sammenhæng mellem nogle af emnerne?"},
+                {"add": " Hvilke ??? underemner vil du bruge til at belyse eller udfolde dit emne?"},
                 {"wait": 1000},
                 {"removeCursor": 600}
             ],

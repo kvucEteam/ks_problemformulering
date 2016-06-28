@@ -242,7 +242,7 @@ textarea {
     margin-left: 10px;
 }
 
-.problemFormulation_saveHide{
+.problemFormulation_saveHide, .problemFormulation_saveHide_step1{
     float: right;
     margin-right: 0px;
 }
@@ -437,6 +437,10 @@ textarea {
 .problemFormulationBtnWrap{
     padding-top: 0px;
     height: 50px;
+}
+
+#step_1 .problemFormulationBtnWrap{
+    height: 0px;
 }
 
 .masterStudentBtnWrap{

@@ -862,14 +862,18 @@ function step_1_template(){
 	HTML += 			'<div id="TextContainer" class="btnActions">';
 			var JT = jsonData.keyProblems;
 			var selcNo = (hasSelected())? jsonData.studentSelectedProblems[getSelectedIndexNum()].selcNo : selcNo ;
+			window.selectedKeyproblem = "";
 			for (var n in JT){
-				HTML += 	'<span class="keyProblems problemFormulationBtn btn btn-'+((parseInt(selcNo) == n)?'primary':'info')+'" >'+JT[n].name+'</span>';
+				// HTML += 	'<span class="keyProblems problemFormulationBtn btn btn-'+((parseInt(selcNo) == n)?'primary':'info')+'" >'+JT[n].name+'</span>';
+				if (parseInt(selcNo) == n){    // Added 27-06-2016.
+					selectedKeyproblem = JT[n].name;
+				}
 			}
 	HTML += 			'</div>';
 
 	HTML += 			'<div class="stepInput">';
-	HTML += 					returnInputBoxes4(1, 'keyproblemByStudent', '', 'Skriv overordnet emne');
-	HTML +=						'<span id="addKeyproblem" class="vuc-primary btn btn-primary">Tilføj overordnet emne</span>';
+	HTML += 					returnInputBoxes4(1, 'keyproblemByStudent', selectedKeyproblem, 'Skriv overordnet emne');
+	// HTML +=						'<span id="addKeyproblem" class="vuc-primary btn btn-primary">Tilføj overordnet emne</span>';
 	HTML += 			'</div>';
 
 	HTML += 		'</div>';
@@ -944,10 +948,12 @@ $( document ).on('click', "#addKeyproblem", function(event){   // addKeyproblem
 			});
 	    }
 	}
+
+	console.log('addKeyproblem - CLICK: ' + JSON.stringify(jsonData.keyProblems));
 });
 
 
-// $( document ).on('click', ".problemFormulationBtn", function(event){
+// $( document ).on('click', ".problemFormulationBtn", function(event){   // <---- script looper uendeligt!!!
 // 	$( ".problemFormulationBtn" ).trigger( "click" );
 // });
 
@@ -1012,11 +1018,97 @@ $( document ).on('click', ".keyProblems", function(event){   // <---------  NOT 
 
 $( document ).on('click', "#step_1_goOn", function(event){
 
+	// #############################################  // Added 27-06-2016.
+
+	var keyproblemByStudent = htmlEntities($('.keyproblemByStudent').val().trim());  // keyproblemsByStudent
+    console.log("step_1_goOn - selcNo: " + selcNo); 
+
+    if (!jsonData.hasOwnProperty("studentSelectedProblems")){
+    	jsonData.studentSelectedProblems = [];
+    }
+
+    var keyProblemsArr = []
+    for (var n in jsonData.keyProblems){
+    	keyProblemsArr.push(jsonData.keyProblems[n].name);
+    }
+
+    // if (!elementInArray(returnStudentTextArray(), selcNo)) {  // If studentSelectedProblems is not allready in studentSelectedProblems.selcNo, then add it: 
+    if (!elementInArray(keyProblemsArr, keyproblemByStudent)) {  // If studentSelectedProblems is not allready in keyProblems, then add it: 
+    	// jsonData.studentSelectedProblems.push({selcNo: studentSelectedProblems, selected: false, subjectTexts: [] });
+
+    	var selcNo = jsonData.studentSelectedProblems.length;  // Last added keyproblem gets selected.
+    	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
+
+
+		if ($('.keyproblemByStudent').val().trim().length > 0) { // Only inset entered values > 0
+
+			if (!jsonData.hasOwnProperty("studentSelectedProblems")) { 
+		    	jsonData.studentSelectedProblems = [];
+		    }
+
+		    var keyproblemByStudent_exist = false;
+		    for (var n in jsonData.studentSelectedProblems) {
+		    	if (keyproblemByStudent == jsonData.studentSelectedProblems[n].name){
+		    		keyproblemByStudent_exist = true;
+		    	}
+		    }
+
+		    if (!keyproblemByStudent_exist) {
+		    	jsonData.keyProblems.push({"name" : keyproblemByStudent, "themes": []});
+		    }
+		}
+	} else {  // If the student has allready/previously entered a keyProblem and later returns to it (by writing it again in step 1), then find the corrosponding selcNo of the old keyProblem:
+		var selcNo = returnElementNumInArray(keyProblemsArr, keyproblemByStudent);
+	}
+
+    console.log("step_1_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+    // if (!studentChangeSubject(studentSelectedProblems)){
+	    for (var n in jsonData.studentSelectedProblems){
+	    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
+	    		jsonData.studentSelectedProblems[n].selected = true;
+	    	} else {
+	    		jsonData.studentSelectedProblems[n].selected = false;
+	    	}
+	    }
+	// }
+
+	// jsonData.selectedselcNo = selcNo; // = returnElementNumInArray(returnStudentTextArray(), studentSelectedProblems);
+	jsonData.selectedIndexNum = getSelectedIndexNum();
+	console.log("step_1_goOn - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum);  // <------- ########  SE HER !!! ##############
+
+    console.log("step_1_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+    // #############################################
+
+
 	if (!jsonData.hasOwnProperty("selectedIndexNum")) {
 		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge et nøgleproblem før du kan gå videre!");
 	} else {
-		if (jsonData.hasOwnProperty("studentSelectedProblems")) {
-		 	step_2_template();
+		if (jsonData.hasOwnProperty("studentSelectedProblems")) {  // <----- 28-06-2016 Added
+			$( ".problemFormulationBtn" ).trigger( "click" );  
+
+			$('.CloseClass').addClass('CloseClass_step1').removeClass('CloseClass');
+			$('.problemFormulation_saveHide').addClass('problemFormulation_saveHide_step1').removeClass('problemFormulation_saveHide');
+
+			$( document ).on('click', ".CloseClass_step1", function(event){
+			// $( document ).on('click', ".CloseClass", function(event){
+				$(".MsgBox_bgr").fadeOut(200, function() {
+		            $(this).remove();
+		            step_2_template();
+		        });
+				// step_2_template();
+			});
+
+			$( document ).on('click', ".problemFormulation_saveHide_step1", function(event){
+			// $( document ).on('click', ".problemFormulation_saveHide", function(event){
+				saveProblemFormulation();
+				$(".MsgBox_bgr").fadeOut(200, function() {
+		            $(this).remove();
+		            step_2_template();
+		        });
+				// step_2_template();
+			});
 		} 
 	}
 
@@ -1034,6 +1126,13 @@ function step_2_template(){
 	console.log("step_2_template - selectedIndexNum: " + jsonData.selectedIndexNum + ", studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems));
 	jsonData.currentStep = 2;
 	osc.save('jsonData', jsonData);
+
+	// window.hasBeenExecBool = false;  // <----- 28-06-2016 Added
+	// if ((jsonData.previousStep == 1) && (showNaggingBox) && !hasBeenExecOnce("stepCheckArr", jsonData.currentStep)) {
+	// 	hasBeenExecBool = true;
+	// 	problemFormulationBtn_pressed = true;  // Only for step 3 and 4.
+	// 	$( ".problemFormulationBtn" ).trigger( "click" );
+	// }
 
 	if ((typeof(DTO) !== 'undefined') && (DTO !== null)){ // Stop dynamic text ecexution.
 		DTO.stopExec(0);
@@ -1134,8 +1233,11 @@ function step_2_template(){
 
 	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
 	
-	window.DTO = Object.create(dynamicTextClass); 
+	window.DTO = Object.create(dynamicTextClass);  					// <----- 28-06-2016 commented out  
 	DTO.init('#dynamicText', jsonData.steps[stepNo].instruction); 
+	// if (!hasBeenExecBool) {    											// <----- 28-06-2016 Added 
+	// 	$( document ).trigger( "dynamicTextEvent", [{testdata: hasBeenExecBool}] );
+	// }
 
 	window.scrollTo(0, 0);
 }
@@ -2970,19 +3072,23 @@ function step_5_template(){
 							HTML += (problemFormulationMemNum < 0)? '' : JS.problemFormulationMem[problemFormulationMemNum];
 	HTML += 			'</textarea>';
 
-						// for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
-						// 	HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
-						// 	TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
-						// }
-						// JS.subQuestionArray = TsubQuestionArray;
+	HTML += 			'<div id="subjectSentenceSortableContainer">';  // Added 27-06-2016
 
-						var supQuestionNum = (subQuestionArray_is_new || jsonData.previousStep == 4)? JS.markedThemes.length :JS.subQuestionArray.length;
-						for (var i = 0; i < supQuestionNum; i++) {
-							var index = JS.markedThemes[i];
-							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
-							TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] ));
-						}
-						JS.subQuestionArray = TsubQuestionArray;
+							// for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
+							// 	HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+							// 	TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
+							// }
+							// JS.subQuestionArray = TsubQuestionArray;
+
+							var supQuestionNum = (subQuestionArray_is_new || jsonData.previousStep == 4)? JS.markedThemes.length :JS.subQuestionArray.length;
+							for (var i = 0; i < supQuestionNum; i++) {
+								var index = JS.markedThemes[i];
+								HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+								TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] ));
+							}
+							JS.subQuestionArray = TsubQuestionArray;
+
+	HTML += 			'</div>';  // Added 27-06-2016
 
 	HTML += 		'</div>';
 
@@ -2996,6 +3102,8 @@ function step_5_template(){
 	$('#DataInput').html(HTML);
 
 	// setJsAudioEventLitsner2();
+
+	makeSortable();  // Added 27-06-2016
 
 	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
 
@@ -3019,7 +3127,7 @@ function updateSubQuestionArray(){
 
 $( document ).on('click', "#addSubQuestion", function(event){
 	window.subQuestionDefaultText  = "(Klik for at skrive dit nye underspørgsmål)";
-	$('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+	$('#subjectSentenceSortableContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
 });
 
 

@@ -2913,19 +2913,24 @@ function step_5_template(){
 							HTML += (problemFormulationMemNum < 0)? '' : JS.problemFormulationMem[problemFormulationMemNum];
 	HTML += 			'</textarea>';
 
-						// for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
-						// 	HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
-						// 	TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
-						// }
-						// JS.subQuestionArray = TsubQuestionArray;
 
-						var supQuestionNum = (subQuestionArray_is_new || jsonData.previousStep == 4)? JS.markedThemes.length :JS.subQuestionArray.length;
-						for (var i = 0; i < supQuestionNum; i++) {
-							var index = JS.markedThemes[i];
-							HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
-							TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] ));
-						}
-						JS.subQuestionArray = TsubQuestionArray;
+	HTML += 			'<div id="subjectSentenceSortableContainer">';  // Added 27-06-2016
+
+							// for (var i = 0; i < jsonData.numOfSubQuestions; i++) {
+							// 	HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+							// 	TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[i] : JS.subQuestionArray[i] ));
+							// }
+							// JS.subQuestionArray = TsubQuestionArray;
+
+							var supQuestionNum = (subQuestionArray_is_new || jsonData.previousStep == 4)? JS.markedThemes.length :JS.subQuestionArray.length;
+							for (var i = 0; i < supQuestionNum; i++) {
+								var index = JS.markedThemes[i];
+								HTML += '<div class="taxonomy subQuestion sortable_text_container">'+((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] )+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>';	
+								TsubQuestionArray.push(((subQuestionArray_is_new || jsonData.previousStep == 4)? JS.SortableOrderArray[index] : JS.subQuestionArray[i] ));
+							}
+							JS.subQuestionArray = TsubQuestionArray;
+
+	HTML += 			'</div>';   // Added 27-06-2016
 
 	HTML += 		'</div>';
 
@@ -2939,6 +2944,8 @@ function step_5_template(){
 	$('#DataInput').html(HTML);
 
 	// setJsAudioEventLitsner2();
+
+	makeSortable();  // Added 27-06-2016
 
 	replaceWildcardsInCmdObj(jsonData.steps[stepNo].instruction);
 
@@ -2962,7 +2969,8 @@ function updateSubQuestionArray(){
 
 $( document ).on('click', "#addSubQuestion", function(event){
 	window.subQuestionDefaultText  = "(Klik for at skrive dit nye underspørgsmål)";
-	$('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+	// $('#subQuestionContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
+	$('#subjectSentenceSortableContainer').append('<div class="taxonomy subQuestion newSubQuestion sortable_text_container">'+subQuestionDefaultText+'<span class="contentEdit glyphicon glyphicon-pencil"></span></div>');
 });
 
 
