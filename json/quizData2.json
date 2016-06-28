@@ -58,7 +58,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_1_goBack", "text":"Gå tilbage"}, {"id": "step_1_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
+            "masterExVideo" : "https://www.youtube.com/embed/yiCWgHMr-94"
 		},{
 			"step" : 2,
 			"header" : "Skriv din egen problemformulering",
@@ -71,7 +71,7 @@
             ],
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
-			"masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
+			"masterExVideo" : "https://www.youtube.com/embed/eh_5etQYMQE"
 		},{
 			"step" : 3,
 			"header" : "Skriv din egen problemformulering",
