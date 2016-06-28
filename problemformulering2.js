@@ -1221,7 +1221,7 @@ function step_2_template(){
 
 	HTML += 			'<div class="stepInput">';
 	// HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'Skriv evt. dit eget emne');
-	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', '', 'Skriv evt. dit eget emne');
+	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', '', 'Skriv dit eget emne');
 	HTML +=						'<span id="addSubject" class="vuc-primary btn btn-primary">Tilføj emne</span>';
 	HTML += 			'</div>';
 
