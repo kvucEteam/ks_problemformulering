@@ -61,7 +61,7 @@
                 {"removeCursor": 600}
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}],
+			"navBtns" : [{"id": "step_1_goBack", "text":"Gå tilbage"}, {"id": "step_1_goOn", "text":"Gå videre"}],
             "masterExVideo" : "https://www.youtube.com/embed/Z9ED4Gqc6qQ"
 		},{
 			"step" : 2,

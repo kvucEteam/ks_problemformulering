@@ -952,6 +952,11 @@ $( document ).on('click', ".keyProblems", function(event){
 });
 
 
+$( document ).on('click', "#step_1_goBack", function(event){
+	step_0_template();
+});
+
+
 $( document ).on('click', "#step_1_goOn", function(event){
 
 	if (!jsonData.hasOwnProperty("selectedIndexNum")) {
