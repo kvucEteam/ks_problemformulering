@@ -42,13 +42,13 @@
 	"steps" : [
 		{
 			"step" : 0,
-			"header" : "Skriv en problemformulering med underspørgsmål",
-			"img" : {"src" : "img/start_img1140.jpg", "alt" : "Guidet skriveproces"},
+			"header" : "Skriv din egen problemformulering",
+			"img" : {"src" : "img/start_img1140_fri_version.jpg", "alt" : "Guidet skriveproces"},
 			"audioFiles" : [{"name": "audio/step_0.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_0_goOn", "text":"Gå videre"}]
 		},{
 			"step" : 1,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"instruction" : [
                 {"insert": "Skriv her hvilket overordnet emne, "},
                 {"wait": 1000},
@@ -57,11 +57,11 @@
                 {"removeCursor": 600}
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_1_goOn", "text":"Gå videre"}],
+			"navBtns" : [{"id": "step_1_goBack", "text":"Gå tilbage"}, {"id": "step_1_goOn", "text":"Gå videre"}],
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 2,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "Hvilke ??? underemner kunne du tænke dig at arbejde med? Kan du se en sammenhæng mellem nogle af emnerne?",
             "instruction" : [
                 {"wait": 1000},
@@ -74,7 +74,7 @@
 			"masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 3,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "Lav de tre valgte underemner om til underspørgsmål. Find på så mange spørgsmål som du kan.",
             "instruction" : [
                 {"wait": 1000},
@@ -87,7 +87,7 @@
             "masterExVideo" : "https://www.youtube.com/embed/FLuwhYNyuGk"
 		},{
 			"step" : 4,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "Nu skal du sortere i spørgsmålene. Træk sætningerne op eller ned. Tænk over taksonomi og sammenhæng - er der nogle du kan “smide væk”? De fire øverste underspørgsmål bliver en del af din problemformulering. ",
             "instruction" : [
                 {"wait": 1000},
@@ -100,7 +100,7 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
 		},{
 			"step" : 5,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "Her er dine fire vigtigste underspørgsmål og din foreløbige problemformulering. Nu skal du omformulere og forfine både hovedspørgsmål og underspørgsmål.",
             "instruction" : [
                 {"insert": "Her er din problemformulering og dine bedste underspørgsmål. Du kan nu finpudse dine formuleringer. Er der tydelig sammenhæng mellem problemformulering og underspørgsmål?"},
@@ -114,7 +114,7 @@
             "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c" 
 		},{
 			"step" : 6,
-			"header" : "Skriv en problemformulering med underspørgsmål",
+			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
             "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil. Du kan også kopiere teksten til dit tekstbehandlingsprogram. <br/>Her kan du arbejde videre med at lave en afgrænset problemformulering og relevante underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],

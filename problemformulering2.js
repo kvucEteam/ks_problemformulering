@@ -1016,71 +1016,76 @@ $( document ).on('click', ".keyProblems", function(event){   // <---------  NOT 
 });
 
 
+$( document ).on('click', "#step_1_goBack", function(event){
+	step_0_template();
+});
+
+
 $( document ).on('click', "#step_1_goOn", function(event){
 
 	// #############################################  // Added 27-06-2016.
 
 	var keyproblemByStudent = htmlEntities($('.keyproblemByStudent').val().trim());  // keyproblemsByStudent
-    console.log("step_1_goOn - selcNo: " + selcNo); 
+    if (keyproblemByStudent.length > 0) {
 
-    if (!jsonData.hasOwnProperty("studentSelectedProblems")){
-    	jsonData.studentSelectedProblems = [];
-    }
+	    if (!jsonData.hasOwnProperty("studentSelectedProblems")){
+	    	jsonData.studentSelectedProblems = [];
+	    }
 
-    var keyProblemsArr = []
-    for (var n in jsonData.keyProblems){
-    	keyProblemsArr.push(jsonData.keyProblems[n].name);
-    }
+	    var keyProblemsArr = []
+	    for (var n in jsonData.keyProblems){
+	    	keyProblemsArr.push(jsonData.keyProblems[n].name);
+	    }
 
-    // if (!elementInArray(returnStudentTextArray(), selcNo)) {  // If studentSelectedProblems is not allready in studentSelectedProblems.selcNo, then add it: 
-    if (!elementInArray(keyProblemsArr, keyproblemByStudent)) {  // If studentSelectedProblems is not allready in keyProblems, then add it: 
-    	// jsonData.studentSelectedProblems.push({selcNo: studentSelectedProblems, selected: false, subjectTexts: [] });
+	    // if (!elementInArray(returnStudentTextArray(), selcNo)) {  // If studentSelectedProblems is not allready in studentSelectedProblems.selcNo, then add it: 
+	    if (!elementInArray(keyProblemsArr, keyproblemByStudent)) {  // If studentSelectedProblems is not allready in keyProblems, then add it: 
+	    	// jsonData.studentSelectedProblems.push({selcNo: studentSelectedProblems, selected: false, subjectTexts: [] });
 
-    	var selcNo = jsonData.studentSelectedProblems.length;  // Last added keyproblem gets selected.
-    	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
+	    	var selcNo = jsonData.studentSelectedProblems.length;  // Last added keyproblem gets selected.
+	    	jsonData.studentSelectedProblems.push({selcNo: selcNo, selected: false });
 
 
-		if ($('.keyproblemByStudent').val().trim().length > 0) { // Only inset entered values > 0
+			if ($('.keyproblemByStudent').val().trim().length > 0) { // Only inset entered values > 0
 
-			if (!jsonData.hasOwnProperty("studentSelectedProblems")) { 
-		    	jsonData.studentSelectedProblems = [];
-		    }
+				if (!jsonData.hasOwnProperty("studentSelectedProblems")) { 
+			    	jsonData.studentSelectedProblems = [];
+			    }
 
-		    var keyproblemByStudent_exist = false;
-		    for (var n in jsonData.studentSelectedProblems) {
-		    	if (keyproblemByStudent == jsonData.studentSelectedProblems[n].name){
-		    		keyproblemByStudent_exist = true;
+			    var keyproblemByStudent_exist = false;
+			    for (var n in jsonData.studentSelectedProblems) {
+			    	if (keyproblemByStudent == jsonData.studentSelectedProblems[n].name){
+			    		keyproblemByStudent_exist = true;
+			    	}
+			    }
+
+			    if (!keyproblemByStudent_exist) {
+			    	jsonData.keyProblems.push({"name" : keyproblemByStudent, "themes": []});
+			    }
+			}
+		} else {  // If the student has allready/previously entered a keyProblem and later returns to it (by writing it again in step 1), then find the corrosponding selcNo of the old keyProblem:
+			var selcNo = returnElementNumInArray(keyProblemsArr, keyproblemByStudent);
+		}
+
+	    console.log("step_1_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+	    // if (!studentChangeSubject(studentSelectedProblems)){
+		    for (var n in jsonData.studentSelectedProblems){
+		    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
+		    		jsonData.studentSelectedProblems[n].selected = true;
+		    	} else {
+		    		jsonData.studentSelectedProblems[n].selected = false;
 		    	}
 		    }
+		// }
 
-		    if (!keyproblemByStudent_exist) {
-		    	jsonData.keyProblems.push({"name" : keyproblemByStudent, "themes": []});
-		    }
-		}
-	} else {  // If the student has allready/previously entered a keyProblem and later returns to it (by writing it again in step 1), then find the corrosponding selcNo of the old keyProblem:
-		var selcNo = returnElementNumInArray(keyProblemsArr, keyproblemByStudent);
+		// jsonData.selectedselcNo = selcNo; // = returnElementNumInArray(returnStudentTextArray(), studentSelectedProblems);
+		jsonData.selectedIndexNum = getSelectedIndexNum();
+		console.log("step_1_goOn - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum);  // <------- ########  SE HER !!! ##############
+
+	    console.log("step_1_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
+
+	    // #############################################
 	}
-
-    console.log("step_1_goOn - jsonData.studentSelectedProblems 1: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-
-    // if (!studentChangeSubject(studentSelectedProblems)){
-	    for (var n in jsonData.studentSelectedProblems){
-	    	if (selcNo == jsonData.studentSelectedProblems[n].selcNo){
-	    		jsonData.studentSelectedProblems[n].selected = true;
-	    	} else {
-	    		jsonData.studentSelectedProblems[n].selected = false;
-	    	}
-	    }
-	// }
-
-	// jsonData.selectedselcNo = selcNo; // = returnElementNumInArray(returnStudentTextArray(), studentSelectedProblems);
-	jsonData.selectedIndexNum = getSelectedIndexNum();
-	console.log("step_1_goOn - jsonData.selectedIndexNum: " + jsonData.selectedIndexNum);  // <------- ########  SE HER !!! ##############
-
-    console.log("step_1_goOn - jsonData.studentSelectedProblems 2: " + JSON.stringify(jsonData.studentSelectedProblems)); 
-
-    // #############################################
-
 
 	if (!jsonData.hasOwnProperty("selectedIndexNum")) {
 		UserMsgBox("body", "<h4>OBS</h4> Du skal vælge et nøgleproblem før du kan gå videre!");
