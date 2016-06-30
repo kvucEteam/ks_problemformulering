@@ -58,7 +58,8 @@
             ],
 			"audioFiles" : [{"name": "audio/step_1.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_1_goBack", "text":"Gå tilbage"}, {"id": "step_1_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/yiCWgHMr-94"
+            "masterExVideo" : "https://www.youtube.com/embed/yiCWgHMr-94",
+            "masterExVideoHeader" : "Eksempel: vælg et overordnet emne"
 		},{
 			"step" : 2,
 			"header" : "Skriv din egen problemformulering",
@@ -71,7 +72,8 @@
             ],
 			"audioFiles" : [{"name": "audio/step_2.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_2_goBack", "text":"Gå tilbage"}, {"id": "step_2_goOn", "text":"Gå videre"}],
-			"masterExVideo" : "https://www.youtube.com/embed/eh_5etQYMQE"
+			"masterExVideo" : "https://www.youtube.com/embed/eh_5etQYMQE",
+            "masterExVideoHeader" : "Eksempel: tilføj underemner"
 		},{
 			"step" : 3,
 			"header" : "Skriv din egen problemformulering",
@@ -84,7 +86,8 @@
             ],
 			"audioFiles" : [{"name": "audio/step_3.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_3_goBack", "text":"Gå tilbage"}, {"id": "step_3_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/FLuwhYNyuGk"
+            "masterExVideo" : "https://www.youtube.com/embed/FLuwhYNyuGk",
+            "masterExVideoHeader" : "Eksempel: skriv underspørgsmål"
 		},{
 			"step" : 4,
 			"header" : "Skriv din egen problemformulering",
@@ -97,7 +100,8 @@
             ],
 			"audioFiles" : [{"name": "audio/step_4.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_4_goBack", "text":"Gå tilbage"}, {"id": "step_4_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c"
+            "masterExVideo" : "https://www.youtube.com/embed/c-bd4b2tta0",
+            "masterExVideoHeader" : "Eksempel: sorter i dine underspørgsmål"
 		},{
 			"step" : 5,
 			"header" : "Skriv din egen problemformulering",
@@ -111,14 +115,17 @@
             ],
 			"audioFiles" : [{"name": "audio/step_5.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_5_goBack", "text":"Gå tilbage"}, {"id": "step_5_goOn", "text":"Gå videre"}],
-            "masterExVideo" : "https://www.youtube.com/embed/0cKkCRRTC_c" 
+            "masterExVideo" : "https://www.youtube.com/embed/3958crKcF6E",
+            "masterExVideoHeader" : "Eksempel: finpuds dine formuleringer"
 		},{
 			"step" : 6,
 			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
             "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil. Du kan også kopiere teksten til dit tekstbehandlingsprogram. <br/>Her kan du arbejde videre med at lave en afgrænset problemformulering og relevante underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
-			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}]
+			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}],
+            "masterExVideo" : "https://www.youtube.com/embed/2a5TseUm9NU",
+            "masterExVideoHeader" : "Eksempel: download din problemformulering"
 		}
 	]
 }

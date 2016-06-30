@@ -1222,7 +1222,7 @@ function step_2_template(){
 	HTML += 			'<div class="stepInput">';
 	// HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', JS.studentThemes, 'Skriv evt. dit eget emne');
 	HTML += 					returnInputBoxes4(1, 'keyThemesByStudent', '', 'Skriv dit eget emne');
-	HTML +=						'<span id="addSubject" class="vuc-primary btn btn-primary">Tilføj emne</span>';
+	HTML +=						'<span id="addSubject" class="vuc-primary btn btn-primary">Tilføj underemne</span>';
 	HTML += 			'</div>';
 
 	HTML += 		'</div>';
@@ -1296,11 +1296,12 @@ function insertMasterExample(){
 	// window.insertMasterExampleActive = true;
 	var HTML = '';
 	HTML += '<div class="masterStudentBtnWrap">';  // EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL
-	if (jsonData.currentStep == 5) {
-		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
-	} else {
-		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
-	}
+	// if (jsonData.currentStep == 5) {
+	// 	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
+	// } else {
+	// 	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	// }
+	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>'+jsonData.steps[jsonData.currentStep].masterExVideoHeader.toUpperCase()+'</span>';
 	HTML += '</div>';
 	return HTML;
 }
@@ -1312,11 +1313,12 @@ $( document ).on('click', ".masterStudentBtn", function(event){
 	console.log("masterStudentBtn - insertMasterExampleActive: " + insertMasterExampleActive);
 
 	var HTML = '';
-	HTML += '<h3>Eksempel</h3>';
 
 	var stepNo = jsonData.currentStep;  // <----------  ORIGINAL LIVE!
 	var masterExVideo = jsonData.steps[stepNo].masterExVideo;
 	console.log("masterStudentBtn - stepNo: " + stepNo + ", masterExVideo: " + masterExVideo);
+
+	HTML += '<h3>'+jsonData.steps[stepNo].masterExVideoHeader+'</h3>';
 
 	HTML += '<div class="embed-responsive embed-responsive-16by9 col-xs-12 col-md-12 vid_container">';
     HTML += 	'<iframe class="embed-responsive-item" src="'+masterExVideo+'?rel=0" allowfullscreen="1"></iframe>';
@@ -1512,7 +1514,8 @@ $( document ).on('click', "#step_2_goOn", function(event){
 		console.log("step_2_goOn - studentSelectedProblems 3: " + JSON.stringify(jsonData.studentSelectedProblems));
 	} else {
 		// UserMsgBox("body", '<h4>OBS</h4> Du skal markere, eller skrive, mindst '+jsonData.numOfChoosenWords+' emner før du kan gå videre. Du har kun angivet '+String(JS.studentSelectedThemes.length+JS.studentThemes.length)+' ord.');  // <--- Commented out 23/6-2016
-		UserMsgBox("body", '<h4>OBS</h4> Du skal tilføje mindst '+jsonData.numOfChoosenWords+' underemner før du kan gå videre. Du har kun angivet '+String(JS.totStudentThemes_selectOrder.length)+' ord.');   // <--- Added 23/6-2016 
+		// UserMsgBox("body", '<h4>OBS</h4> Du skal tilføje mindst '+jsonData.numOfChoosenWords+' underemner før du kan gå videre. Du har kun angivet '+String(JS.totStudentThemes_selectOrder.length)+' ord.');   // <--- Added 23/6-2016 
+		UserMsgBox("body", '<h4>OBS</h4> Du skal udvælge mindst '+jsonData.numOfChoosenWords+' af dine tilføjede underemner, før du kan gå videre.');   // <--- Added 23/6-2016 
 	}
 
 });
@@ -3253,7 +3256,7 @@ function step_6_template(){
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_6" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + returnAudioMarkup(stepNo)):'')+'</div><div class="clear"></div>';
 	// HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction('<span id="dynamicText"></span><span class="cursor">|</span>'):'')+'</div><div class="clear"></div>';
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div class="col-xs-12 col-md-8">'+instruction(jsonData.steps[stepNo].instruction + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="TextAndQuoteContainer">';
