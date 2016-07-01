@@ -121,7 +121,7 @@
 			"step" : 6,
 			"header" : "Skriv din egen problemformulering",
 			"OLD_instruction" : "E-team og Faglærer mangler at lave dette og videre steps i skriveguiden...",
-            "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil. Du kan også kopiere teksten til dit tekstbehandlingsprogram. <br/>Her kan du arbejde videre med at lave en afgrænset problemformulering og relevante underspørgsmål.",
+            "instruction" : "Klik på “download” knappen for at hente dit arbejde som en Wordfil. Eller kopier teksten herunder. Nu kan du arbejde videre med at afgrænse din problemformulering og dine relevante underspørgsmål.",
 			"audioFiles" : [{"name": "audio/step_6.mp3", "type": "mpeg"}],
 			"navBtns" : [{"id": "step_6_goBack", "text":"Gå tilbage"}, {"id": "step_6_download", "text":"<span class='glyphicons glyphicons-download-alt'></span> DOWNLOAD "}],
             "masterExVideo" : "https://www.youtube.com/embed/2a5TseUm9NU",

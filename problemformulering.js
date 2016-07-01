@@ -1136,10 +1136,15 @@ function insertMasterExample(){
 	// window.insertMasterExampleActive = true;
 	var HTML = '';
 	HTML += '<div class="masterStudentBtnWrap">';  // EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL
-	if (jsonData.currentStep == 5) {
-		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
+	// if (jsonData.currentStep == 5) {
+	// 	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: PROBLEMFORMULERING - MED UNDERSPØRGSMÅL</span>';
+	// } else {
+	// 	HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+	// }
+	if (jsonData.currentStep == 6) {
+		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: HENT DIT ARBEJDE</span>';
 	} else {
-		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>EKSEMPEL: UDVÆLG UNDEREMNER</span>';
+		HTML += 	'<span class="masterStudentBtn btn btn-info"><span class="glyphicons glyphicons-eye-open"></span>'+jsonData.steps[jsonData.currentStep].masterExVideoHeader.toUpperCase()+'</span>';
 	}
 	HTML += '</div>';
 	return HTML;
@@ -1152,11 +1157,12 @@ $( document ).on('click', ".masterStudentBtn", function(event){
 	console.log("masterStudentBtn - insertMasterExampleActive: " + insertMasterExampleActive);
 
 	var HTML = '';
-	HTML += '<h3>Eksempel</h3>';
 
 	var stepNo = jsonData.currentStep;  // <----------  ORIGINAL LIVE!
 	var masterExVideo = jsonData.steps[stepNo].masterExVideo;
 	console.log("masterStudentBtn - stepNo: " + stepNo + ", masterExVideo: " + masterExVideo);
+
+	HTML += '<h3>'+jsonData.steps[stepNo].masterExVideoHeader+'</h3>';
 
 	HTML += '<div class="embed-responsive embed-responsive-16by9 col-xs-12 col-md-12 vid_container">';
     HTML += 	'<iframe class="embed-responsive-item" src="'+masterExVideo+'?rel=0" allowfullscreen="1"></iframe>';
