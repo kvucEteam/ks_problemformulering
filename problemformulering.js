@@ -1694,7 +1694,7 @@ $( document ).on('click', ".taxonomy", function(event){
 
 	// $('.taxonomyTextEdit', this).focus();  // This jus sets the focus. To set the focus at the end, see the following:
 
-	// SET FOCUS AT THE END:
+	// SET FOCUS AT THE END: 
 	// SEE: http://stackoverflow.com/questions/19568041/set-focus-and-cursor-to-end-of-text-input-field-string-w-jquery 
 	var searchInput = $('.taxonomyTextEdit', this);
 
@@ -1703,7 +1703,7 @@ $( document ).on('click', ".taxonomy", function(event){
 	var strLength = searchInput.val().length * 2;
 
 	searchInput.focus();
-	searchInput[0].setSelectionRange(strLength, strLength);
+	// searchInput[0].setSelectionRange(strLength, strLength);  // <----- Commented out 07-07-2016  // Is supported in all major browsers - see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
 
 	// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
 	// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
@@ -1751,7 +1751,10 @@ $( document ).on('mousedown', ".contentDelete", function(event){  // <----- EVEN
 
 
 // $( document ).on('click', "body:not(.contentDelete .taxonomyEdit)", function(event){
-$( document ).on('click', "body", function(event){
+$( document ).on('click', "body", function(event){  // <-----  UDKOMMENTERET I TEST 6/7-2016 - MEN SKAL AKTIVERES IGEN!!!
+// $( document ).on('click', "*", function(event){
+// $( document ).on('click', "body, .deleteCallOut", function(event){   
+// $( document ).on('mousedown', "body", function(event){
 	
 	console.log('TAXONOMYTEST -x- event.target.nodeName: ' + event.target.nodeName + ', event.target.className: ' + event.target.className); 
 
@@ -1774,6 +1777,7 @@ $( document ).on('click', "body", function(event){
 });
 
 $( document ).on('click', ".deleteCallOut", function(event){
+	console.log('deleteCallOut - CLICKED');
 
 	// taxonomyEdit($('.taxonomyTextEdit').val(), $(this).closest('.taxonomyEdit'));  // <----- "sortable_text_container" instead of "taxonomyEdit"
 
@@ -1783,7 +1787,7 @@ $( document ).on('click', ".deleteCallOut", function(event){
 
 $( document ).on('click', ".contentDelete", function(event){
 	console.log('TAXONOMYTEST -x- contentDelete.focusout');
-	// $( ".taxonomyEdit" ).trigger( "focusout" ); 
+	// $( ".taxonomyEdit" ).trigger( "focusout" );  
 });
 
 

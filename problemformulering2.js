@@ -1859,7 +1859,7 @@ $( document ).on('click', ".taxonomy", function(event){
 	var strLength = searchInput.val().length * 2;
 
 	searchInput.focus();
-	searchInput[0].setSelectionRange(strLength, strLength);
+	searchInput[0].setSelectionRange(strLength, strLength);  // <----- Is supported in all major browsers - see: https://developer.mozilla.org/en-US/docs/Web/API/HTMLInputElement/setSelectionRange
 
 	// UGLY SPECIAL CASE FOR STEP 4 !!! This has been implemented as a solution to the problem of the .sortable(): // UGLY SPECIAL CASE FOR STEP 4 !!!  There is an issue of ".taxonomy click" being fired before ".taxonomyEdit focusout" - this is a genereal issue with click and focusout - SEE:  http://stackoverflow.com/questions/13980448/jquery-focusout-click-conflict
 	// By deactivating sortability on the "on click" click event, then the "on focusout" event will fire BEFORE the "on click" event as it should (when you edit one div an click on another div to edit this div). 
