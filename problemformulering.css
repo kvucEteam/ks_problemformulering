@@ -496,6 +496,10 @@ textarea {
 }
 
 
+#submit {
+    display: none;
+}
+
 /*****************************************/
 
 #XdynamicTextContainer{
