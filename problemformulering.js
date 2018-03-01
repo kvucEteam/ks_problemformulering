@@ -1445,7 +1445,7 @@ function step_3_template(){
 	HTML += 		'<div class="col-xs-12 col-md-12">';
 	
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('header'))?'<h1 id="stepHeader_3" class="stepHeader">'+jsonData.steps[stepNo].header+'</h1>':'');
-	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div >'+instruction('Lav dine ??? underemner om til underspørgsmål. Find på så mange spørgsmål som muligt. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
+	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('instruction'))?'<div >'+instruction('Lav dine ??? underemner om til underspørgsmål. Find på så mange spørgsmål som muligt. Tryk på “enter“ for at tilføje spørgsmålet. <span id="dynamicText"></span><span class="cursor">|</span>' + insertMasterExample()):'')+'</div><div class="clear"></div>';
 	HTML += 			((jsonData.steps[stepNo].hasOwnProperty('explanation'))?explanation(jsonData.steps[stepNo].explanation):'');
 
 	HTML += 			'<div id="subjectTextThemeContainer" >';
